@@ -22,18 +22,13 @@ export default function Footer() {
                 <div className="grid gap-10 md:grid-cols-12">
                     <div className="md:col-span-4">
                         <div className="flex items-center gap-3 text-tblack">
-                            <span className="grid size-10 place-items-center rounded-full bg-alpha-blue">
-                                <img
-                                    src="/assets/logo.webp"
-                                    alt="Tilila"
-                                    className="size-6 object-contain"
-                                    loading="lazy"
-                                    decoding="async"
-                                />
-                            </span>
-                            <span className="text-base font-semibold tracking-wide">
-                                TILILA
-                            </span>
+                            <img
+                                src="/assets/logo.webp"
+                                alt="Tilila"
+                                className="size-25 object-contain"
+                                loading="eager"
+                                decoding="async"
+                            />
                         </div>
 
                         <p className="mt-5 max-w-xs text-sm leading-6 text-tgray">

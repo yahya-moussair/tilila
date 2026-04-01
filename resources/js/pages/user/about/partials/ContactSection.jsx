@@ -1,0 +1,150 @@
+import { Mail, MapPin, Phone, Send } from 'lucide-react';
+
+export default function ContactSection() {
+    const handleSubmit = (event) => {
+        event.preventDefault();
+    };
+
+    return (
+        <section className="mx-auto max-w-7xl px-4 py-14">
+            <div className="grid gap-10 lg:grid-cols-12">
+                <div className="lg:col-span-5">
+                    <div className="text-xs font-semibold tracking-widest text-tgray">
+                        CONTACT
+                    </div>
+                    <h2 className="mt-3 text-2xl font-semibold text-tblack">
+                        Contact Us
+                    </h2>
+                    <p className="mt-3 text-sm leading-6 text-tgray">
+                        Reach out for partnerships, media inquiries, or program
+                        questions. We’ll get back to you as soon as possible.
+                    </p>
+
+                    <div className="mt-6 space-y-4 text-sm text-tgray">
+                        <div className="flex items-start gap-3">
+                            <span className="mt-0.5 inline-flex size-9 items-center justify-center rounded-full bg-alpha-blue text-beta-blue">
+                                <MapPin className="size-4" />
+                            </span>
+                            <div>
+                                <div className="font-semibold text-tblack">
+                                    Headquarters
+                                </div>
+                                <div>Casablanca, Morocco</div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-start gap-3">
+                            <span className="mt-0.5 inline-flex size-9 items-center justify-center rounded-full bg-alpha-blue text-beta-blue">
+                                <Mail className="size-4" />
+                            </span>
+                            <div>
+                                <div className="font-semibold text-tblack">
+                                    Email Us
+                                </div>
+                                <a
+                                    className="hover:text-tblack"
+                                    href="mailto:contact@tilila.ma"
+                                >
+                                    contact@tilila.ma
+                                </a>
+                            </div>
+                        </div>
+
+                        <div className="flex items-start gap-3">
+                            <span className="mt-0.5 inline-flex size-9 items-center justify-center rounded-full bg-alpha-blue text-beta-blue">
+                                <Phone className="size-4" />
+                            </span>
+                            <div>
+                                <div className="font-semibold text-tblack">
+                                    Call Us
+                                </div>
+                                <a
+                                    className="hover:text-tblack"
+                                    href="tel:+212522000000"
+                                >
+                                    +212 5 22 00 00 00
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="lg:col-span-7">
+                    <form
+                        onSubmit={handleSubmit}
+                        className="rounded-2xl border border-border bg-background p-6"
+                    >
+                        <div className="flex items-center justify-between gap-4">
+                            <h3 className="text-base font-semibold text-tblack">
+                                Send an Inquiry
+                            </h3>
+                            <span className="text-xs font-medium text-tgray">
+                                We respond within 1–2 business days
+                            </span>
+                        </div>
+
+                        <div className="mt-6 grid gap-4 sm:grid-cols-2">
+                            <label className="grid gap-2 text-sm">
+                                <span className="font-medium text-tblack">
+                                    Full Name
+                                </span>
+                                <input
+                                    className="h-11 rounded-xl border border-border bg-background px-4 text-sm text-tblack placeholder:text-tgray focus:outline-none focus:ring-2 focus:ring-beta-blue/30"
+                                    placeholder="Your name"
+                                    name="fullName"
+                                    autoComplete="name"
+                                />
+                            </label>
+
+                            <label className="grid gap-2 text-sm">
+                                <span className="font-medium text-tblack">
+                                    Email
+                                </span>
+                                <input
+                                    className="h-11 rounded-xl border border-border bg-background px-4 text-sm text-tblack placeholder:text-tgray focus:outline-none focus:ring-2 focus:ring-beta-blue/30"
+                                    placeholder="name@company.com"
+                                    type="email"
+                                    name="email"
+                                    autoComplete="email"
+                                />
+                            </label>
+
+                            <label className="grid gap-2 text-sm sm:col-span-2">
+                                <span className="font-medium text-tblack">
+                                    Subject
+                                </span>
+                                <input
+                                    className="h-11 rounded-xl border border-border bg-background px-4 text-sm text-tblack placeholder:text-tgray focus:outline-none focus:ring-2 focus:ring-beta-blue/30"
+                                    placeholder="How can we help?"
+                                    name="subject"
+                                />
+                            </label>
+
+                            <label className="grid gap-2 text-sm sm:col-span-2">
+                                <span className="font-medium text-tblack">
+                                    Message
+                                </span>
+                                <textarea
+                                    className="min-h-32 resize-y rounded-xl border border-border bg-background px-4 py-3 text-sm text-tblack placeholder:text-tgray focus:outline-none focus:ring-2 focus:ring-beta-blue/30"
+                                    placeholder="Write your message..."
+                                    name="message"
+                                />
+                            </label>
+                        </div>
+
+                        <div className="mt-6 flex items-center justify-end">
+                            <button
+                                type="submit"
+                                className="inline-flex items-center gap-2 rounded-full bg-beta-blue px-6 py-2.5 text-sm font-semibold text-twhite transition-opacity hover:opacity-90"
+                            >
+                                <Send className="size-4" />
+                                Send Inquiry
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    );
+}
+

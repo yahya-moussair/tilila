@@ -13,23 +13,19 @@ export default function Navbar() {
 
     return (
         <header className="border-b border-border bg-background">
-            <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4">
+            <div className="mx-auto flex max-w-7xl items-center gap-6 px-4">
                 <Link
                     href={home()}
                     className="flex items-center gap-3 text-tblack"
                 >
-                    <span className="grid size-10 place-items-center rounded-full bg-alpha-blue">
-                        <img
-                            src="/assets/logo.webp"
-                            alt="Tilila"
-                            className="size-6 object-contain"
-                            loading="eager"
-                            decoding="async"
-                        />
-                    </span>
-                    <span className="text-base font-semibold tracking-wide">
-                        TILILA
-                    </span>
+
+                    <img
+                        src="/assets/logo.webp"
+                        alt="Tilila"
+                        className="size-25 object-contain"
+                        loading="eager"
+                        decoding="async"
+                    /> 
                 </Link>
 
                 <nav className="hidden flex-1 items-center justify-center gap-8 md:flex">
