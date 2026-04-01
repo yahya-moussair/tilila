@@ -12,9 +12,12 @@ Route::inertia('/experts', 'experts/index')->name('experts.index');
 Route::inertia('/experts/{id}', 'experts/[id]')->name('experts.show');
 Route::inertia('/opportunities', 'opportunities/index')->name('opportunities.index');
 Route::inertia('/opportunities/{id}', 'opportunities/[id]')->name('opportunities.show');
+Route::get('/about', function () {
+    return Inertia::render('user/about/index');
+});
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::inertia('dashboard', 'dashboard')->name('dashboard');
 });
 
-require __DIR__.'/settings.php';
+require __DIR__ . '/settings.php';
