@@ -10,7 +10,7 @@
 @theme {
     --color-beta-green: #dcfce7;
     --color-alpha-green: #16a34a;
-    --color-beta-blue: #1392ec;
+    --color-beta-blue: #0097aa;
     --color-alpha-blue: #e8f5fe;
     --color-beta-purple: #f3e8ff;
     --color-alpha-purple: #9333ea;
@@ -22,6 +22,7 @@
     --color-alpha-danger: #ef4444;
     --color-tgray: #64748b;
     --color-twhite: #ffffff;
+    --color-beta-white: #f6f7f8;
     --color-tblack: #0f172a;
     --color-gold: #c29d57;
     --font-sans:

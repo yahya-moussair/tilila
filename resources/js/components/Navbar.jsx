@@ -2,7 +2,8 @@ import { Link, usePage } from '@inertiajs/react';
 import { home, login, register, dashboard } from '@/routes';
 
 const navItems = [
-    { label: 'About', href: '/#about' },
+    { label: 'About', href: '/about' },
+    { label: 'Tililab', href: '/tililab' },
     { label: 'Experts', href: '/#experts' },
     { label: 'Events', href: '/#events' },
     { label: 'Trophée', href: '/#trophee' },
