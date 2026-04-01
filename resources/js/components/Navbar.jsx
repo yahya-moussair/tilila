@@ -3,6 +3,8 @@ import { home, login, register, dashboard } from '@/routes';
 
 const navItems = [
     { label: 'About', href: '/about' },
+    { label: 'Tililab', href: '/tililab' },
+    { label: 'Tilila', href: '/tilila' },
     { label: 'Gouvernance', href: '/gouvernance' },
     { label: 'Experts', href: '/experts' },
     { label: 'Events', href: '/events' },
@@ -13,8 +15,8 @@ export default function Navbar() {
     const { auth } = usePage().props;
 
     return (
-        <header className="border-b border-border bg-background">
-            <div className="mx-auto flex max-w-7xl items-center gap-6 px-4">
+        <header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/90 backdrop-blur">
+            <div className="mx-auto flex h-16 max-w-7xl items-center gap-6 px-4">
                 <Link
                     href={home()}
                     className="flex items-center gap-3 text-tblack"
@@ -23,7 +25,7 @@ export default function Navbar() {
                     <img
                         src="/assets/logo.webp"
                         alt="Tilila"
-                        className="size-25 object-contain"
+                        className="h-10 w-auto object-contain"
                         loading="eager"
                         decoding="async"
                     /> 
