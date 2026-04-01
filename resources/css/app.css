@@ -8,6 +8,22 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme {
+    --color-beta-green: #dcfce7;
+    --color-alpha-green: #16a34a;
+    --color-beta-blue: #1392ec;
+    --color-alpha-blue: #e8f5fe;
+    --color-beta-purple: #f3e8ff;
+    --color-alpha-purple: #9333ea;
+    --color-beta-yellow: #fdf8e7;
+    --color-alpha-yellow: #ca8a04;
+    --color-beta-pink: #fce7f3;
+    --color-alpha-pink: #be185d;
+    --color-beta-danger: #fef2f2;
+    --color-alpha-danger: #ef4444;
+    --color-tgray: #64748b;
+    --color-twhite: #ffffff;
+    --color-tblack: #0f172a;
+    --color-gold: #c29d57;
     --font-sans:
         'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
