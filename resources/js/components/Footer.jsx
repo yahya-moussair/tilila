@@ -1,18 +1,17 @@
 import { Link } from '@inertiajs/react';
 import { Mail, MessageCircle, Twitter } from 'lucide-react';
-import { login } from '@/routes';
+import { login, register } from '@/routes';
 
 const platformLinks = [
-    { label: 'Find an Expert', href: '/#experts' },
-    { label: 'Join as Media', href: '/#join' },
-    { label: 'Our Partners', href: '/#partners' },
+    { label: 'Find an Expert', href: '/experts' },
+    { label: 'Join as Media', href: register() },
+    { label: 'Our Partners', href: '/about' },
 ];
 
 const initiativesLinks = [
-    { label: 'Trophée Tilila', href: '/#trophee' },
-    { label: 'TilTalks', href: '/#tilltalks' },
-    { label: 'Past Events', href: '/#events' },
-    { label: 'Resources', href: '/#resources' },
+    { label: 'Events', href: '/events' },
+    { label: 'Opportunities', href: '/opportunities' },
+    { label: 'Governance', href: '/gouvernance' },
 ];
 
 export default function Footer() {
@@ -68,12 +67,12 @@ export default function Footer() {
                         <ul className="mt-4 space-y-3 text-sm text-tgray">
                             {platformLinks.map((item) => (
                                 <li key={item.label}>
-                                    <a
+                                    <Link
                                         href={item.href}
                                         className="transition-colors hover:text-tblack"
                                     >
                                         {item.label}
-                                    </a>
+                                    </Link>
                                 </li>
                             ))}
                             <li>
@@ -94,12 +93,12 @@ export default function Footer() {
                         <ul className="mt-4 space-y-3 text-sm text-tgray">
                             {initiativesLinks.map((item) => (
                                 <li key={item.label}>
-                                    <a
+                                    <Link
                                         href={item.href}
                                         className="transition-colors hover:text-tblack"
                                     >
                                         {item.label}
-                                    </a>
+                                    </Link>
                                 </li>
                             ))}
                         </ul>

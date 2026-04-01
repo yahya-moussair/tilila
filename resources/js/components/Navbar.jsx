@@ -2,10 +2,11 @@ import { Link, usePage } from '@inertiajs/react';
 import { home, login, register, dashboard } from '@/routes';
 
 const navItems = [
-    { label: 'About', href: '/#about' },
-    { label: 'Experts', href: '/#experts' },
-    { label: 'Events', href: '/#events' },
-    { label: 'Trophée', href: '/#trophee' },
+    { label: 'About', href: '/about' },
+    { label: 'Gouvernance', href: '/gouvernance' },
+    { label: 'Experts', href: '/experts' },
+    { label: 'Events', href: '/events' },
+    { label: 'Opportunities', href: '/opportunities' },
 ];
 
 export default function Navbar() {
@@ -30,13 +31,13 @@ export default function Navbar() {
 
                 <nav className="hidden flex-1 items-center justify-center gap-8 md:flex">
                     {navItems.map((item) => (
-                        <a
+                        <Link
                             key={item.label}
                             href={item.href}
                             className="text-sm font-medium text-tgray transition-colors hover:text-tblack"
                         >
                             {item.label}
-                        </a>
+                        </Link>
                     ))}
                 </nav>
 
