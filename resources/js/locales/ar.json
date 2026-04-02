@@ -34,7 +34,8 @@
       "closed": "مغلقة"
     },
     "card": {
-      "fallbackType": "فرصة"
+      "fallbackType": "فرصة",
+      "postedPrefix": "نُشر"
     },
     "detail": {
       "fallbackHeadTitle": "فرصة",

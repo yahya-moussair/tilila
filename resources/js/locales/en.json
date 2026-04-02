@@ -34,7 +34,8 @@
       "closed": "Closed"
     },
     "card": {
-      "fallbackType": "Opportunity"
+      "fallbackType": "Opportunity",
+      "postedPrefix": "Posted"
     },
     "detail": {
       "fallbackHeadTitle": "Opportunity",

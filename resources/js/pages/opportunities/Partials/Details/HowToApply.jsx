@@ -1,6 +1,7 @@
 import React from 'react';
 import InfoCard from '@/pages/opportunities/Partials/Details/InfoCard';
 import { useTranslation } from '@/contexts/TranslationContext';
+import TransText from '@/components/TransText';
 
 export default function HowToApply({ steps = [] }) {
     const { t } = useTranslation();
@@ -15,10 +16,10 @@ export default function HowToApply({ steps = [] }) {
                         </div>
                         <div>
                             <div className="text-sm font-extrabold text-foreground">
-                                {s.title}
+                                <TransText en={s.title.en} fr={s.title.fr} ar={s.title.ar} />
                             </div>
                             <div className="mt-1 text-sm leading-relaxed text-muted-foreground">
-                                {s.text}
+                                <TransText en={s.text.en} fr={s.text.fr} ar={s.text.ar} />
                             </div>
                         </div>
                     </div>
