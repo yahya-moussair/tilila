@@ -3,13 +3,34 @@ import TransText from "@/components/TransText";
 
 const stats = [
     {
-        label: "Impact on Advertising",
-        description:
+        enLabel: "Impact on Advertising",
+        frLabel: "Impact sur la publicité",
+        arLabel: "الأثر على الإعلانات",
+        enDescription:
             "Measuring how the Trophée Tilila has shifted the narrative in Moroccan media over the years.",
+        frDescription:
+            "Mesurer comment le Trophée Tilila a fait évoluer le récit dans les médias marocains au fil des années.",
+        arDescription:
+            "قياس كيف غيّرت جائزة تيليلا السردية في الإعلام المغربي عبر السنوات.",
     },
-    { value: "+45%", label: "ADS WITH GENDER PARITY" },
-    { value: "300+", label: "CAMPAIGNS REVIEWED" },
-    { value: "6", label: "EDITIONS CELEBRATED" },
+    {
+        value: "+45%",
+        enLabel: "ADS WITH GENDER PARITY",
+        frLabel: "PUBS AVEC PARITÉ",
+        arLabel: "إعلانات مع تكافؤ",
+    },
+    {
+        value: "300+",
+        enLabel: "CAMPAIGNS REVIEWED",
+        frLabel: "CAMPAGNES ÉVALUÉES",
+        arLabel: "حملات تمت مراجعتها",
+    },
+    {
+        value: "6",
+        enLabel: "EDITIONS CELEBRATED",
+        frLabel: "ÉDITIONS CÉLÉBRÉES",
+        arLabel: "دورات مُحتفى بها",
+    },
 ];
 
 export default function HeroSection() {
@@ -57,9 +78,11 @@ export default function HeroSection() {
                             className="mt-5 max-w-xl text-base leading-7 sm:text-lg"
                             style={{ color: "rgba(255,255,255,0.62)" }}
                         >
-                            Honoring the advertising campaigns that break stereotypes and
-                            champion gender equality. A celebration of creativity committed
-                            to diversity in Morocco and Africa.
+                            <TransText
+                                en="Honoring the advertising campaigns that break stereotypes and champion gender equality. A celebration of creativity committed to diversity in Morocco and Africa."
+                                fr="Célébrer les campagnes publicitaires qui brisent les stéréotypes et défendent l’égalité des genres. Une célébration de la créativité engagée pour la diversité au Maroc et en Afrique."
+                                ar="تكريم الحملات الإعلانية التي تكسر القوالب النمطية وتدعم المساواة بين الجنسين. احتفاء بالإبداع الملتزم بالتنوع في المغرب وإفريقيا."
+                            />
                         </p>
 
                         {/* CTA buttons */}
@@ -164,10 +187,18 @@ export default function HeroSection() {
                             {/* Label + description */}
                             <div className="lg:col-span-5 lg:pr-6">
                                 <p className="text-sm font-semibold" style={{ color: "var(--color-tblack)" }}>
-                                    {stats[0].label}
+                                    <TransText
+                                        en={stats[0].enLabel}
+                                        fr={stats[0].frLabel}
+                                        ar={stats[0].arLabel}
+                                    />
                                 </p>
                                 <p className="mt-1.5 text-xs leading-6" style={{ color: "var(--color-tgray)" }}>
-                                    {stats[0].description}
+                                    <TransText
+                                        en={stats[0].enDescription}
+                                        fr={stats[0].frDescription}
+                                        ar={stats[0].arDescription}
+                                    />
                                 </p>
                             </div>
 
@@ -196,7 +227,11 @@ export default function HeroSection() {
                                             className="mt-1 text-[0.65rem] font-semibold tracking-widest"
                                             style={{ color: "var(--color-tgray)" }}
                                         >
-                                            {item.label}
+                                            <TransText
+                                                en={item.enLabel}
+                                                fr={item.frLabel}
+                                                ar={item.arLabel}
+                                            />
                                         </div>
                                     </div>
                                 ))}

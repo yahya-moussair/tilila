@@ -4,11 +4,12 @@ import ArchiveSection from '@/pages/user/tilila/partials/ArchiveSection';
 import CtaSection from '@/pages/user/tilila/partials/CtaSection';
 import FeaturedLaureatesSection from '@/pages/user/tilila/partials/FeaturedLaureatesSection';
 import HeroSection from '@/pages/user/tilila/partials/HeroSection';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 export default function TililaIndex() {
     return (
         <>
-            <Head title="Tilila" />
+            <TililaHead />
             <div>
                 <div className="pb-8">
                     <HeroSection />
@@ -28,3 +29,8 @@ export default function TililaIndex() {
 }
 
 TililaIndex.layout = (page) => <AppLayout>{page}</AppLayout>;
+
+function TililaHead() {
+    const { t } = useTranslation();
+    return <Head title={t('tilila.headTitle')} />;
+}
