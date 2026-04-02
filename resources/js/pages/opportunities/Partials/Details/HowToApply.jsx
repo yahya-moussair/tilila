@@ -1,9 +1,12 @@
 import React from 'react';
 import InfoCard from '@/pages/opportunities/Partials/Details/InfoCard';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 export default function HowToApply({ steps = [] }) {
+    const { t } = useTranslation();
+
     return (
-        <InfoCard title="How to Apply">
+        <InfoCard title={t('opportunities.detail.sections.howToApplyTitle')}>
             <div className="space-y-4">
                 {steps.map((s) => (
                     <div key={s.step} className="flex gap-3">

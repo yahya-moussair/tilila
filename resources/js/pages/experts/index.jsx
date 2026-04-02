@@ -4,8 +4,11 @@ import AppLayout from '@/layouts/app-layout';
 import FiltersBar from '@/pages/experts/Partials/FiltersBar';
 import ExpertCard from '@/pages/experts/Partials/ExpertCard';
 import { EXPERTS } from '@/pages/experts/Partials/expert-data';
+import { useTranslation } from '@/contexts/TranslationContext';
+import TransText from '@/components/TransText';
 
 export default function ExpertsIndex() {
+    const { t } = useTranslation();
     const [query, setQuery] = useState('');
     const [sort, setSort] = useState('relevance');
     const [view, setView] = useState('grid');
@@ -19,25 +22,25 @@ export default function ExpertsIndex() {
     const filterLabels = useMemo(
         () => ({
             industry: {
-                economics: 'Economics',
-                technology: 'Technology',
-                health: 'Health',
-                legal: 'Legal',
+                economics: t('experts.filters.economics'),
+                technology: t('experts.filters.technology'),
+                health: t('experts.filters.health'),
+                legal: t('experts.filters.legal'),
             },
             country: {
-                ma: 'Morocco',
-                sn: 'Senegal',
+                ma: t('experts.filters.morocco'),
+                sn: t('experts.filters.senegal'),
             },
             language: {
-                ar: 'Arabic',
-                fr: 'French',
-                en: 'English',
+                ar: t('experts.filters.arabic'),
+                fr: t('experts.filters.french'),
+                en: t('experts.filters.english'),
             },
             availability: {
-                available: 'Available',
+                available: t('experts.filters.available'),
             },
         }),
-        [],
+        [t],
     );
 
     const activeFilters = useMemo(() => {
@@ -146,18 +149,25 @@ export default function ExpertsIndex() {
 
     return (
         <>
-            <Head title="Experts" />
+            <Head title={t('experts.headTitle')} />
 
             <div className="bg-background">
                 <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
                     <header className="mx-auto max-w-3xl text-center">
-                        <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-                            Find an Expert
-                        </h1>
-                        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                            Discover and connect with leading women experts across Morocco
-                            and Africa.
-                        </p>
+                        <TransText
+                            tag="h1"
+                            className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl"
+                            en="Find an Expert"
+                            fr="Trouver une experte"
+                            ar="اعثر على خبيرة"
+                        />
+                        <TransText
+                            tag="p"
+                            className="mt-3 text-sm leading-relaxed text-muted-foreground"
+                            en="Discover and connect with leading women experts across Morocco and Africa."
+                            fr="Découvrez et contactez des expertes de premier plan au Maroc et en Afrique."
+                            ar="اكتشف وتواصل مع خبيرات رائدات في المغرب وإفريقيا."
+                        />
                     </header>
 
                     <div className="mx-auto mt-8 max-w-5xl">
@@ -174,7 +184,9 @@ export default function ExpertsIndex() {
 
                         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-xs text-muted-foreground">
                             <div className="flex items-center gap-2">
-                                <span className="font-semibold">ACTIVE FILTERS:</span>
+                                <span className="font-semibold">
+                                    <TransText en="ACTIVE FILTERS:" fr="FILTRES ACTIFS :" ar="الفلاتر النشطة:" />
+                                </span>
                                 {activeFilters.length ? (
                                     <>
                                         {activeFilters.map((f) => (
@@ -204,18 +216,24 @@ export default function ExpertsIndex() {
                                             }
                                             className="text-xs font-semibold text-muted-foreground hover:text-foreground hover:underline"
                                         >
-                                            Clear all
+                                            <TransText en="Clear all" fr="Tout effacer" ar="مسح الكل" />
                                         </button>
                                     </>
                                 ) : (
-                                    <span>None</span>
+                                    <span>
+                                        <TransText en="None" fr="Aucun" ar="لا شيء" />
+                                    </span>
                                 )}
                             </div>
                         </div>
 
                         <div className="mt-10 flex items-center justify-between text-sm">
                             <div className="text-muted-foreground">
-                                Showing {experts.length} experts
+                                <TransText
+                                    en={`Showing ${experts.length} experts`}
+                                    fr={`Affichage de ${experts.length} expertes`}
+                                    ar={`عرض ${experts.length} خبيرات`}
+                                />
                             </div>
                         </div>
 

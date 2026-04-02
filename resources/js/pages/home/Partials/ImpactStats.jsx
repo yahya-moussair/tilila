@@ -1,9 +1,10 @@
 import React from 'react';
+import TransText from '@/components/TransText';
 
 const STATS = [
-    { value: '500+', label: 'Experts registered' },
-    { value: '50+', label: 'Media partners' },
-    { value: '120+', label: 'Events hosted' },
+    { value: '500+', en: 'Experts registered', fr: 'Expertes inscrites', ar: 'خبيرات مسجلات' },
+    { value: '50+', en: 'Media partners', fr: 'Partenaires médias', ar: 'شركاء إعلاميون' },
+    { value: '120+', en: 'Events hosted', fr: 'Événements organisés', ar: 'فعاليات نُظِّمت' },
 ];
 
 export default function ImpactStats() {
@@ -13,10 +14,18 @@ export default function ImpactStats() {
                 <div className="grid grid-cols-1 items-center gap-6 md:grid-cols-4">
                     <div>
                         <div className="text-sm font-semibold opacity-95">
-                            Our Impact in Numbers
+                            <TransText
+                                en="Our Impact in Numbers"
+                                fr="Notre impact en chiffres"
+                                ar="أثرنا بالأرقام"
+                            />
                         </div>
                         <div className="mt-1 text-xs opacity-90">
-                            Growing a community of visibility.
+                            <TransText
+                                en="Growing a community of visibility."
+                                fr="Construire une communauté visible."
+                                ar="نبني مجتمعًا أكثر حضورًا."
+                            />
                         </div>
                     </div>
 
@@ -31,7 +40,7 @@ export default function ImpactStats() {
                                         {stat.value}
                                     </div>
                                     <div className="mt-1 text-xs opacity-90">
-                                        {stat.label}
+                                        <TransText en={stat.en} fr={stat.fr} ar={stat.ar} />
                                     </div>
                                 </div>
                             ))}

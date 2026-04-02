@@ -6,11 +6,12 @@ import HeroSection from '@/pages/user/about/partials/HeroSection';
 import MissionSection from '@/pages/user/about/partials/MissionSection';
 import PartnersSection from '@/pages/user/about/partials/PartnersSection';
 import TililabCtaSection from '@/pages/user/about/partials/TililabCtaSection';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 export default function About() {
     return (
         <>
-            <Head title="About" />
+            <AboutHead />
             <div>
                 <div className="bg-beta-white py-8">
                     <HeroSection />
@@ -36,3 +37,8 @@ export default function About() {
 }
 
 About.layout = (page) => <AppLayout>{page}</AppLayout>;
+
+function AboutHead() {
+    const { t } = useTranslation();
+    return <Head title={t('about.headTitle')} />;
+}

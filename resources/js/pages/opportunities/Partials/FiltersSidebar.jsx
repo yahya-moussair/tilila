@@ -1,4 +1,6 @@
 import React from 'react';
+import TransText from '@/components/TransText';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 function Section({ title, children }) {
     return (
@@ -26,73 +28,77 @@ function Radio({ checked, onChange, label }) {
 }
 
 export default function FiltersSidebar({ filters, setFilters, onReset }) {
+    const { t } = useTranslation();
+
     return (
         <aside className="rounded-2xl bg-card p-5 shadow-sm ring-1 ring-border">
             <div className="flex items-center justify-between">
-                <div className="text-sm font-extrabold text-foreground">Filters</div>
+                <div className="text-sm font-extrabold text-foreground">
+                    <TransText en="Filters" fr="Filtres" ar="الفلاتر" />
+                </div>
                 <button
                     type="button"
                     onClick={onReset}
                     className="text-xs font-semibold text-beta-blue hover:underline"
                 >
-                    Reset All
+                    <TransText en="Reset All" fr="Réinitialiser" ar="إعادة ضبط الكل" />
                 </button>
             </div>
 
             <div className="mt-5 space-y-4">
-                <Section title="TYPE">
+                <Section title={<TransText en="TYPE" fr="TYPE" ar="النوع" />}>
                     <Radio
                         checked={filters.type === 'all'}
                         onChange={() => setFilters((f) => ({ ...f, type: 'all' }))}
-                        label="All Types"
+                        label={t('opportunities.filters.allTypes')}
                     />
                     <Radio
                         checked={filters.type === 'panel_discussion'}
                         onChange={() =>
                             setFilters((f) => ({ ...f, type: 'panel_discussion' }))
                         }
-                        label="Panel Discussion"
+                        label={t('opportunities.filters.panelDiscussion')}
                     />
                     <Radio
                         checked={filters.type === 'media_call'}
                         onChange={() => setFilters((f) => ({ ...f, type: 'media_call' }))}
-                        label="Media Call"
+                        label={t('opportunities.filters.mediaCall')}
                     />
                     <Radio
                         checked={filters.type === 'grant'}
                         onChange={() => setFilters((f) => ({ ...f, type: 'grant' }))}
-                        label="Grant"
+                        label={t('opportunities.filters.grant')}
                     />
                     <Radio
                         checked={filters.type === 'residency'}
                         onChange={() => setFilters((f) => ({ ...f, type: 'residency' }))}
-                        label="Residency"
+                        label={t('opportunities.filters.residency')}
                     />
                 </Section>
 
-                <Section title="DEADLINE">
+                <Section title={<TransText en="DEADLINE" fr="DATE LIMITE" ar="الموعد النهائي" />}>
                     <Radio
                         checked={filters.deadline === 'any'}
                         onChange={() => setFilters((f) => ({ ...f, deadline: 'any' }))}
-                        label="Anytime"
+                        label={t('opportunities.filters.deadlineAny')}
                     />
                     <Radio
                         checked={filters.deadline === 'this_week'}
                         onChange={() =>
                             setFilters((f) => ({ ...f, deadline: 'this_week' }))
                         }
-                        label="This Week"
+                        label={t('opportunities.filters.deadlineThisWeek')}
                     />
                     <Radio
                         checked={filters.deadline === 'this_month'}
                         onChange={() =>
                             setFilters((f) => ({ ...f, deadline: 'this_month' }))
                         }
-                        label="This Month"
+                        label={t('opportunities.filters.deadlineThisMonth')}
                     />
                 </Section>
 
-                <Section title="REGION">
+                <Section title={<TransText en="REGION" fr="RÉGION" ar="المنطقة" />}>
                     <select
                         value={filters.region}
                         onChange={(e) =>
@@ -100,11 +106,11 @@ export default function FiltersSidebar({ filters, setFilters, onReset }) {
                         }
                         className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm outline-none"
                     >
-                        <option value="all">All Regions</option>
-                        <option value="casablanca">Casablanca</option>
-                        <option value="rabat">Rabat</option>
-                        <option value="marrakesh">Marrakesh</option>
-                        <option value="tangier">Tangier</option>
+                        <option value="all">{t('opportunities.filters.regionAll')}</option>
+                        <option value="casablanca">{t('opportunities.filters.regionCasablanca')}</option>
+                        <option value="rabat">{t('opportunities.filters.regionRabat')}</option>
+                        <option value="marrakesh">{t('opportunities.filters.regionMarrakesh')}</option>
+                        <option value="tangier">{t('opportunities.filters.regionTangier')}</option>
                     </select>
                 </Section>
 
@@ -113,11 +119,14 @@ export default function FiltersSidebar({ filters, setFilters, onReset }) {
                         <div className="mt-0.5 h-9 w-9 rounded-lg bg-beta-blue/20 text-beta-blue ring-1 ring-border" />
                         <div className="min-w-0">
                             <div className="text-sm font-extrabold text-foreground">
-                                Stay Updated
+                                <TransText en="Stay Updated" fr="Restez informé" ar="ابقَ على اطلاع" />
                             </div>
                             <div className="mt-1 text-xs leading-relaxed text-muted-foreground">
-                                Get the latest opportunities delivered to your inbox every
-                                week.
+                                <TransText
+                                    en="Get the latest opportunities delivered to your inbox every week."
+                                    fr="Recevez chaque semaine les dernières opportunités directement dans votre boîte mail."
+                                    ar="احصل على أحدث الفرص مباشرة إلى بريدك الإلكتروني كل أسبوع."
+                                />
                             </div>
                         </div>
                     </div>
@@ -125,7 +134,7 @@ export default function FiltersSidebar({ filters, setFilters, onReset }) {
                         type="button"
                         className="mt-4 inline-flex w-full items-center justify-center rounded-md bg-beta-blue px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-90"
                     >
-                        Subscribe
+                        <TransText en="Subscribe" fr="S’abonner" ar="اشترك" />
                     </button>
                 </div>
             </div>

@@ -1,9 +1,12 @@
 import React from 'react';
 import InfoCard from '@/pages/opportunities/Partials/Details/InfoCard';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 export default function Eligibility({ items = [] }) {
+    const { t } = useTranslation();
+
     return (
-        <InfoCard title="Eligibility Criteria">
+        <InfoCard title={t('opportunities.detail.sections.eligibilityTitle')}>
             <ul className="space-y-3 text-sm text-muted-foreground">
                 {items.map((x) => (
                     <li key={x} className="flex gap-3">

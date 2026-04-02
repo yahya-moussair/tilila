@@ -4,6 +4,8 @@ import AppLayout from '@/layouts/app-layout';
 import FiltersSidebar from '@/pages/opportunities/Partials/FiltersSidebar';
 import OpportunityCard from '@/pages/opportunities/Partials/OpportunityCard';
 import { OPPORTUNITIES } from '@/pages/opportunities/Partials/opportunities-data';
+import { useTranslation } from '@/contexts/TranslationContext';
+import TransText from '@/components/TransText';
 
 function formatDate(iso) {
     try {
@@ -25,6 +27,7 @@ function daysUntil(iso) {
 }
 
 export default function OpportunitiesIndex() {
+    const { t } = useTranslation();
     const [query, setQuery] = useState('');
     const [sort, setSort] = useState('newest');
     const [page, setPage] = useState(1);
@@ -108,19 +111,25 @@ export default function OpportunitiesIndex() {
 
     return (
         <>
-            <Head title="Opportunities" />
+            <Head title={t('opportunities.headTitle')} />
 
             <div className="bg-background">
                 <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
                     <header className="max-w-3xl">
-                        <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-                            Opportunities Board
-                        </h1>
-                        <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                            Discover grants, media calls, panel discussions, and residencies
-                            tailored for women experts. Connect, contribute, and grow your
-                            impact.
-                        </p>
+                        <TransText
+                            tag="h1"
+                            className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl"
+                            en="Opportunities Board"
+                            fr="Tableau des opportunités"
+                            ar="لوحة الفرص"
+                        />
+                        <TransText
+                            tag="p"
+                            className="mt-3 text-sm leading-relaxed text-muted-foreground"
+                            en="Discover grants, media calls, panel discussions, and residencies tailored for women experts. Connect, contribute, and grow your impact."
+                            fr="Découvrez des subventions, des appels médias, des tables rondes et des résidences destinés aux expertes. Connectez-vous, contribuez et développez votre impact."
+                            ar="اكتشفي المنح وفرص الإعلام والحوارات والبرامج الإقامية المصممة للخبيرات. تواصلي، ساهمي، ووسّعي أثرَك."
+                        />
                     </header>
 
                     <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-12">
@@ -148,7 +157,7 @@ export default function OpportunitiesIndex() {
                                         <input
                                             value={query}
                                             onChange={(e) => setQuery(e.target.value)}
-                                            placeholder="Search opportunities by keyword..."
+                                            placeholder={t('common.search')}
                                             className="w-full rounded-md border border-border bg-background py-2 pl-9 pr-3 text-sm text-foreground shadow-sm outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
                                         />
                                     </div>
@@ -156,16 +165,20 @@ export default function OpportunitiesIndex() {
                                     <div className="flex items-center justify-between gap-3 md:justify-end">
                                         <label className="flex items-center gap-2 rounded-md border border-border bg-background px-3 py-2 text-sm text-muted-foreground shadow-sm">
                                             <span className="whitespace-nowrap">
-                                                Sort by:
+                                                <TransText
+                                                    en="Sort by:"
+                                                    fr="Trier par :"
+                                                    ar="ترتيب حسب:"
+                                                />
                                             </span>
                                             <select
                                                 value={sort}
                                                 onChange={(e) => setSort(e.target.value)}
                                                 className="bg-transparent text-sm text-foreground outline-none"
                                             >
-                                                <option value="newest">Newest First</option>
+                                                <option value="newest">{t('opportunities.sortNewest')}</option>
                                                 <option value="deadline_soonest">
-                                                    Deadline Soonest
+                                                    {t('opportunities.sortDeadlineSoonest')}
                                                 </option>
                                             </select>
                                         </label>

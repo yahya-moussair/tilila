@@ -1,3 +1,5 @@
+import TransText from '@/components/TransText';
+
 const partners = [
     {
         id: 'un',
@@ -47,14 +49,17 @@ export default function PartnersSection() {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
                 <div>
                     <div className="text-xs font-semibold tracking-widest text-tgray">
-                        PARTNERSHIP
+                        <TransText en="PARTNERSHIP" fr="PARTENARIAT" ar="الشراكة" />
                     </div>
                     <h2 className="mt-3 text-2xl font-semibold text-tblack">
-                        Institutional Partners
+                        <TransText en="Institutional Partners" fr="Partenaires institutionnels" ar="شركاء مؤسساتيون" />
                     </h2>
                     <p className="mt-3 max-w-2xl text-sm leading-6 text-tgray">
-                        Building a network of allies advancing parity,
-                        diversity, and high-quality public discourse.
+                        <TransText
+                            en="Building a network of allies advancing parity, diversity, and high-quality public discourse."
+                            fr="Construire un réseau d’alliés qui font avancer la parité, la diversité et un débat public de qualité."
+                            ar="بناء شبكة من الحلفاء لتعزيز المساواة والتنوع وجودة الخطاب العام."
+                        />
                     </p>
                 </div>
 
@@ -62,7 +67,7 @@ export default function PartnersSection() {
                     href="/#partners"
                     className="text-sm font-semibold text-beta-blue hover:underline"
                 >
-                    Become a Partner
+                    <TransText en="Become a Partner" fr="Devenir partenaire" ar="كن شريكًا" />
                 </a>
             </div>
 

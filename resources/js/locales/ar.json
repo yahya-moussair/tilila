@@ -10,14 +10,216 @@
     "opportunities": "الفرص",
     "dashboard": "لوحة التحكم",
     "login": "تسجيل الدخول",
-    "register": "إنشاء حساب"
+    "register": "إنشاء حساب",
+    "mobileOpenMenuAria": "فتح القائمة",
+    "mobileCloseMenuAria": "إغلاق القائمة"
   },
   "common": {
     "save": "حفظ",
+    "saved": "تم الحفظ",
     "cancel": "إلغاء",
     "delete": "حذف",
     "close": "إغلاق",
-    "language": "اللغة"
+    "language": "اللغة",
+    "search": "ابحث عن الفرص باستخدام كلمة مفتاحية...",
+    "na": "—"
+  },
+  "opportunities": {
+    "headTitle": "الفرص",
+    "sortNewest": "الأحدث أولاً",
+    "sortDeadlineSoonest": "الأقرب موعدًا",
+    "detail": {
+      "fallbackHeadTitle": "فرصة",
+      "organizerFallback": "سيتم إضافة معلومات الجهة المنظمة قريبًا.",
+      "shareAria": "مشاركة",
+      "sections": {
+        "descriptionTitle": "الوصف",
+        "eligibilityTitle": "معايير الأهلية",
+        "deadlineTitle": "آخر موعد للتقديم",
+        "howToApplyTitle": "كيفية التقديم",
+        "organizerTitle": "الجهة المنظمة",
+        "quickInfoTitle": "معلومات سريعة",
+        "relatedThemesTitle": "موضوعات ذات صلة",
+        "shareTitle": "مشاركة هذه الفرصة"
+      }
+    },
+    "filters": {
+      "allTypes": "كل الأنواع",
+      "panelDiscussion": "حلقة نقاش",
+      "mediaCall": "نداء إعلامي",
+      "grant": "منحة",
+      "residency": "إقامة",
+      "deadlineAny": "في أي وقت",
+      "deadlineThisWeek": "هذا الأسبوع",
+      "deadlineThisMonth": "هذا الشهر",
+      "regionAll": "كل المناطق",
+      "regionCasablanca": "الدار البيضاء",
+      "regionRabat": "الرباط",
+      "regionMarrakesh": "مراكش",
+      "regionTangier": "طنجة"
+    }
+  },
+  "experts": {
+    "headTitle": "الخبيرات",
+    "searchPlaceholder": "ابحث بالاسم أو الخبرة أو كلمة مفتاحية...",
+    "filters": {
+      "all": "الكل",
+      "economics": "الاقتصاد",
+      "technology": "التكنولوجيا",
+      "health": "الصحة",
+      "legal": "القانون",
+      "morocco": "المغرب",
+      "senegal": "السنغال",
+      "arabic": "العربية",
+      "french": "الفرنسية",
+      "english": "الإنجليزية",
+      "available": "متاحة"
+    },
+    "sort": {
+      "relevance": "الأكثر صلة",
+      "nameAsc": "الاسم (أ-ي)",
+      "nameDesc": "الاسم (ي-أ)"
+    },
+    "view": {
+      "gridAria": "عرض شبكي",
+      "listAria": "عرض قائمة"
+    }
+  },
+  "contact": {
+    "form": {
+      "namePlaceholder": "اسمك",
+      "emailPlaceholder": "name@company.com",
+      "subjectPlaceholder": "كيف يمكننا مساعدتك؟",
+      "messagePlaceholder": "اكتب رسالتك..."
+    }
+  },
+  "footer": {
+    "aria": {
+      "twitter": "تويتر",
+      "community": "المجتمع",
+      "email": "البريد الإلكتروني"
+    }
+  },
+  "home": {
+    "headTitle": "تيليلا"
+  },
+  "about": {
+    "headTitle": "حول"
+  },
+  "auth": {
+    "common": {
+      "emailPlaceholder": "email@example.com",
+      "passwordLabel": "كلمة المرور",
+      "passwordPlaceholder": "كلمة المرور",
+      "confirmPasswordLabel": "تأكيد كلمة المرور",
+      "confirmPasswordPlaceholder": "تأكيد كلمة المرور"
+    },
+    "login": {
+      "headTitle": "تسجيل الدخول",
+      "layoutTitle": "سجّل الدخول إلى حسابك",
+      "layoutDescription": "أدخل بريدك الإلكتروني وكلمة المرور لتسجيل الدخول",
+      "emailLabel": "البريد الإلكتروني",
+      "forgotPassword": "هل نسيت كلمة المرور؟",
+      "rememberMe": "تذكرني",
+      "submit": "تسجيل الدخول",
+      "noAccount": "ليس لديك حساب؟",
+      "signUp": "إنشاء حساب"
+    },
+    "register": {
+      "headTitle": "إنشاء حساب",
+      "layoutTitle": "إنشاء حساب",
+      "layoutDescription": "أدخل بياناتك لإنشاء حساب جديد",
+      "nameLabel": "الاسم",
+      "namePlaceholder": "الاسم الكامل",
+      "emailLabel": "البريد الإلكتروني",
+      "submit": "إنشاء حساب",
+      "haveAccount": "لديك حساب بالفعل؟",
+      "loginLink": "تسجيل الدخول"
+    },
+    "forgot": {
+      "headTitle": "نسيت كلمة المرور",
+      "layoutTitle": "نسيت كلمة المرور",
+      "layoutDescription": "أدخل بريدك الإلكتروني لتصلك رسالة لإعادة تعيين كلمة المرور",
+      "emailLabel": "البريد الإلكتروني",
+      "submit": "إرسال رابط إعادة التعيين",
+      "returnPrefix": "أو ارجع إلى",
+      "returnLink": "تسجيل الدخول"
+    },
+    "confirm": {
+      "headTitle": "تأكيد كلمة المرور",
+      "layoutTitle": "أكد كلمة المرور",
+      "layoutDescription": "هذه منطقة آمنة من التطبيق. يرجى تأكيد كلمة المرور قبل المتابعة.",
+      "submit": "تأكيد"
+    },
+    "reset": {
+      "headTitle": "إعادة تعيين كلمة المرور",
+      "layoutTitle": "إعادة تعيين كلمة المرور",
+      "layoutDescription": "يرجى إدخال كلمة المرور الجديدة أدناه",
+      "emailLabel": "البريد الإلكتروني",
+      "submit": "إعادة التعيين"
+    },
+    "twoFactor": {
+      "headTitle": "المصادقة الثنائية",
+      "recoveryTitle": "رمز الاسترداد",
+      "recoveryDescription": "يرجى تأكيد الوصول إلى حسابك عبر إدخال أحد رموز الاسترداد الاحتياطية.",
+      "authCodeTitle": "رمز المصادقة",
+      "authCodeDescription": "أدخل رمز المصادقة الذي توفره تطبيقات المصادقة لديك.",
+      "useAuthCodeToggle": "تسجيل الدخول باستخدام رمز المصادقة",
+      "useRecoveryToggle": "تسجيل الدخول باستخدام رمز الاسترداد",
+      "recoveryPlaceholder": "أدخل رمز الاسترداد",
+      "continue": "متابعة",
+      "togglePrefix": "أو يمكنك "
+    },
+    "verify": {
+      "headTitle": "التحقق من البريد الإلكتروني",
+      "layoutTitle": "تحقق من البريد الإلكتروني",
+      "layoutDescription": "يرجى التحقق من بريدك الإلكتروني بالنقر على الرابط الذي أرسلناه لك للتو.",
+      "linkSent": "تم إرسال رابط تحقق جديد إلى البريد الإلكتروني الذي قدمته أثناء التسجيل.",
+      "resend": "إعادة إرسال رسالة التحقق",
+      "logout": "تسجيل الخروج"
+    }
+  },
+  "settings": {
+    "profile": {
+      "headTitle": "إعدادات الملف الشخصي",
+      "srTitle": "إعدادات الملف الشخصي",
+      "breadcrumbTitle": "إعدادات الملف الشخصي",
+      "headingTitle": "معلومات الملف الشخصي",
+      "headingDescription": "حدّث اسمك وبريدك الإلكتروني",
+      "nameLabel": "الاسم",
+      "namePlaceholder": "الاسم الكامل",
+      "emailLabel": "البريد الإلكتروني",
+      "emailPlaceholder": "البريد الإلكتروني",
+      "unverifiedPrefix": "بريدك الإلكتروني غير مُتحقق.",
+      "resendVerification": "انقر هنا لإعادة إرسال رسالة التحقق.",
+      "linkSent": "تم إرسال رابط تحقق جديد إلى بريدك الإلكتروني."
+    },
+    "security": {
+      "headTitle": "إعدادات الأمان",
+      "srTitle": "إعدادات الأمان",
+      "breadcrumbTitle": "إعدادات الأمان",
+      "updatePasswordTitle": "تحديث كلمة المرور",
+      "updatePasswordDescription": "تأكد من استخدام كلمة مرور طويلة وعشوائية للحفاظ على أمان حسابك",
+      "currentPasswordLabel": "كلمة المرور الحالية",
+      "currentPasswordPlaceholder": "كلمة المرور الحالية",
+      "newPasswordLabel": "كلمة المرور الجديدة",
+      "newPasswordPlaceholder": "كلمة المرور الجديدة",
+      "savePassword": "حفظ كلمة المرور",
+      "twoFactorTitle": "المصادقة الثنائية",
+      "twoFactorDescription": "أدر إعدادات المصادقة الثنائية",
+      "twoFactorEnabledInfo": "سيُطلب منك أثناء تسجيل الدخول إدخال رمز آمن. يمكنك الحصول عليه من تطبيق يدعم TOTP على هاتفك.",
+      "twoFactorDisabledInfo": "عند تفعيل المصادقة الثنائية، سيُطلب منك أثناء تسجيل الدخول إدخال رمز آمن. يمكنك الحصول عليه من تطبيق يدعم TOTP على هاتفك.",
+      "disable2fa": "تعطيل 2FA",
+      "continueSetup": "متابعة الإعداد",
+      "enable2fa": "تفعيل 2FA"
+    },
+    "appearance": {
+      "headTitle": "إعدادات المظهر",
+      "srTitle": "إعدادات المظهر",
+      "breadcrumbTitle": "إعدادات المظهر",
+      "headingTitle": "إعدادات المظهر",
+      "headingDescription": "حدّث إعدادات مظهر حسابك"
+    }
   },
   "tilila": {
     "hero": {

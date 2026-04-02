@@ -4,15 +4,17 @@ import Hero from '@/pages/home/Partials/Hero';
 import ImpactStats from '@/pages/home/Partials/ImpactStats';
 import AudienceCards from '@/pages/home/Partials/AudienceCards';
 import Highlights from '@/pages/home/Partials/Highlights';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 export default function HomeIndex({ canRegister = true }) {
+    const { t } = useTranslation();
     const heroImageSrc = '/assets/hero.png';
     const tropheeImageSrc = '/assets/trophee.png';
     const talkImageSrc = '/assets/talk.png';
 
     return (
         <>
-            <Head title="Tilila">
+            <Head title={t('home.headTitle')}>
                 <link rel="preconnect" href="https://fonts.bunny.net" />
                 <link
                     href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700,800"

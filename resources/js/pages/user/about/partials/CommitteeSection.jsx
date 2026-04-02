@@ -1,3 +1,5 @@
+import TransText from '@/components/TransText';
+
 const committee = [
     {
         name: 'Khadija Bouzoubaa',
@@ -30,14 +32,21 @@ export default function CommitteeSection() {
         <section className="mx-auto max-w-7xl px-4 py-12">
             <div className="text-center">
                 <div className="text-xs font-semibold tracking-widest text-tgray">
-                    LEADERSHIP
+                    <TransText en="LEADERSHIP" fr="GOUVERNANCE" ar="القيادة" />
                 </div>
                 <h2 className="mt-3 text-2xl font-semibold text-tblack">
-                    Comité Parité &amp; Diversité
+                    <TransText
+                        en="Parity & Diversity Committee"
+                        fr="Comité Parité & Diversité"
+                        ar="لجنة المساواة والتنوع"
+                    />
                 </h2>
                 <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-tgray">
-                    A committee of committed professionals supporting our
-                    mission and guiding our initiatives.
+                    <TransText
+                        en="A committee of committed professionals supporting our mission and guiding our initiatives."
+                        fr="Un comité de professionnels engagés qui soutiennent notre mission et orientent nos initiatives."
+                        ar="لجنة من مهنيين ملتزمين يدعمون رسالتنا ويوجهون مبادراتنا."
+                    />
                 </p>
             </div>
 
@@ -62,7 +71,11 @@ export default function CommitteeSection() {
                                 {member.name}
                             </div>
                             <div className="mt-1 text-xs font-medium text-tgray">
-                                {member.role}
+                                {member.role === 'Chair' ? (
+                                    <TransText en="Chair" fr="Présidente" ar="الرئيسة" />
+                                ) : (
+                                    <TransText en="Member" fr="Membre" ar="عضوة" />
+                                )}
                             </div>
                         </div>
                     </div>

@@ -1,20 +1,24 @@
 import { Link } from '@inertiajs/react';
 import { Mail, MessageCircle, Twitter } from 'lucide-react';
 import { login, register } from '@/routes';
+import { useTranslation } from '@/contexts/TranslationContext';
+import TransText from '@/components/TransText';
 
 const platformLinks = [
-    { label: 'Find an Expert', href: '/experts' },
-    { label: 'Join as Media', href: register() },
-    { label: 'Our Partners', href: '/about' },
+    { en: 'Find an Expert', fr: 'Trouver une experte', ar: 'اعثر على خبيرة', href: '/experts' },
+    { en: 'Join as Media', fr: 'Rejoindre en tant que média', ar: 'انضم كوسيلة إعلام', href: register() },
+    { en: 'Our Partners', fr: 'Nos partenaires', ar: 'شركاؤنا', href: '/about' },
 ];
 
 const initiativesLinks = [
-    { label: 'Events', href: '/events' },
-    { label: 'Opportunities', href: '/opportunities' },
-    { label: 'Governance', href: '/gouvernance' },
+    { en: 'Events', fr: 'Événements', ar: 'الفعاليات', href: '/events' },
+    { en: 'Opportunities', fr: 'Opportunités', ar: 'الفرص', href: '/opportunities' },
+    { en: 'Governance', fr: 'Gouvernance', ar: 'الحوكمة', href: '/gouvernance' },
 ];
 
 export default function Footer() {
+    const { t } = useTranslation();
+
     return (
         <footer className="border-t border-border bg-background">
             <div className="mx-auto max-w-7xl px-4 py-14">
@@ -31,28 +35,31 @@ export default function Footer() {
                         </div>
 
                         <p className="mt-5 max-w-xs text-sm leading-6 text-tgray">
-                            An initiative committed to parity and diversity in
-                            media. Empowering voices, changing narratives.
+                            <TransText
+                                en="An initiative committed to parity and diversity in media. Empowering voices, changing narratives."
+                                fr="Une initiative engagée pour la parité et la diversité dans les médias. Donner de la voix, changer les récits."
+                                ar="مبادرة ملتزمة بالمساواة والتنوع في الإعلام. تمكين الأصوات وتغيير السرديات."
+                            />
                         </p>
 
                         <div className="mt-5 flex items-center gap-4 text-tgray">
                             <a
                                 href="/"
-                                aria-label="Twitter"
+                                aria-label={t('footer.aria.twitter')}
                                 className="inline-flex size-9 items-center justify-center rounded-full bg-alpha-blue text-beta-blue transition-colors hover:bg-beta-blue hover:text-twhite"
                             >
                                 <Twitter className="size-4" />
                             </a>
                             <a
                                 href="/"
-                                aria-label="Community"
+                                aria-label={t('footer.aria.community')}
                                 className="inline-flex size-9 items-center justify-center rounded-full bg-alpha-blue text-beta-blue transition-colors hover:bg-beta-blue hover:text-twhite"
                             >
                                 <MessageCircle className="size-4" />
                             </a>
                             <a
                                 href="mailto:contact@tilila.ma"
-                                aria-label="Email"
+                                aria-label={t('footer.aria.email')}
                                 className="inline-flex size-9 items-center justify-center rounded-full bg-alpha-blue text-beta-blue transition-colors hover:bg-beta-blue hover:text-twhite"
                             >
                                 <Mail className="size-4" />
@@ -62,16 +69,16 @@ export default function Footer() {
 
                     <div className="md:col-span-2 md:col-start-6">
                         <h3 className="text-sm font-semibold text-tblack">
-                            Platform
+                            <TransText en="Platform" fr="Plateforme" ar="المنصة" />
                         </h3>
                         <ul className="mt-4 space-y-3 text-sm text-tgray">
                             {platformLinks.map((item) => (
-                                <li key={item.label}>
+                                <li key={item.en}>
                                     <Link
                                         href={item.href}
                                         className="transition-colors hover:text-tblack"
                                     >
-                                        {item.label}
+                                        <TransText en={item.en} fr={item.fr} ar={item.ar} />
                                     </Link>
                                 </li>
                             ))}
@@ -80,7 +87,7 @@ export default function Footer() {
                                     href={login()}
                                     className="transition-colors hover:text-tblack"
                                 >
-                                    Login
+                                    <TransText en="Login" fr="Connexion" ar="تسجيل الدخول" />
                                 </Link>
                             </li>
                         </ul>
@@ -88,16 +95,16 @@ export default function Footer() {
 
                     <div className="md:col-span-2">
                         <h3 className="text-sm font-semibold text-tblack">
-                            Initiatives
+                            <TransText en="Initiatives" fr="Initiatives" ar="المبادرات" />
                         </h3>
                         <ul className="mt-4 space-y-3 text-sm text-tgray">
                             {initiativesLinks.map((item) => (
-                                <li key={item.label}>
+                                <li key={item.en}>
                                     <Link
                                         href={item.href}
                                         className="transition-colors hover:text-tblack"
                                     >
-                                        {item.label}
+                                        <TransText en={item.en} fr={item.fr} ar={item.ar} />
                                     </Link>
                                 </li>
                             ))}
@@ -106,10 +113,12 @@ export default function Footer() {
 
                     <div className="md:col-span-3">
                         <h3 className="text-sm font-semibold text-tblack">
-                            Contact
+                            <TransText en="Contact" fr="Contact" ar="التواصل" />
                         </h3>
                         <ul className="mt-4 space-y-3 text-sm text-tgray">
-                            <li>Casablanca, Morocco</li>
+                            <li>
+                                <TransText en="Casablanca, Morocco" fr="Casablanca, Maroc" ar="الدار البيضاء، المغرب" />
+                            </li>
                             <li>
                                 <a
                                     href="mailto:contact@tilila.ma"
@@ -131,9 +140,20 @@ export default function Footer() {
                 </div>
 
                 <div className="mt-14 flex flex-col gap-3 border-t border-border pt-6 text-xs text-tgray md:flex-row md:items-center md:justify-between">
-                    <span>© 2023 Tilila. All rights reserved.</span>
                     <span>
-                        Powered by <span className="font-semibold">2M</span>
+                        <TransText
+                            en="© 2023 Tilila. All rights reserved."
+                            fr="© 2023 Tilila. Tous droits réservés."
+                            ar="© 2023 تيليلا. جميع الحقوق محفوظة."
+                        />
+                    </span>
+                    <span>
+                        <TransText
+                            en="Powered by"
+                            fr="Propulsé par"
+                            ar="بدعم من"
+                        />{' '}
+                        <span className="font-semibold">2M</span>
                     </span>
                 </div>
             </div>

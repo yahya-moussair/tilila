@@ -7,6 +7,8 @@ import InfoCard from '@/pages/opportunities/Partials/Details/InfoCard';
 import Eligibility from '@/pages/opportunities/Partials/Details/Eligibility';
 import DeadlineCard from '@/pages/opportunities/Partials/Details/DeadlineCard';
 import HowToApply from '@/pages/opportunities/Partials/Details/HowToApply';
+import { useTranslation } from '@/contexts/TranslationContext';
+import TransText from '@/components/TransText';
 
 function Pill({ children, variant = 'secondary' }) {
     const className =
@@ -26,6 +28,7 @@ function Pill({ children, variant = 'secondary' }) {
 }
 
 export default function OpportunityDetails({ id }) {
+    const { t } = useTranslation();
     const pageProps = usePage().props;
     const opportunityId = id ?? pageProps?.id;
 
@@ -45,20 +48,20 @@ export default function OpportunityDetails({ id }) {
 
     return (
         <>
-            <Head title={details?.title ?? base?.title ?? 'Opportunity'} />
+            <Head title={details?.title ?? base?.title ?? t('opportunities.detail.fallbackHeadTitle')} />
 
             <div className="bg-background">
                 <div className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
                     <nav className="flex items-center gap-2 text-xs text-muted-foreground">
                         <Link href="/" className="hover:text-foreground hover:underline">
-                            Home
+                            <TransText en="Home" fr="Accueil" ar="الرئيسية" />
                         </Link>
                         <span aria-hidden="true">›</span>
                         <Link
                             href="/opportunities"
                             className="hover:text-foreground hover:underline"
                         >
-                            Opportunities
+                            <TransText en="Opportunities" fr="Opportunités" ar="الفرص" />
                         </Link>
                         <span aria-hidden="true">›</span>
                         <span className="font-semibold text-foreground">
@@ -93,21 +96,25 @@ export default function OpportunityDetails({ id }) {
                                             type="button"
                                             className="inline-flex items-center justify-center rounded-md bg-beta-blue px-5 py-2.5 text-sm font-semibold text-white shadow-sm hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
                                         >
-                                            Apply Now
+                                            <TransText en="Apply Now" fr="Postuler" ar="قدّم الآن" />
                                         </button>
                                         <button
                                             type="button"
                                             onClick={() => setSaved((s) => !s)}
                                             className="inline-flex items-center justify-center rounded-md border border-border bg-card px-5 py-2.5 text-sm font-semibold text-foreground shadow-sm hover:bg-accent hover:text-accent-foreground"
                                         >
-                                            {saved ? 'Saved' : 'Save'}
+                                            {saved ? (
+                                                <TransText en="Saved" fr="Enregistré" ar="تم الحفظ" />
+                                            ) : (
+                                                <TransText en="Save" fr="Enregistrer" ar="حفظ" />
+                                            )}
                                         </button>
                                     </div>
                                 </div>
                             </header>
 
                             <div className="mt-6 space-y-6">
-                                <InfoCard title="Description">
+                                <InfoCard title={t('opportunities.detail.sections.descriptionTitle')}>
                                     <div className="space-y-4 text-sm leading-relaxed text-muted-foreground">
                                         <p>
                                             The Women in Media Leadership Program is a flagship
@@ -128,7 +135,11 @@ export default function OpportunityDetails({ id }) {
 
                                     <div className="mt-5">
                                         <div className="text-xs font-extrabold tracking-wide text-muted-foreground">
-                                            Key Program Modules:
+                                            <TransText
+                                                en="Key Program Modules:"
+                                                fr="Modules clés du programme :"
+                                                ar="المحاور الأساسية للبرنامج:"
+                                            />
                                         </div>
                                         <ul className="mt-3 list-disc space-y-2 pl-5 text-sm text-muted-foreground">
                                             {(details?.programModules ?? []).map((m) => (
@@ -140,15 +151,15 @@ export default function OpportunityDetails({ id }) {
 
                                 <Eligibility items={details?.eligibility ?? []} />
                                 <DeadlineCard
-                                    label={details?.deadline?.label ?? 'Application Deadline'}
-                                    dateLabel={details?.deadline?.dateLabel ?? '—'}
+                                    label={details?.deadline?.label ?? t('opportunities.detail.sections.deadlineTitle')}
+                                    dateLabel={details?.deadline?.dateLabel ?? t('common.na')}
                                 />
                                 <HowToApply steps={details?.howToApply ?? []} />
                             </div>
                         </div>
 
                         <div className="space-y-6 lg:col-span-4">
-                            <InfoCard title="Organizer">
+                            <InfoCard title={t('opportunities.detail.sections.organizerTitle')}>
                                 <div className="flex items-start gap-3">
                                     <div className="mt-0.5 h-10 w-10 rounded-xl bg-alpha-blue text-beta-blue ring-1 ring-border" />
                                     <div>
@@ -157,23 +168,23 @@ export default function OpportunityDetails({ id }) {
                                         </div>
                                         <div className="mt-1 text-xs leading-relaxed text-muted-foreground">
                                             {details?.organizer?.blurb ??
-                                                'Organizer information will be added soon.'}
+                                                t('opportunities.detail.organizerFallback')}
                                         </div>
                                         <button
                                             type="button"
                                             className="mt-3 text-xs font-semibold text-beta-blue hover:underline"
                                         >
-                                            View Profile →
+                                            <TransText en="View Profile →" fr="Voir le profil →" ar="عرض الملف →" />
                                         </button>
                                     </div>
                                 </div>
                             </InfoCard>
 
-                            <InfoCard title="Quick Info">
+                            <InfoCard title={t('opportunities.detail.sections.quickInfoTitle')}>
                                 <div className="grid grid-cols-2 gap-4 text-xs">
                                     <div>
                                         <div className="font-semibold text-muted-foreground">
-                                            Location
+                                            <TransText en="Location" fr="Lieu" ar="الموقع" />
                                         </div>
                                         <div className="mt-1 text-sm font-extrabold text-foreground">
                                             {details?.quickInfo?.location ?? base.location}
@@ -181,32 +192,32 @@ export default function OpportunityDetails({ id }) {
                                     </div>
                                     <div>
                                         <div className="font-semibold text-muted-foreground">
-                                            Duration
+                                            <TransText en="Duration" fr="Durée" ar="المدة" />
                                         </div>
                                         <div className="mt-1 text-sm font-extrabold text-foreground">
-                                            {details?.quickInfo?.duration ?? '—'}
+                                            {details?.quickInfo?.duration ?? t('common.na')}
                                         </div>
                                     </div>
                                     <div>
                                         <div className="font-semibold text-muted-foreground">
-                                            Language
+                                            <TransText en="Language" fr="Langue" ar="اللغة" />
                                         </div>
                                         <div className="mt-1 text-sm font-extrabold text-foreground">
-                                            {details?.quickInfo?.language ?? '—'}
+                                            {details?.quickInfo?.language ?? t('common.na')}
                                         </div>
                                     </div>
                                     <div>
                                         <div className="font-semibold text-muted-foreground">
-                                            Cost
+                                            <TransText en="Cost" fr="Coût" ar="التكلفة" />
                                         </div>
                                         <div className="mt-1 text-sm font-extrabold text-foreground">
-                                            {details?.quickInfo?.cost ?? '—'}
+                                            {details?.quickInfo?.cost ?? t('common.na')}
                                         </div>
                                     </div>
                                 </div>
                             </InfoCard>
 
-                            <InfoCard title="Related Themes">
+                            <InfoCard title={t('opportunities.detail.sections.relatedThemesTitle')}>
                                 <div className="flex flex-wrap gap-2">
                                     {(details?.relatedThemes ?? []).map((t) => (
                                         <Pill key={t}>{t}</Pill>
@@ -214,14 +225,14 @@ export default function OpportunityDetails({ id }) {
                                 </div>
                             </InfoCard>
 
-                            <InfoCard title="Share this opportunity">
+                            <InfoCard title={t('opportunities.detail.sections.shareTitle')}>
                                 <div className="flex flex-wrap gap-2">
                                     {['in', '𝕏', '⤴', '✉'].map((x) => (
                                         <button
                                             key={x}
                                             type="button"
                                             className="inline-flex h-10 w-10 items-center justify-center rounded-md border border-border bg-card text-muted-foreground shadow-sm hover:text-foreground"
-                                            aria-label="Share"
+                                            aria-label={t('opportunities.detail.shareAria')}
                                         >
                                             {x}
                                         </button>
