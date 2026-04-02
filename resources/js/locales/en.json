@@ -10,14 +10,153 @@
     "opportunities": "Opportunities",
     "dashboard": "Dashboard",
     "login": "Login",
-    "register": "Register"
+    "register": "Register",
+    "mobileOpenMenuAria": "Open menu",
+    "mobileCloseMenuAria": "Close menu"
   },
   "common": {
     "save": "Save",
+    "saved": "Saved",
     "cancel": "Cancel",
     "delete": "Delete",
     "close": "Close",
-    "language": "Language"
+    "language": "Language",
+    "search": "Search opportunities by keyword..."
+  },
+  "opportunities": {
+    "headTitle": "Opportunities",
+    "sortNewest": "Newest First",
+    "sortDeadlineSoonest": "Deadline Soonest",
+    "filters": {
+      "allTypes": "All Types",
+      "panelDiscussion": "Panel Discussion",
+      "mediaCall": "Media Call",
+      "grant": "Grant",
+      "residency": "Residency",
+      "deadlineAny": "Anytime",
+      "deadlineThisWeek": "This Week",
+      "deadlineThisMonth": "This Month",
+      "regionAll": "All Regions",
+      "regionCasablanca": "Casablanca",
+      "regionRabat": "Rabat",
+      "regionMarrakesh": "Marrakesh",
+      "regionTangier": "Tangier"
+    }
+  },
+  "auth": {
+    "common": {
+      "emailPlaceholder": "email@example.com",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Password",
+      "confirmPasswordLabel": "Confirm password",
+      "confirmPasswordPlaceholder": "Confirm password"
+    },
+    "login": {
+      "headTitle": "Log in",
+      "layoutTitle": "Log in to your account",
+      "layoutDescription": "Enter your email and password below to log in",
+      "emailLabel": "Email address",
+      "forgotPassword": "Forgot password?",
+      "rememberMe": "Remember me",
+      "submit": "Log in",
+      "noAccount": "Don't have an account?",
+      "signUp": "Sign up"
+    },
+    "register": {
+      "headTitle": "Register",
+      "layoutTitle": "Create an account",
+      "layoutDescription": "Enter your details below to create your account",
+      "nameLabel": "Name",
+      "namePlaceholder": "Full name",
+      "emailLabel": "Email address",
+      "submit": "Create account",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Log in"
+    },
+    "forgot": {
+      "headTitle": "Forgot password",
+      "layoutTitle": "Forgot password",
+      "layoutDescription": "Enter your email to receive a password reset link",
+      "emailLabel": "Email address",
+      "submit": "Email password reset link",
+      "returnPrefix": "Or, return to",
+      "returnLink": "log in"
+    },
+    "confirm": {
+      "headTitle": "Confirm password",
+      "layoutTitle": "Confirm your password",
+      "layoutDescription": "This is a secure area of the application. Please confirm your password before continuing.",
+      "submit": "Confirm password"
+    },
+    "reset": {
+      "headTitle": "Reset password",
+      "layoutTitle": "Reset password",
+      "layoutDescription": "Please enter your new password below",
+      "emailLabel": "Email",
+      "submit": "Reset password"
+    },
+    "twoFactor": {
+      "headTitle": "Two-factor authentication",
+      "recoveryTitle": "Recovery code",
+      "recoveryDescription": "Please confirm access to your account by entering one of your emergency recovery codes.",
+      "authCodeTitle": "Authentication code",
+      "authCodeDescription": "Enter the authentication code provided by your authenticator application.",
+      "useAuthCodeToggle": "log in using an authentication code",
+      "useRecoveryToggle": "log in using a recovery code",
+      "recoveryPlaceholder": "Enter recovery code",
+      "continue": "Continue",
+      "togglePrefix": "or you can "
+    },
+    "verify": {
+      "headTitle": "Email verification",
+      "layoutTitle": "Verify email",
+      "layoutDescription": "Please verify your email address by clicking on the link we just emailed to you.",
+      "linkSent": "A new verification link has been sent to the email address you provided during registration.",
+      "resend": "Resend verification email",
+      "logout": "Log out"
+    }
+  },
+  "settings": {
+    "profile": {
+      "headTitle": "Profile settings",
+      "srTitle": "Profile settings",
+      "breadcrumbTitle": "Profile settings",
+      "headingTitle": "Profile information",
+      "headingDescription": "Update your name and email address",
+      "nameLabel": "Name",
+      "namePlaceholder": "Full name",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "Email address",
+      "unverifiedPrefix": "Your email address is unverified.",
+      "resendVerification": "Click here to resend the verification email.",
+      "linkSent": "A new verification link has been sent to your email address."
+    },
+    "security": {
+      "headTitle": "Security settings",
+      "srTitle": "Security settings",
+      "breadcrumbTitle": "Security settings",
+      "updatePasswordTitle": "Update password",
+      "updatePasswordDescription": "Ensure your account is using a long, random password to stay secure",
+      "currentPasswordLabel": "Current password",
+      "currentPasswordPlaceholder": "Current password",
+      "newPasswordLabel": "New password",
+      "newPasswordPlaceholder": "New password",
+      "savePassword": "Save password",
+      "twoFactorTitle": "Two-factor authentication",
+      "twoFactorDescription": "Manage your two-factor authentication settings",
+      "twoFactorEnabledInfo": "You will be prompted for a secure, random pin during login, which you can retrieve from the TOTP-supported application on your phone.",
+      "twoFactorDisabledInfo": "When you enable two-factor authentication, you will be prompted for a secure pin during login. This pin can be retrieved from a TOTP-supported application on your phone.",
+      "disable2fa": "Disable 2FA",
+      "continueSetup": "Continue setup",
+      "enable2fa": "Enable 2FA"
+    },
+    "appearance": {
+      "headTitle": "Appearance settings",
+      "srTitle": "Appearance settings",
+      "breadcrumbTitle": "Appearance settings",
+      "headingTitle": "Appearance settings",
+      "headingDescription": "Update your account's appearance settings"
+    }
   },
   "tilila": {
     "hero": {

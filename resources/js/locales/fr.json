@@ -10,14 +10,153 @@
     "opportunities": "Opportunités",
     "dashboard": "Tableau de bord",
     "login": "Connexion",
-    "register": "S’inscrire"
+    "register": "S’inscrire",
+    "mobileOpenMenuAria": "Ouvrir le menu",
+    "mobileCloseMenuAria": "Fermer le menu"
   },
   "common": {
     "save": "Enregistrer",
+    "saved": "Enregistré",
     "cancel": "Annuler",
     "delete": "Supprimer",
     "close": "Fermer",
-    "language": "Langue"
+    "language": "Langue",
+    "search": "Rechercher des opportunités par mot-clé..."
+  },
+  "opportunities": {
+    "headTitle": "Opportunités",
+    "sortNewest": "Les plus récentes d’abord",
+    "sortDeadlineSoonest": "Échéance la plus proche",
+    "filters": {
+      "allTypes": "Tous les types",
+      "panelDiscussion": "Table ronde",
+      "mediaCall": "Appel médias",
+      "grant": "Subvention",
+      "residency": "Résidence",
+      "deadlineAny": "À tout moment",
+      "deadlineThisWeek": "Cette semaine",
+      "deadlineThisMonth": "Ce mois-ci",
+      "regionAll": "Toutes les régions",
+      "regionCasablanca": "Casablanca",
+      "regionRabat": "Rabat",
+      "regionMarrakesh": "Marrakech",
+      "regionTangier": "Tanger"
+    }
+  },
+  "auth": {
+    "common": {
+      "emailPlaceholder": "email@example.com",
+      "passwordLabel": "Mot de passe",
+      "passwordPlaceholder": "Mot de passe",
+      "confirmPasswordLabel": "Confirmer le mot de passe",
+      "confirmPasswordPlaceholder": "Confirmer le mot de passe"
+    },
+    "login": {
+      "headTitle": "Connexion",
+      "layoutTitle": "Connectez-vous à votre compte",
+      "layoutDescription": "Saisissez votre e-mail et votre mot de passe pour vous connecter",
+      "emailLabel": "Adresse e-mail",
+      "forgotPassword": "Mot de passe oublié ?",
+      "rememberMe": "Se souvenir de moi",
+      "submit": "Se connecter",
+      "noAccount": "Vous n’avez pas de compte ?",
+      "signUp": "S’inscrire"
+    },
+    "register": {
+      "headTitle": "S’inscrire",
+      "layoutTitle": "Créer un compte",
+      "layoutDescription": "Renseignez vos informations pour créer votre compte",
+      "nameLabel": "Nom",
+      "namePlaceholder": "Nom complet",
+      "emailLabel": "Adresse e-mail",
+      "submit": "Créer un compte",
+      "haveAccount": "Vous avez déjà un compte ?",
+      "loginLink": "Se connecter"
+    },
+    "forgot": {
+      "headTitle": "Mot de passe oublié",
+      "layoutTitle": "Mot de passe oublié",
+      "layoutDescription": "Saisissez votre e-mail pour recevoir un lien de réinitialisation",
+      "emailLabel": "Adresse e-mail",
+      "submit": "Envoyer le lien de réinitialisation",
+      "returnPrefix": "Ou revenir à",
+      "returnLink": "la connexion"
+    },
+    "confirm": {
+      "headTitle": "Confirmer le mot de passe",
+      "layoutTitle": "Confirmez votre mot de passe",
+      "layoutDescription": "Cette zone est sécurisée. Veuillez confirmer votre mot de passe avant de continuer.",
+      "submit": "Confirmer"
+    },
+    "reset": {
+      "headTitle": "Réinitialiser le mot de passe",
+      "layoutTitle": "Réinitialiser le mot de passe",
+      "layoutDescription": "Saisissez votre nouveau mot de passe ci-dessous",
+      "emailLabel": "E-mail",
+      "submit": "Réinitialiser"
+    },
+    "twoFactor": {
+      "headTitle": "Authentification à deux facteurs",
+      "recoveryTitle": "Code de récupération",
+      "recoveryDescription": "Veuillez confirmer l’accès à votre compte en saisissant l’un de vos codes de récupération d’urgence.",
+      "authCodeTitle": "Code d’authentification",
+      "authCodeDescription": "Saisissez le code fourni par votre application d’authentification.",
+      "useAuthCodeToggle": "se connecter avec un code d’authentification",
+      "useRecoveryToggle": "se connecter avec un code de récupération",
+      "recoveryPlaceholder": "Saisir un code de récupération",
+      "continue": "Continuer",
+      "togglePrefix": "ou vous pouvez "
+    },
+    "verify": {
+      "headTitle": "Vérification de l’e-mail",
+      "layoutTitle": "Vérifier l’e-mail",
+      "layoutDescription": "Veuillez vérifier votre adresse e-mail en cliquant sur le lien que nous venons de vous envoyer.",
+      "linkSent": "Un nouveau lien de vérification a été envoyé à l’adresse e-mail fournie lors de l’inscription.",
+      "resend": "Renvoyer l’e-mail de vérification",
+      "logout": "Se déconnecter"
+    }
+  },
+  "settings": {
+    "profile": {
+      "headTitle": "Paramètres du profil",
+      "srTitle": "Paramètres du profil",
+      "breadcrumbTitle": "Paramètres du profil",
+      "headingTitle": "Informations du profil",
+      "headingDescription": "Mettez à jour votre nom et votre adresse e-mail",
+      "nameLabel": "Nom",
+      "namePlaceholder": "Nom complet",
+      "emailLabel": "Adresse e-mail",
+      "emailPlaceholder": "Adresse e-mail",
+      "unverifiedPrefix": "Votre adresse e-mail n’est pas vérifiée.",
+      "resendVerification": "Cliquez ici pour renvoyer l’e-mail de vérification.",
+      "linkSent": "Un nouveau lien de vérification a été envoyé à votre adresse e-mail."
+    },
+    "security": {
+      "headTitle": "Paramètres de sécurité",
+      "srTitle": "Paramètres de sécurité",
+      "breadcrumbTitle": "Paramètres de sécurité",
+      "updatePasswordTitle": "Mettre à jour le mot de passe",
+      "updatePasswordDescription": "Assurez-vous d’utiliser un mot de passe long et aléatoire pour rester en sécurité",
+      "currentPasswordLabel": "Mot de passe actuel",
+      "currentPasswordPlaceholder": "Mot de passe actuel",
+      "newPasswordLabel": "Nouveau mot de passe",
+      "newPasswordPlaceholder": "Nouveau mot de passe",
+      "savePassword": "Enregistrer le mot de passe",
+      "twoFactorTitle": "Authentification à deux facteurs",
+      "twoFactorDescription": "Gérez vos paramètres d’authentification à deux facteurs",
+      "twoFactorEnabledInfo": "Lors de la connexion, un code sécurisé vous sera demandé. Vous pourrez le récupérer via une application compatible TOTP sur votre téléphone.",
+      "twoFactorDisabledInfo": "Lorsque vous activez l’authentification à deux facteurs, un code sécurisé vous sera demandé lors de la connexion. Vous pourrez le récupérer via une application compatible TOTP sur votre téléphone.",
+      "disable2fa": "Désactiver la 2FA",
+      "continueSetup": "Continuer la configuration",
+      "enable2fa": "Activer la 2FA"
+    },
+    "appearance": {
+      "headTitle": "Paramètres d’apparence",
+      "srTitle": "Paramètres d’apparence",
+      "breadcrumbTitle": "Paramètres d’apparence",
+      "headingTitle": "Paramètres d’apparence",
+      "headingDescription": "Mettez à jour les paramètres d’apparence de votre compte"
+    }
   },
   "tilila": {
     "hero": {

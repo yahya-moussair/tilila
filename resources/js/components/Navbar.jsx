@@ -3,19 +3,22 @@ import { Menu, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { home, login, register, dashboard } from '@/routes';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
+import TransText from '@/components/TransText';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 const navItems = [
-    { label: 'About', href: '/about' },
-    { label: 'Tililab', href: '/tililab' },
-    { label: 'Tilila', href: '/tilila' },
-    { label: 'Gouvernance', href: '/gouvernance' },
-    { label: 'Experts', href: '/experts' },
-    { label: 'Events', href: '/events' },
-    { label: 'Opportunities', href: '/opportunities' },
+    { en: 'About', fr: 'À propos', ar: 'حول', href: '/about' },
+    { en: 'Tililab', fr: 'Tililab', ar: 'تيليلاب', href: '/tililab' },
+    { en: 'Tilila', fr: 'Tilila', ar: 'تيليلا', href: '/tilila' },
+    { en: 'Governance', fr: 'Gouvernance', ar: 'الحوكمة', href: '/gouvernance' },
+    { en: 'Experts', fr: 'Experts', ar: 'الخبراء', href: '/experts' },
+    { en: 'Events', fr: 'Événements', ar: 'الفعاليات', href: '/events' },
+    { en: 'Opportunities', fr: 'Opportunités', ar: 'الفرص', href: '/opportunities' },
 ];
 
 export default function Navbar() {
     const { auth } = usePage().props;
+    const { t } = useTranslation();
     const [mobileOpen, setMobileOpen] = useState(false);
     const headerRef = useRef(null);
 
@@ -77,11 +80,11 @@ export default function Navbar() {
                 <nav className="hidden flex-1 items-center justify-center gap-8 md:flex">
                     {navItems.map((item) => (
                         <Link
-                            key={item.label}
+                            key={item.en}
                             href={item.href}
                             className="text-sm font-medium text-tgray transition-colors hover:text-tblack"
                         >
-                            {item.label}
+                            <TransText en={item.en} fr={item.fr} ar={item.ar} />
                         </Link>
                     ))}
                 </nav>
@@ -93,18 +96,18 @@ export default function Navbar() {
                             href={dashboard()}
                             className={authButtonClass}
                         >
-                            Dashboard
+                            <TransText en="Dashboard" fr="Tableau de bord" ar="لوحة التحكم" />
                         </Link>
                     ) : (
                         <>
                             <Link href={login()} className={authButtonClass}>
-                                Login
+                                <TransText en="Login" fr="Connexion" ar="تسجيل الدخول" />
                             </Link>
                             <Link
                                 href={register()}
                                 className={registerButtonClass}
                             >
-                                Register
+                                <TransText en="Register" fr="S’inscrire" ar="إنشاء حساب" />
                             </Link>
                         </>
                     )}
@@ -116,7 +119,9 @@ export default function Navbar() {
                         className="inline-flex h-10 w-10 items-center justify-center rounded-full text-tblack transition-colors hover:bg-alpha-blue/40"
                         aria-expanded={mobileOpen}
                         aria-controls="mobile-nav-menu"
-                        aria-label={mobileOpen ? 'Close menu' : 'Open menu'}
+                        aria-label={
+                            mobileOpen ? t('nav.mobileCloseMenuAria') : t('nav.mobileOpenMenuAria')
+                        }
                         onClick={() => setMobileOpen((open) => !open)}
                     >
                         {mobileOpen ? (
@@ -136,12 +141,12 @@ export default function Navbar() {
                     <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-3">
                         {navItems.map((item) => (
                             <Link
-                                key={item.label}
+                                key={item.en}
                                 href={item.href}
                                 className="rounded-lg px-3 py-2.5 text-sm font-medium text-tgray transition-colors hover:bg-alpha-blue/30 hover:text-tblack"
                                 onClick={closeMobile}
                             >
-                                {item.label}
+                                <TransText en={item.en} fr={item.fr} ar={item.ar} />
                             </Link>
                         ))}
                         <div className="my-2 border-t border-border" />
@@ -151,7 +156,7 @@ export default function Navbar() {
                                 className={`${authButtonClass} justify-center`}
                                 onClick={closeMobile}
                             >
-                                Dashboard
+                                <TransText en="Dashboard" fr="Tableau de bord" ar="لوحة التحكم" />
                             </Link>
                         ) : (
                             <div className="flex flex-col gap-2 pb-1">
@@ -160,14 +165,14 @@ export default function Navbar() {
                                     className={`${authButtonClass} justify-center`}
                                     onClick={closeMobile}
                                 >
-                                    Login
+                                    <TransText en="Login" fr="Connexion" ar="تسجيل الدخول" />
                                 </Link>
                                 <Link
                                     href={register()}
                                     className={`${registerButtonClass} justify-center`}
                                     onClick={closeMobile}
                                 >
-                                    Register
+                                    <TransText en="Register" fr="S’inscrire" ar="إنشاء حساب" />
                                 </Link>
                             </div>
                         )}
