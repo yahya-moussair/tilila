@@ -122,15 +122,15 @@ export default function Navbar() {
             {mobileOpen ? (
                 <>
                     <div
-                        className="fixed inset-0 z-40 bg-tblack/40 backdrop-blur-[1px] md:hidden"
+                        className="fixed inset-0 z-40 bg-tblack/45 backdrop-blur-sm md:hidden"
                         onClick={closeMobile}
                         aria-hidden="true"
                     />
                     <div
                         id="mobile-nav-menu"
-                        className="fixed inset-x-0 top-0 z-50 bg-background/95 shadow-lg md:hidden"
+                        className="fixed inset-x-0 top-0 z-50 bg-background md:hidden"
                     >
-                        <div className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/95">
+                        <div className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background">
                             <div className="mx-auto flex h-16 max-w-7xl items-center justify-end px-4">
                                 <button
                                     type="button"
