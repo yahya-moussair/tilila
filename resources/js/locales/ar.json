@@ -62,6 +62,16 @@
   "experts": {
     "headTitle": "الخبيرات",
     "searchPlaceholder": "ابحث بالاسم أو الخبرة أو كلمة مفتاحية...",
+    "actions": {
+      "addToFavoritesAria": "إضافة إلى المفضلة",
+      "viewProfile": "عرض الملف",
+      "linkedinAria": "لينكدإن",
+      "twitterAria": "تويتر / X",
+      "websiteAria": "الموقع الإلكتروني"
+    },
+    "detail": {
+      "fallbackHeadTitle": "خبيرة"
+    },
     "filters": {
       "all": "الكل",
       "economics": "الاقتصاد",
