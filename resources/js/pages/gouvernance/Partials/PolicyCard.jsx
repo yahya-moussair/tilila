@@ -1,4 +1,5 @@
 import React from 'react';
+import TransText from '@/components/TransText';
 
 function StatCard({ value, label }) {
     return (
@@ -29,12 +30,12 @@ export default function PolicyCard({
 
                 <ul className="mt-4 space-y-3">
                     {highlights.map((h) => (
-                        <li key={h} className="flex gap-3">
+                        <li key={h.en} className="flex gap-3">
                             <span className="mt-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full bg-alpha-blue text-beta-blue ring-1 ring-border">
                                 ✓
                             </span>
                             <span className="text-sm font-semibold text-muted-foreground">
-                                {h}
+                                <TransText en={h.en} fr={h.fr} ar={h.ar} />
                             </span>
                         </li>
                     ))}

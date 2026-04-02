@@ -8,7 +8,7 @@ import { useTranslation } from '@/contexts/TranslationContext';
 import TransText from '@/components/TransText';
 
 export default function ExpertsIndex() {
-    const { t } = useTranslation();
+    const { locale, t } = useTranslation();
     const [query, setQuery] = useState('');
     const [sort, setSort] = useState('relevance');
     const [view, setView] = useState('grid');
@@ -98,17 +98,22 @@ export default function ExpertsIndex() {
         if (q) {
             const withScore = list
                 .map((e, idx) => {
-                    const name = (e.name ?? '').toLowerCase();
-                    const title = (e.title ?? '').toLowerCase();
-                    const tags = (e.tags ?? []).join(' ').toLowerCase();
-                    const location = (e.location ?? '').toLowerCase();
-                    const haystack = [name, title, tags, location].join(' ');
+                    const nameEn = (e.name?.en ?? '').toLowerCase();
+                    const nameFr = (e.name?.fr ?? '').toLowerCase();
+                    const nameAr = (e.name?.ar ?? '').toLowerCase();
+                    const title = (e.title?.en ?? '').toLowerCase();
+                    const tags = (e.tags ?? [])
+                        .map((x) => x.en)
+                        .join(' ')
+                        .toLowerCase();
+                    const location = (e.location?.en ?? '').toLowerCase();
+                    const haystack = [nameEn, nameFr, nameAr, title, tags, location].join(' ');
 
                     if (!haystack.includes(q)) return null;
 
                     let score = 0;
-                    if (name.startsWith(q)) score += 100;
-                    if (name.includes(q)) score += 50;
+                    if (nameEn.startsWith(q)) score += 100;
+                    if (nameEn.includes(q)) score += 50;
                     if (title.includes(q)) score += 25;
                     if (tags.includes(q)) score += 15;
                     if (location.includes(q)) score += 10;
@@ -132,9 +137,37 @@ export default function ExpertsIndex() {
         }
 
         if (sort === 'name_asc') {
-            list = [...list].sort((a, b) => a.name.localeCompare(b.name));
+            list = [...list].sort((a, b) => {
+                const aName =
+                    locale === 'ar'
+                        ? a.name?.ar
+                        : locale === 'fr'
+                          ? a.name?.fr
+                          : a.name?.en;
+                const bName =
+                    locale === 'ar'
+                        ? b.name?.ar
+                        : locale === 'fr'
+                          ? b.name?.fr
+                          : b.name?.en;
+                return (aName ?? '').localeCompare(bName ?? '');
+            });
         } else if (sort === 'name_desc') {
-            list = [...list].sort((a, b) => b.name.localeCompare(a.name));
+            list = [...list].sort((a, b) => {
+                const aName =
+                    locale === 'ar'
+                        ? a.name?.ar
+                        : locale === 'fr'
+                          ? a.name?.fr
+                          : a.name?.en;
+                const bName =
+                    locale === 'ar'
+                        ? b.name?.ar
+                        : locale === 'fr'
+                          ? b.name?.fr
+                          : b.name?.en;
+                return (bName ?? '').localeCompare(aName ?? '');
+            });
         }
 
         return list;
@@ -143,6 +176,7 @@ export default function ExpertsIndex() {
         filters.country,
         filters.industry,
         filters.language,
+        locale,
         query,
         sort,
     ]);

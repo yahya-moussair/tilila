@@ -28,6 +28,15 @@
     "headTitle": "Opportunités",
     "sortNewest": "Les plus récentes d’abord",
     "sortDeadlineSoonest": "Échéance la plus proche",
+    "status": {
+      "open": "Ouvert",
+      "closingSoon": "Bientôt clôturé",
+      "closed": "Fermé"
+    },
+    "card": {
+      "fallbackType": "Opportunité",
+      "postedPrefix": "Publié"
+    },
     "detail": {
       "fallbackHeadTitle": "Opportunité",
       "organizerFallback": "Les informations sur l’organisateur seront ajoutées bientôt.",
@@ -62,6 +71,16 @@
   "experts": {
     "headTitle": "Expertes",
     "searchPlaceholder": "Rechercher par nom, expertise ou mot-clé...",
+    "actions": {
+      "addToFavoritesAria": "Ajouter aux favoris",
+      "viewProfile": "Voir le profil",
+      "linkedinAria": "LinkedIn",
+      "twitterAria": "Twitter / X",
+      "websiteAria": "Site web"
+    },
+    "detail": {
+      "fallbackHeadTitle": "Experte"
+    },
     "filters": {
       "all": "Tous",
       "economics": "Économie",
@@ -230,6 +249,69 @@
       "ctaSecondary": "Participer",
       "missionLabel": "La mission",
       "missionQuote": "\"La publicité a le pouvoir de façonner les esprits. Assurons-nous qu’elle façonne un monde d’égalité.\""
+    },
+    "headTitle": "Tilila"
+  },
+  "tililab": {
+    "headTitle": "Tililab",
+    "pastWinners": {
+      "prevAria": "Lauréats précédents",
+      "nextAria": "Lauréats suivants"
+    }
+  },
+  "gouvernance": {
+    "headTitle": "Gouvernance"
+  },
+  "events": {
+    "headTitle": "Événements",
+    "tabs": {
+      "upcomingAria": "Événements à venir",
+      "pastAria": "Événements passés et replays"
+    },
+    "calendar": {
+      "prevMonthAria": "Mois précédent",
+      "nextMonthAria": "Mois suivant",
+      "selectDayAria": "Sélectionner {date}"
+    },
+    "categories": {
+      "talk": "TiliTalks",
+      "webinar": "Webinaires",
+      "workshop": "Ateliers"
+    },
+    "actions": {
+      "view": "Voir"
+    },
+    "labels": {
+      "event": "Événement",
+      "andOnline": "& En ligne"
+    }
+  },
+  "tililaConnect": {
+    "form": {
+      "firstNamePlaceholder": "Jane",
+      "lastNamePlaceholder": "Doe",
+      "emailPlaceholder": "jane.doe@organisation.com",
+      "phonePlaceholder": "+212 6 00 00 00 00",
+      "jobTitlePlaceholder": "ex. : Chercheuse senior",
+      "organizationPlaceholder": "ex. : Université de Casablanca",
+      "bioPlaceholder": "Décrivez brièvement votre parcours professionnel et vos domaines d’intérêt…",
+      "citySelect": "Sélectionner une ville",
+      "cityCasablanca": "Casablanca",
+      "cityRabat": "Rabat",
+      "cityTangier": "Tanger",
+      "cityMarrakesh": "Marrakech",
+      "countryMorocco": "Maroc",
+      "countrySenegal": "Sénégal"
+    }
+  },
+  "media": {
+    "headTitle": "Médias",
+    "actions": {
+      "loadMore": "Charger plus de médias",
+      "viewAllExperts": "Tout voir"
+    },
+    "newsletter": {
+      "emailPlaceholder": "Entrez votre e-mail"
     }
   },
   "welcome": "Bienvenue dans l’application"

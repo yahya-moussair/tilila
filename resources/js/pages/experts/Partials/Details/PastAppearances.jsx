@@ -1,22 +1,27 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
+import TransText from '@/components/TransText';
 
 export default function PastAppearances({ items = [] }) {
     return (
         <section className="rounded-2xl bg-card p-6 shadow-sm ring-1 ring-border">
             <div className="flex items-center justify-between gap-4">
                 <h2 className="text-base font-extrabold text-foreground">
-                    Past Appearances
+                    <TransText
+                        en="Past Appearances"
+                        fr="Apparitions passées"
+                        ar="الظهورات السابقة"
+                    />
                 </h2>
                 <Link href="#" className="text-xs font-semibold text-beta-blue hover:underline">
-                    View All
+                    <TransText en="View All" fr="Tout voir" ar="عرض الكل" />
                 </Link>
             </div>
 
             <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2">
                 {items.map((x) => (
                     <div
-                        key={x.title}
+                        key={x.title.en}
                         className="overflow-hidden rounded-xl bg-background ring-1 ring-border"
                     >
                         <div className="relative aspect-[16/9] w-full bg-muted">
@@ -38,10 +43,10 @@ export default function PastAppearances({ items = [] }) {
                         </div>
                         <div className="p-4">
                             <div className="text-sm font-extrabold text-foreground">
-                                {x.title}
+                                <TransText en={x.title.en} fr={x.title.fr} ar={x.title.ar} />
                             </div>
                             <div className="mt-1 text-xs text-muted-foreground">
-                                {x.meta}
+                                <TransText en={x.meta.en} fr={x.meta.fr} ar={x.meta.ar} />
                             </div>
                         </div>
                     </div>

@@ -1,4 +1,5 @@
 import React from 'react';
+import TransText from '@/components/TransText';
 
 export default function GovernanceSidebar({
     sections = [],
@@ -8,7 +9,7 @@ export default function GovernanceSidebar({
     return (
         <aside className="rounded-2xl bg-card p-5 shadow-sm ring-1 ring-border">
             <div className="text-xs font-extrabold uppercase tracking-wide text-muted-foreground">
-                Governance
+                <TransText en="Governance" fr="Gouvernance" ar="الحوكمة" />
             </div>
 
             <nav className="mt-4 space-y-1">
@@ -27,7 +28,9 @@ export default function GovernanceSidebar({
                                     : 'bg-background text-muted-foreground ring-border hover:text-foreground',
                             ].join(' ')}
                         >
-                            <span>{s.label}</span>
+                            <span>
+                                <TransText en={s.enLabel} fr={s.frLabel} ar={s.arLabel} />
+                            </span>
                             <span aria-hidden="true">›</span>
                         </button>
                     );
@@ -36,20 +39,20 @@ export default function GovernanceSidebar({
 
             <div className="mt-4 rounded-xl bg-background p-4 ring-1 ring-border">
                 <div className="text-xs font-extrabold uppercase tracking-wide text-muted-foreground">
-                    Resources
+                    <TransText en="Resources" fr="Ressources" ar="الموارد" />
                 </div>
                 <div className="mt-2 space-y-2 text-sm">
                     <a
                         href="#"
                         className="block font-semibold text-beta-blue hover:underline"
                     >
-                        Download policy
+                        <TransText en="Download policy" fr="Télécharger la politique" ar="تنزيل السياسة" />
                     </a>
                     <a
                         href="#"
                         className="block font-semibold text-beta-blue hover:underline"
                     >
-                        Contact committee
+                        <TransText en="Contact committee" fr="Contacter le comité" ar="تواصل مع اللجنة" />
                     </a>
                 </div>
             </div>

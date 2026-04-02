@@ -5,6 +5,8 @@ import EventsTabs from '@/pages/events/Partials/EventsTabs';
 import EventsSidebar from '@/pages/events/Partials/EventsSidebar';
 import EventCard from '@/pages/events/Partials/EventCard';
 import { EVENTS } from '@/pages/events/Partials/events-data';
+import { useTranslation } from '@/contexts/TranslationContext';
+import TransText from '@/components/TransText';
 
 function isPastEvent(event) {
     const ts = new Date(event?.dateTimeIso ?? '').getTime();
@@ -13,6 +15,7 @@ function isPastEvent(event) {
 }
 
 export default function EventsIndex() {
+    const { t } = useTranslation();
     const [activeTab, setActiveTab] = useState('upcoming'); // upcoming | past
     const [selectedDayIso, setSelectedDayIso] = useState(null);
     const [categories, setCategories] = useState({
@@ -54,18 +57,20 @@ export default function EventsIndex() {
 
     return (
         <>
-            <Head title="Events" />
+            <Head title={t('events.headTitle')} />
 
             <div className="bg-background">
                 <div className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
                     <header className="mx-auto max-w-3xl text-center">
                         <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
-                            Events Agenda
+                            <TransText en="Events Agenda" fr="Agenda des événements" ar="أجندة الفعاليات" />
                         </h1>
                         <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-                            Stay connected with the latest discussions, workshops, and
-                            TiliTalks. Join us to shape the future of diversity and parity
-                            in media.
+                            <TransText
+                                en="Stay connected with the latest discussions, workshops, and TiliTalks. Join us to shape the future of diversity and parity in media."
+                                fr="Restez connectée aux dernières discussions, ateliers et TiliTalks. Rejoignez-nous pour façonner l’avenir de la diversité et de la parité dans les médias."
+                                ar="ابقَ على تواصل مع أحدث النقاشات وورشات العمل وTiliTalks. انضم إلينا لصياغة مستقبل التنوع والتكافؤ في الإعلام."
+                            />
                         </p>
 
                         <div className="mt-7 flex justify-center">
@@ -102,11 +107,18 @@ export default function EventsIndex() {
                             {filteredEvents.length === 0 ? (
                                 <div className="mt-6 rounded-2xl bg-card p-8 text-center shadow-sm ring-1 ring-border">
                                     <div className="text-sm font-semibold text-foreground">
-                                        No events found
+                                        <TransText
+                                            en="No events found"
+                                            fr="Aucun événement trouvé"
+                                            ar="لا توجد فعاليات"
+                                        />
                                     </div>
                                     <div className="mt-2 text-sm text-muted-foreground">
-                                        Try changing your categories or selecting a different
-                                        date.
+                                        <TransText
+                                            en="Try changing your categories or selecting a different date."
+                                            fr="Essayez de modifier les catégories ou de sélectionner une autre date."
+                                            ar="جرّب تغيير الفئات أو اختيار تاريخ مختلف."
+                                        />
                                     </div>
                                 </div>
                             ) : null}

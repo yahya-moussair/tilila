@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
+import TransText from '@/components/TransText';
 
 export default function JoinCta({ title, description, primaryCta, secondaryCta }) {
     return (
@@ -18,7 +19,13 @@ export default function JoinCta({ title, description, primaryCta, secondaryCta }
                             href={primaryCta?.href ?? '#'}
                             className="inline-flex items-center justify-center rounded-md bg-white px-5 py-2.5 text-sm font-semibold text-beta-blue shadow-sm hover:opacity-95"
                         >
-                            {primaryCta?.label ?? 'Get involved'}
+                            {primaryCta?.label ?? (
+                                <TransText
+                                    en="Get involved"
+                                    fr="S’impliquer"
+                                    ar="شارك معنا"
+                                />
+                            )}
                         </Link>
                         {secondaryCta ? (
                             <Link

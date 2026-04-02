@@ -28,6 +28,15 @@
     "headTitle": "Opportunities",
     "sortNewest": "Newest First",
     "sortDeadlineSoonest": "Deadline Soonest",
+    "status": {
+      "open": "Open",
+      "closingSoon": "Closing Soon",
+      "closed": "Closed"
+    },
+    "card": {
+      "fallbackType": "Opportunity",
+      "postedPrefix": "Posted"
+    },
     "detail": {
       "fallbackHeadTitle": "Opportunity",
       "organizerFallback": "Organizer information will be added soon.",
@@ -62,6 +71,16 @@
   "experts": {
     "headTitle": "Experts",
     "searchPlaceholder": "Search by name, expertise, or keyword...",
+    "actions": {
+      "addToFavoritesAria": "Add to favorites",
+      "viewProfile": "View Profile",
+      "linkedinAria": "LinkedIn",
+      "twitterAria": "Twitter / X",
+      "websiteAria": "Website"
+    },
+    "detail": {
+      "fallbackHeadTitle": "Expert"
+    },
     "filters": {
       "all": "All",
       "economics": "Economics",
@@ -230,6 +249,69 @@
       "ctaSecondary": "Participate",
       "missionLabel": "The Mission",
       "missionQuote": "\"Advertising has the power to shape minds. Let's make sure it shapes a world of equality.\""
+    },
+    "headTitle": "Tilila"
+  },
+  "tililab": {
+    "headTitle": "Tililab",
+    "pastWinners": {
+      "prevAria": "Previous winners",
+      "nextAria": "Next winners"
+    }
+  },
+  "gouvernance": {
+    "headTitle": "Governance"
+  },
+  "events": {
+    "headTitle": "Events",
+    "tabs": {
+      "upcomingAria": "Upcoming events",
+      "pastAria": "Past events and replays"
+    },
+    "calendar": {
+      "prevMonthAria": "Previous month",
+      "nextMonthAria": "Next month",
+      "selectDayAria": "Select {date}"
+    },
+    "categories": {
+      "talk": "TiliTalks",
+      "webinar": "Webinars",
+      "workshop": "Workshops"
+    },
+    "actions": {
+      "view": "View"
+    },
+    "labels": {
+      "event": "Event",
+      "andOnline": "& Online"
+    }
+  },
+  "tililaConnect": {
+    "form": {
+      "firstNamePlaceholder": "Jane",
+      "lastNamePlaceholder": "Doe",
+      "emailPlaceholder": "jane.doe@organization.com",
+      "phonePlaceholder": "+212 6 00 00 00 00",
+      "jobTitlePlaceholder": "e.g., Senior Researcher",
+      "organizationPlaceholder": "e.g., University of Casablanca",
+      "bioPlaceholder": "Briefly describe your professional background and areas of interest…",
+      "citySelect": "Select City",
+      "cityCasablanca": "Casablanca",
+      "cityRabat": "Rabat",
+      "cityTangier": "Tangier",
+      "cityMarrakesh": "Marrakesh",
+      "countryMorocco": "Morocco",
+      "countrySenegal": "Senegal"
+    }
+  },
+  "media": {
+    "headTitle": "Media",
+    "actions": {
+      "loadMore": "Load more media",
+      "viewAllExperts": "View all"
+    },
+    "newsletter": {
+      "emailPlaceholder": "Enter your email"
     }
   },
   "welcome": "Welcome to the app"

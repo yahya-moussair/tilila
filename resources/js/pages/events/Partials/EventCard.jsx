@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react';
 import { Link } from '@inertiajs/react';
+import { useTranslation } from '@/contexts/TranslationContext';
+import TransText from '@/components/TransText';
 
 function formatDateLabel(iso) {
     try {
@@ -51,7 +53,13 @@ function Badge({ children, tone = 'blue' }) {
 }
 
 function CtaButton({ cta }) {
-    const label = cta?.label ?? 'View';
+    const { locale, t } = useTranslation();
+    const label =
+        locale === 'ar'
+            ? cta?.label?.ar
+            : locale === 'fr'
+              ? cta?.label?.fr
+              : cta?.label?.en ?? t('events.actions.view');
     const href = cta?.href ?? '#';
     const kind = cta?.kind ?? 'secondary';
 
@@ -78,6 +86,7 @@ function CtaButton({ cta }) {
 }
 
 export default function EventCard({ event, activeTab }) {
+    const { locale, t } = useTranslation();
     const dateLabel = useMemo(() => formatDateLabel(event?.dateIso ?? ''), [event]);
     const leftMonth = useMemo(() => monthShort(event?.dateIso ?? ''), [event]);
     const leftDay = useMemo(() => day2(event?.dateIso ?? ''), [event]);
@@ -86,8 +95,12 @@ export default function EventCard({ event, activeTab }) {
     const showLeftDate = !isFeatured;
 
     const subtitle = [
-        event?.location,
-        event?.isOnline ? '& Online' : null,
+        locale === 'ar'
+            ? event?.location?.ar
+            : locale === 'fr'
+              ? event?.location?.fr
+              : event?.location?.en,
+        event?.isOnline ? t('events.labels.andOnline') : null,
     ].filter(Boolean);
 
     return (
@@ -104,7 +117,13 @@ export default function EventCard({ event, activeTab }) {
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-tblack/60 via-tblack/15 to-transparent" />
                             <div className="absolute left-4 top-4">
-                                <Badge tone="blue">{event?.badge ?? 'Event'}</Badge>
+                                <Badge tone="blue">
+                                    {locale === 'ar'
+                                        ? event?.badge?.ar
+                                        : locale === 'fr'
+                                          ? event?.badge?.fr
+                                          : event?.badge?.en ?? t('events.labels.event')}
+                                </Badge>
                             </div>
                         </div>
                     </div>
@@ -121,7 +140,11 @@ export default function EventCard({ event, activeTab }) {
                             <div className="flex flex-wrap items-center gap-2">
                                 {!isFeatured && event?.badge ? (
                                     <Badge tone={activeTab === 'past' ? 'muted' : 'blue'}>
-                                        {event.badge}
+                                        {locale === 'ar'
+                                            ? event.badge.ar
+                                            : locale === 'fr'
+                                              ? event.badge.fr
+                                              : event.badge.en}
                                     </Badge>
                                 ) : null}
                                 <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground">
@@ -141,10 +164,14 @@ export default function EventCard({ event, activeTab }) {
                             </div>
 
                             <h3 className="mt-3 text-base font-extrabold text-foreground sm:text-lg">
-                                {event?.title}
+                                <TransText en={event?.title?.en} fr={event?.title?.fr} ar={event?.title?.ar} />
                             </h3>
                             <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                                {event?.excerpt}
+                                <TransText
+                                    en={event?.excerpt?.en}
+                                    fr={event?.excerpt?.fr}
+                                    ar={event?.excerpt?.ar}
+                                />
                             </p>
                         </div>
 
@@ -166,7 +193,13 @@ export default function EventCard({ event, activeTab }) {
                         </div>
                         <div className="flex items-center gap-2">
                             {event?.categoryLabel ? (
-                                <Badge tone="muted">{event.categoryLabel}</Badge>
+                                <Badge tone="muted">
+                                    {locale === 'ar'
+                                        ? event.categoryLabel.ar
+                                        : locale === 'fr'
+                                          ? event.categoryLabel.fr
+                                          : event.categoryLabel.en}
+                                </Badge>
                             ) : null}
                             <CtaButton cta={event?.cta} />
                         </div>

@@ -28,6 +28,15 @@
     "headTitle": "الفرص",
     "sortNewest": "الأحدث أولاً",
     "sortDeadlineSoonest": "الأقرب موعدًا",
+    "status": {
+      "open": "مفتوحة",
+      "closingSoon": "توشك على الإغلاق",
+      "closed": "مغلقة"
+    },
+    "card": {
+      "fallbackType": "فرصة",
+      "postedPrefix": "نُشر"
+    },
     "detail": {
       "fallbackHeadTitle": "فرصة",
       "organizerFallback": "سيتم إضافة معلومات الجهة المنظمة قريبًا.",
@@ -62,6 +71,16 @@
   "experts": {
     "headTitle": "الخبيرات",
     "searchPlaceholder": "ابحث بالاسم أو الخبرة أو كلمة مفتاحية...",
+    "actions": {
+      "addToFavoritesAria": "إضافة إلى المفضلة",
+      "viewProfile": "عرض الملف",
+      "linkedinAria": "لينكدإن",
+      "twitterAria": "تويتر / X",
+      "websiteAria": "الموقع الإلكتروني"
+    },
+    "detail": {
+      "fallbackHeadTitle": "خبيرة"
+    },
     "filters": {
       "all": "الكل",
       "economics": "الاقتصاد",
@@ -230,6 +249,69 @@
       "ctaSecondary": "شارك",
       "missionLabel": "الرسالة",
       "missionQuote": "\"للإعلان قوة في تشكيل العقول. فلنحرص أن يُسهم في تشكيل عالم من المساواة.\""
+    },
+    "headTitle": "تيليلا"
+  },
+  "tililab": {
+    "headTitle": "تيليلاب",
+    "pastWinners": {
+      "prevAria": "الفائزون السابقون",
+      "nextAria": "الفائزون التاليون"
+    }
+  },
+  "gouvernance": {
+    "headTitle": "الحوكمة"
+  },
+  "events": {
+    "headTitle": "الفعاليات",
+    "tabs": {
+      "upcomingAria": "الفعاليات القادمة",
+      "pastAria": "الفعاليات الماضية والإعادات"
+    },
+    "calendar": {
+      "prevMonthAria": "الشهر السابق",
+      "nextMonthAria": "الشهر التالي",
+      "selectDayAria": "اختر {date}"
+    },
+    "categories": {
+      "talk": "TiliTalks",
+      "webinar": "ندوات عبر الإنترنت",
+      "workshop": "ورشات"
+    },
+    "actions": {
+      "view": "عرض"
+    },
+    "labels": {
+      "event": "فعالية",
+      "andOnline": "و عبر الإنترنت"
+    }
+  },
+  "tililaConnect": {
+    "form": {
+      "firstNamePlaceholder": "سارة",
+      "lastNamePlaceholder": "أحمد",
+      "emailPlaceholder": "name@organization.com",
+      "phonePlaceholder": "+212 6 00 00 00 00",
+      "jobTitlePlaceholder": "مثال: باحثة أولى",
+      "organizationPlaceholder": "مثال: جامعة الدار البيضاء",
+      "bioPlaceholder": "صِف بإيجاز خلفيتك المهنية ومجالات اهتمامك…",
+      "citySelect": "اختر المدينة",
+      "cityCasablanca": "الدار البيضاء",
+      "cityRabat": "الرباط",
+      "cityTangier": "طنجة",
+      "cityMarrakesh": "مراكش",
+      "countryMorocco": "المغرب",
+      "countrySenegal": "السنغال"
+    }
+  },
+  "media": {
+    "headTitle": "الإعلام",
+    "actions": {
+      "loadMore": "تحميل المزيد",
+      "viewAllExperts": "عرض الكل"
+    },
+    "newsletter": {
+      "emailPlaceholder": "أدخل بريدك الإلكتروني"
     }
   },
   "welcome": "مرحباً بك في التطبيق"

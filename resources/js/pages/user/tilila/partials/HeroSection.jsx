@@ -1,22 +1,45 @@
 import { ArrowRight } from "lucide-react";
 import TransText from "@/components/TransText";
+import { Link } from "@inertiajs/react";
 
 const stats = [
     {
-        label: "Impact on Advertising",
-        description:
+        enLabel: "Impact on Advertising",
+        frLabel: "Impact sur la publicité",
+        arLabel: "الأثر على الإعلانات",
+        enDescription:
             "Measuring how the Trophée Tilila has shifted the narrative in Moroccan media over the years.",
+        frDescription:
+            "Mesurer comment le Trophée Tilila a fait évoluer le récit dans les médias marocains au fil des années.",
+        arDescription:
+            "قياس كيف غيّرت جائزة تيليلا السردية في الإعلام المغربي عبر السنوات.",
     },
-    { value: "+45%", label: "ADS WITH GENDER PARITY" },
-    { value: "300+", label: "CAMPAIGNS REVIEWED" },
-    { value: "6", label: "EDITIONS CELEBRATED" },
+    {
+        value: "+45%",
+        enLabel: "ADS WITH GENDER PARITY",
+        frLabel: "PUBS AVEC PARITÉ",
+        arLabel: "إعلانات مع تكافؤ",
+    },
+    {
+        value: "300+",
+        enLabel: "CAMPAIGNS REVIEWED",
+        frLabel: "CAMPAGNES ÉVALUÉES",
+        arLabel: "حملات تمت مراجعتها",
+    },
+    {
+        value: "6",
+        enLabel: "EDITIONS CELEBRATED",
+        frLabel: "ÉDITIONS CÉLÉBRÉES",
+        arLabel: "دورات مُحتفى بها",
+    },
 ];
 
 export default function HeroSection() {
     return (
-        <section className="relative w-full  sm:pb-28">
+        <section className="relative w-full pb-10 sm:pb-28">
             {/* ── Dark hero panel ── */}
-            <div className="relative h-[85vh] overflow-hidden"
+            <div
+                className="relative min-h-[85vh] overflow-hidden sm:h-[85vh]"
                 style={{ background: "linear-gradient(135deg, var(--color-tblack) 0%, #111827 60%, #1a2035 100%)" }}
             >
                 {/* Gold glow blob */}
@@ -25,7 +48,7 @@ export default function HeroSection() {
                     style={{ background: "radial-gradient(circle, rgba(194,157,87,0.12) 0%, transparent 70%)" }}
                 />
 
-                <div className="mx-auto grid max-w-7xl gap-10 px-4 pb-28 pt-10 sm:px-10 sm:pb-32 sm:pt-14 lg:grid-cols-12 lg:items-center">
+                <div className="mx-auto grid max-w-7xl gap-10 px-4 pb-10 pt-10 sm:px-10 sm:pb-32 sm:pt-14 lg:grid-cols-12 lg:items-center">
 
                     {/* ── Left: text ── */}
                     <div className="lg:col-span-7">
@@ -44,7 +67,7 @@ export default function HeroSection() {
 
                         {/* Heading */}
                         <h1
-                            className="mt-6 text-5xl font-extrabold tracking-tight sm:text-6xl lg:text-7xl"
+                            className="mt-6 text-4xl font-extrabold tracking-tight sm:text-6xl lg:text-7xl"
                             style={{ fontFamily: "'Playfair Display', serif", color: "var(--color-twhite)", lineHeight: 1.05 }}
                         >
                             Trophée
@@ -57,15 +80,17 @@ export default function HeroSection() {
                             className="mt-5 max-w-xl text-base leading-7 sm:text-lg"
                             style={{ color: "rgba(255,255,255,0.62)" }}
                         >
-                            Honoring the advertising campaigns that break stereotypes and
-                            champion gender equality. A celebration of creativity committed
-                            to diversity in Morocco and Africa.
+                            <TransText
+                                en="Honoring the advertising campaigns that break stereotypes and champion gender equality. A celebration of creativity committed to diversity in Morocco and Africa."
+                                fr="Célébrer les campagnes publicitaires qui brisent les stéréotypes et défendent l’égalité des genres. Une célébration de la créativité engagée pour la diversité au Maroc et en Afrique."
+                                ar="تكريم الحملات الإعلانية التي تكسر القوالب النمطية وتدعم المساواة بين الجنسين. احتفاء بالإبداع الملتزم بالتنوع في المغرب وإفريقيا."
+                            />
                         </p>
 
                         {/* CTA buttons */}
-                        <div className="mt-7 flex flex-wrap items-center gap-3">
+                        <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                             <button
-                                className="inline-flex items-center justify-center rounded-full px-6 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90"
+                                className="inline-flex w-full items-center justify-center rounded-full px-6 py-2.5 text-sm font-semibold transition-opacity hover:opacity-90 sm:w-auto"
                                 style={{ background: "var(--color-gold)", color: "var(--color-tblack)" }}
                             >
                                 <TransText
@@ -76,7 +101,7 @@ export default function HeroSection() {
                                 <ArrowRight className="ml-2 h-4 w-4" />
                             </button>
                             <button
-                                className="inline-flex items-center justify-center rounded-full px-6 py-2.5 text-sm font-semibold transition-colors"
+                                className="inline-flex w-full items-center justify-center rounded-full px-6 py-2.5 text-sm font-semibold transition-colors sm:w-auto"
                                 style={{
                                     background: "rgba(255,255,255,0.07)",
                                     border: "0.5px solid rgba(255,255,255,0.22)",
@@ -85,7 +110,9 @@ export default function HeroSection() {
                                 onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.13)")}
                                 onMouseLeave={e => (e.currentTarget.style.background = "rgba(255,255,255,0.07)")}
                             >
-                                <TransText en="Participate" fr="Participer" ar="شارك" />
+                                <Link href="/tilila/form">
+                                    <TransText en="Participate" fr="Participer" ar="شارك" />
+                                </Link>
                             </button>
                         </div>
                     </div>
@@ -150,7 +177,7 @@ export default function HeroSection() {
             </div>
 
             {/* ── Stats bar — floats over the bottom edge ── */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-6">
+            <div className="pointer-events-none relative mt-8 sm:absolute sm:inset-x-0 sm:bottom-6 sm:mt-0">
                 <div className="pointer-events-auto mx-auto max-w-7xl px-4 sm:px-10">
                     <div
                         className="rounded-2xl shadow-xl"
@@ -164,27 +191,32 @@ export default function HeroSection() {
                             {/* Label + description */}
                             <div className="lg:col-span-5 lg:pr-6">
                                 <p className="text-sm font-semibold" style={{ color: "var(--color-tblack)" }}>
-                                    {stats[0].label}
+                                    <TransText
+                                        en={stats[0].enLabel}
+                                        fr={stats[0].frLabel}
+                                        ar={stats[0].arLabel}
+                                    />
                                 </p>
                                 <p className="mt-1.5 text-xs leading-6" style={{ color: "var(--color-tgray)" }}>
-                                    {stats[0].description}
+                                    <TransText
+                                        en={stats[0].enDescription}
+                                        fr={stats[0].frDescription}
+                                        ar={stats[0].arDescription}
+                                    />
                                 </p>
                             </div>
 
                             {/* Metrics */}
                             <div
-                                className="grid gap-6 sm:grid-cols-3 lg:col-span-7 lg:pl-6"
-                                style={{ borderLeft: "0.5px solid #e5e7eb" }}
+                                className="grid gap-6 sm:grid-cols-3 lg:col-span-7 lg:border-l lg:border-border lg:pl-6"
                             >
                                 {stats.slice(1).map((item, i) => (
                                     <div
-                                        key={item.label}
-                                        className="text-center sm:text-left lg:px-6"
-                                        style={
-                                            i < 2
-                                                ? { borderRight: "0.5px solid #e5e7eb" }
-                                                : {}
-                                        }
+                                        key={`${item.value}-${item.enLabel}`}
+                                        className={[
+                                            'text-center sm:text-left lg:px-6',
+                                            i < 2 ? 'lg:border-r lg:border-border' : '',
+                                        ].join(' ')}
                                     >
                                         <div
                                             className="text-3xl font-bold tracking-tight sm:text-4xl"
@@ -196,7 +228,11 @@ export default function HeroSection() {
                                             className="mt-1 text-[0.65rem] font-semibold tracking-widest"
                                             style={{ color: "var(--color-tgray)" }}
                                         >
-                                            {item.label}
+                                            <TransText
+                                                en={item.enLabel}
+                                                fr={item.frLabel}
+                                                ar={item.arLabel}
+                                            />
                                         </div>
                                     </div>
                                 ))}

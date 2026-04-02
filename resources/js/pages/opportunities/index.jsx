@@ -27,7 +27,7 @@ function daysUntil(iso) {
 }
 
 export default function OpportunitiesIndex() {
-    const { t } = useTranslation();
+    const { locale, t } = useTranslation();
     const [query, setQuery] = useState('');
     const [sort, setSort] = useState('newest');
     const [page, setPage] = useState(1);
@@ -63,17 +63,25 @@ export default function OpportunitiesIndex() {
 
         if (filters.region !== 'all') {
             list = list.filter((x) =>
-                (x.location ?? '').toLowerCase().includes(filters.region),
+                (x.location?.en ?? '').toLowerCase().includes(filters.region),
             );
         }
 
         if (q) {
             list = list.filter((x) => {
                 const haystack = [
-                    x.title,
-                    x.org,
-                    x.location,
-                    x.excerpt,
+                    x.title?.en,
+                    x.title?.fr,
+                    x.title?.ar,
+                    x.org?.en,
+                    x.org?.fr,
+                    x.org?.ar,
+                    x.location?.en,
+                    x.location?.fr,
+                    x.location?.ar,
+                    x.excerpt?.en,
+                    x.excerpt?.fr,
+                    x.excerpt?.ar,
                     x.type,
                     x.status,
                 ]

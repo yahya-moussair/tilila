@@ -5,11 +5,12 @@ import HeroSection from '@/pages/user/tililab/partials/HeroSection';
 import KeyDatesSection from '@/pages/user/tililab/partials/KeyDatesSection';
 import MissionSection from '@/pages/user/tililab/partials/MissionSection';
 import PastWinnersSection from '@/pages/user/tililab/partials/PastWinnersSection';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 export default function TililabIndex() {
     return (
         <>
-            <Head title="Tililab" />
+            <TililabHead />
             <div>
                 <div className="bg-beta-white py-8">
                     <HeroSection />
@@ -38,3 +39,8 @@ export default function TililabIndex() {
 }
 
 TililabIndex.layout = (page) => <AppLayout>{page}</AppLayout>;
+
+function TililabHead() {
+    const { t } = useTranslation();
+    return <Head title={t('tililab.headTitle')} />;
+}

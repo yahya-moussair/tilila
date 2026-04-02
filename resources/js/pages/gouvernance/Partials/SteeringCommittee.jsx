@@ -1,4 +1,5 @@
 import React from 'react';
+import TransText from '@/components/TransText';
 
 function Avatar({ tone }) {
     return (
@@ -30,7 +31,7 @@ export default function SteeringCommittee({ title, ctaLabel, items = [] }) {
             <div className="mt-4 space-y-4">
                 {items.map((m) => (
                     <article
-                        key={`${m.name}-${m.role}`}
+                        key={`${m.name}-${m.enRole}`}
                         className="rounded-2xl bg-card p-5 shadow-sm ring-1 ring-border"
                     >
                         <div className="flex gap-4">
@@ -41,14 +42,14 @@ export default function SteeringCommittee({ title, ctaLabel, items = [] }) {
                                         {m.name}
                                     </div>
                                     <span className="rounded-full bg-secondary px-2.5 py-1 text-xs font-semibold text-secondary-foreground">
-                                        {m.role}
+                                        <TransText en={m.enRole} fr={m.frRole} ar={m.arRole} />
                                     </span>
                                 </div>
                                 <div className="mt-1 text-xs font-semibold text-muted-foreground">
-                                    {m.org}
+                                    <TransText en={m.enOrg} fr={m.frOrg} ar={m.arOrg} />
                                 </div>
                                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                                    {m.bio}
+                                    <TransText en={m.enBio} fr={m.frBio} ar={m.arBio} />
                                 </p>
                             </div>
                         </div>

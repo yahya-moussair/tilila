@@ -1,4 +1,6 @@
 import React from 'react';
+import TransText from '@/components/TransText';
+import { useTranslation } from '@/contexts/TranslationContext';
 
 function TabButton({ isActive, onClick, children, count, ariaLabel }) {
     return (
@@ -30,23 +32,29 @@ function TabButton({ isActive, onClick, children, count, ariaLabel }) {
 }
 
 export default function EventsTabs({ activeTab, setActiveTab, counts }) {
+    const { t } = useTranslation();
+
     return (
         <div className="inline-flex items-center gap-2 rounded-full bg-background p-1 ring-1 ring-border">
             <TabButton
                 isActive={activeTab === 'upcoming'}
                 onClick={() => setActiveTab('upcoming')}
                 count={counts?.upcoming}
-                ariaLabel="Upcoming events"
+                ariaLabel={t('events.tabs.upcomingAria')}
             >
-                Upcoming Events
+                <TransText en="Upcoming Events" fr="Événements à venir" ar="الفعاليات القادمة" />
             </TabButton>
             <TabButton
                 isActive={activeTab === 'past'}
                 onClick={() => setActiveTab('past')}
                 count={counts?.past}
-                ariaLabel="Past events and replays"
+                ariaLabel={t('events.tabs.pastAria')}
             >
-                Past Events / Replays
+                <TransText
+                    en="Past Events / Replays"
+                    fr="Événements passés / Replays"
+                    ar="الفعاليات الماضية / الإعادات"
+                />
             </TabButton>
         </div>
     );
