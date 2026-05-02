@@ -7,7 +7,7 @@ import { useTranslation } from '@/contexts/TranslationContext';
 import { logout } from '@/routes';
 import { send } from '@/routes/verification';
 
-export default function VerifyEmail({ status }: { status?: string }) {
+export default function VerifyEmail({ status }) {
     const { t } = useTranslation();
 
     setLayoutProps({

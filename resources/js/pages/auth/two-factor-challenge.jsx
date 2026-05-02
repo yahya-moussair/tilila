@@ -15,14 +15,10 @@ import { store } from '@/routes/two-factor/login';
 
 export default function TwoFactorChallenge() {
     const { t } = useTranslation();
-    const [showRecoveryInput, setShowRecoveryInput] = useState<boolean>(false);
-    const [code, setCode] = useState<string>('');
+    const [showRecoveryInput, setShowRecoveryInput] = useState(false);
+    const [code, setCode] = useState('');
 
-    const authConfigContent = useMemo<{
-        title: string;
-        description: string;
-        toggleText: string;
-    }>(() => {
+    const authConfigContent = useMemo(() => {
         if (showRecoveryInput) {
             return {
                 title: t('auth.twoFactor.recoveryTitle'),
@@ -43,7 +39,7 @@ export default function TwoFactorChallenge() {
         description: authConfigContent.description,
     });
 
-    const toggleRecoveryMode = (clearErrors: () => void): void => {
+    const toggleRecoveryMode = (clearErrors) => {
         setShowRecoveryInput(!showRecoveryInput);
         clearErrors();
         setCode('');
@@ -84,13 +80,17 @@ export default function TwoFactorChallenge() {
                                             name="code"
                                             maxLength={OTP_MAX_LENGTH}
                                             value={code}
-                                            onChange={(value) => setCode(value)}
+                                            onChange={(value) =>
+                                                setCode(value)
+                                            }
                                             disabled={processing}
                                             pattern={REGEXP_ONLY_DIGITS}
                                         >
                                             <InputOTPGroup>
                                                 {Array.from(
-                                                    { length: OTP_MAX_LENGTH },
+                                                    {
+                                                        length: OTP_MAX_LENGTH,
+                                                    },
                                                     (_, index) => (
                                                         <InputOTPSlot
                                                             key={index}

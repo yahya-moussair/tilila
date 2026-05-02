@@ -8,12 +8,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { useTranslation } from '@/contexts/TranslationContext';
 import { update } from '@/routes/password';
 
-type Props = {
-    token: string;
-    email: string;
-};
-
-export default function ResetPassword({ token, email }: Props) {
+export default function ResetPassword({ token, email }) {
     const { t } = useTranslation();
 
     setLayoutProps({

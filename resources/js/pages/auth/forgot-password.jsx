@@ -10,7 +10,7 @@ import { useTranslation } from '@/contexts/TranslationContext';
 import { login } from '@/routes';
 import { email } from '@/routes/password';
 
-export default function ForgotPassword({ status }: { status?: string }) {
+export default function ForgotPassword({ status }) {
     const { t } = useTranslation();
 
     setLayoutProps({
