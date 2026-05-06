@@ -64,6 +64,24 @@ export default function AdminTililaSubmissionShow({ participant }) {
                             </Button>
                         ) : null}
 
+                        {p.submission_video_url ? (
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="gap-2"
+                                onClick={() =>
+                                    window.open(
+                                        p.submission_video_url,
+                                        '_blank',
+                                        'noopener,noreferrer',
+                                    )
+                                }
+                            >
+                                <ExternalLink className="size-4" />
+                                Open uploaded video
+                            </Button>
+                        ) : null}
+
                         <Button
                             type="button"
                             variant="destructive"
@@ -102,6 +120,17 @@ export default function AdminTililaSubmissionShow({ participant }) {
                     <Row label="Title" value={p.submission_title} />
                     <Row label="Description" value={p.submission_description} />
                     <Row label="Link" value={p.submission_link} />
+                    <Row label="Uploaded video" value={p.submission_video_url} />
+                    {p.submission_video_url ? (
+                        <div className="pt-2">
+                            <video
+                                className="w-full rounded-lg ring-1 ring-border"
+                                controls
+                                preload="metadata"
+                                src={p.submission_video_url}
+                            />
+                        </div>
+                    ) : null}
                     <Row
                         label="Accepted rules"
                         value={p.accepted_rules ? 'Yes' : 'No'}

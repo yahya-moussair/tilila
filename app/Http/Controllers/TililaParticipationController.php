@@ -6,6 +6,7 @@ use App\Mail\TililaParticipationReceipt;
 use App\Models\TililaContestParticipant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Throwable;
 
 class TililaParticipationController extends Controller
@@ -24,9 +25,25 @@ class TililaParticipationController extends Controller
             'submission_title' => ['nullable', 'string', 'max:255'],
             'submission_description' => ['nullable', 'string', 'max:5000'],
             'submission_link' => ['nullable', 'url', 'max:2048'],
+            'submission_video' => [
+                'nullable',
+                'file',
+                // Keep it permissive across browsers; mp4/webm/quicktime are common exports.
+                'mimetypes:video/mp4,video/webm,video/quicktime,video/x-matroska',
+                // 200 MB (in KB)
+                'max:204800',
+            ],
             'accepted_rules' => ['accepted'],
             'locale' => ['nullable', 'string', 'max:8'],
         ]);
+
+        $videoPath = null;
+        if ($request->hasFile('submission_video')) {
+            $videoPath = $request->file('submission_video')->storePublicly(
+                'tilila/submissions/videos',
+                'public'
+            );
+        }
 
         /** @var TililaContestParticipant $participant */
         $participant = TililaContestParticipant::query()->create([
@@ -41,6 +58,7 @@ class TililaParticipationController extends Controller
             'submission_title' => $data['submission_title'] ?? null,
             'submission_description' => $data['submission_description'] ?? null,
             'submission_link' => $data['submission_link'] ?? null,
+            'submission_video_path' => $videoPath,
             'accepted_rules' => true,
             'locale' => $data['locale'] ?? null,
             'ip' => $request->ip(),

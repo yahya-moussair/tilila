@@ -1,15 +1,8 @@
-import { useForm } from '@inertiajs/react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
 
 import TransText from '@/components/TransText';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
@@ -26,6 +19,7 @@ function Field({ label, children, error }) {
 }
 
 export default function ParticipateModal({ open, onOpenChange }) {
+    const flash = usePage().props?.flash ?? {};
     const { data, setData, post, processing, errors, clearErrors, reset } =
         useForm({
             first_name: '',
@@ -39,23 +33,25 @@ export default function ParticipateModal({ open, onOpenChange }) {
             submission_title: '',
             submission_description: '',
             submission_link: '',
+            submission_video: null,
             accepted_rules: false,
         });
 
     useEffect(() => {
-        if (!open) {
-            clearErrors();
-        }
-    }, [open, clearErrors]);
+        clearErrors();
+    }, [clearErrors]);
 
     const submit = (e) => {
         e.preventDefault();
         clearErrors();
         post('/tilila/participate', {
-            preserveScroll: true,
+            preserveScroll: false,
+            forceFormData: true,
             onSuccess: () => {
                 reset();
-                onOpenChange(false);
+                requestAnimationFrame(() => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
             },
             onError: () => {
                 requestAnimationFrame(() => {
@@ -69,33 +65,50 @@ export default function ParticipateModal({ open, onOpenChange }) {
     };
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-h-[85vh] overflow-hidden p-0 sm:max-w-4xl">
-                <div className="border-b border-border bg-background/95 px-6 py-5 backdrop-blur supports-backdrop-filter:bg-background/80">
-                    <DialogHeader className="space-y-2">
-                        <DialogTitle className="text-xl">
+        <>
+            <Head title="Participate - Tilila" />
+            <section className="mx-auto w-full max-w-4xl px-4 py-10">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                    <Link
+                        href="/tilila"
+                        className="inline-flex items-center gap-2 rounded-lg border border-border bg-background px-4 py-2 text-sm font-semibold text-tblack hover:bg-secondary"
+                    >
+                        <TransText
+                            en="Back"
+                            fr="Retour"
+                            ar="رجوع"
+                        />
+                    </Link>
+                </div>
+
+                {flash?.success ? (
+                    <div className="mt-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-900">
+                        {flash.success}
+                    </div>
+                ) : null}
+
+                <div className="mt-6 rounded-2xl border border-border bg-background shadow-sm">
+                    <div className="border-b border-border bg-background/95 px-6 py-5 backdrop-blur supports-backdrop-filter:bg-background/80">
+                        <div className="space-y-2">
+                            <div className="text-xl font-semibold text-foreground">
                             <TransText
                                 en="Participate in the Trophée Tilila"
                                 fr="Participer au Trophée Tilila"
                                 ar="المشاركة في جائزة تيليلا"
                             />
-                        </DialogTitle>
-                        <DialogDescription>
-                            <TransText
-                                en="Fill in the participation form, accept the contest rules, and receive an acknowledgment by email."
-                                fr="Remplir le formulaire de participation, accepter le règlement du concours, puis recevoir un accusé de réception par e-mail."
-                                ar="املأ استمارة المشاركة، اقبل نظام المسابقة، وستصلك رسالة تأكيد عبر البريد الإلكتروني."
-                            />
-                        </DialogDescription>
-                    </DialogHeader>
-                </div>
+                            </div>
+                            <div className="text-sm text-muted-foreground">
+                                <TransText
+                                    en="Fill in the participation form, accept the contest rules, and receive an acknowledgment by email."
+                                    fr="Remplir le formulaire de participation, accepter le règlement du concours, puis recevoir un accusé de réception par e-mail."
+                                    ar="املأ استمارة المشاركة، اقبل نظام المسابقة، وستصلك رسالة تأكيد عبر البريد الإلكتروني."
+                                />
+                            </div>
+                        </div>
+                    </div>
 
-                <form
-                    onSubmit={submit}
-                    id="tilila-participate-scroll"
-                    className="max-h-[calc(85vh-140px)] overflow-y-auto px-6 py-6"
-                >
-                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                    <form onSubmit={submit} className="px-6 py-6">
+                        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                         <Field
                             label={
                                 <TransText
@@ -292,13 +305,23 @@ export default function ParticipateModal({ open, onOpenChange }) {
                             <Field
                                 label={
                                     <TransText
-                                        en="Submission link"
-                                        fr="Lien de soumission"
-                                        ar="رابط المشاركة"
+                                        en="Submission video (upload)"
+                                        fr="Vidéo de soumission (upload)"
+                                        ar="فيديو المشاركة (رفع)"
                                     />
                                 }
-                                error={errors.submission_link}
+                                error={errors.submission_video}
                             >
+                                <Input
+                                    type="file"
+                                    accept="video/*"
+                                    onChange={(e) =>
+                                        setData(
+                                            'submission_video',
+                                            e.target.files?.[0] ?? null,
+                                        )
+                                    }
+                                />
                                 <Input
                                     type="url"
                                     placeholder="https://wetransfer.com/…"
@@ -312,9 +335,9 @@ export default function ParticipateModal({ open, onOpenChange }) {
                                 />
                                 <div className="mt-2 text-xs text-muted-foreground">
                                     <TransText
-                                        en="Paste a link to your files (Drive, SwissTransfer, WeTransfer, Dropbox…)."
-                                        fr="Collez un lien vers vos fichiers (Drive, SwissTransfer, WeTransfer, Dropbox…)."
-                                        ar="الصق رابط ملفاتك (Drive أو SwissTransfer أو WeTransfer أو Dropbox...)."
+                                        en="Upload your video (recommended). If you prefer, you can still paste a link (Drive, SwissTransfer, WeTransfer, Dropbox…)."
+                                        fr="Téléversez votre vidéo (recommandé). Sinon, vous pouvez aussi coller un lien (Drive, SwissTransfer, WeTransfer, Dropbox…)."
+                                        ar="ارفعي الفيديو مباشرة (موصى به). أو يمكنك لصق رابط (Drive أو SwissTransfer أو WeTransfer أو Dropbox...)."
                                     />
                                 </div>
                             </Field>
@@ -386,9 +409,10 @@ export default function ParticipateModal({ open, onOpenChange }) {
                                 />
                             </button>
                         </div>
-                    </div>
-                </form>
-            </DialogContent>
-        </Dialog>
+                        </div>
+                    </form>
+                </div>
+            </section>
+        </>
     );
 }

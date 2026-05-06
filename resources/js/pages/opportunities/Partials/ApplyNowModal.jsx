@@ -140,6 +140,7 @@ export default function ApplyNowModal({
     onClose,
     opportunityTitle,
     opportunitySlug,
+    applyPathPrefix = '/opportunities',
 }) {
     const { locale, t } = useTranslation();
     const formId = useId();
@@ -213,7 +214,7 @@ export default function ApplyNowModal({
                         if (!opportunitySlug) return;
                         clearErrors();
                         post(
-                            `/opportunities/${encodeURIComponent(opportunitySlug)}/apply`,
+                            `${applyPathPrefix.replace(/\/$/, '')}/${encodeURIComponent(opportunitySlug)}/apply`,
                             {
                                 forceFormData: true,
                                 preserveScroll: true,

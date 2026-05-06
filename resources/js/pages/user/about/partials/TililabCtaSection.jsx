@@ -38,7 +38,7 @@ export default function TililabCtaSection() {
                                 />
                                 <ArrowRight className="size-4" />
                             </Link>
-                            <a
+                            {/* <a
                                 href="/tililab#key-dates"
                                 className="inline-flex items-center justify-center rounded-full bg-background px-6 py-2.5 text-sm font-semibold text-tblack transition-colors hover:bg-secondary"
                             >
@@ -47,7 +47,7 @@ export default function TililabCtaSection() {
                                     fr="Voir les dates clés"
                                     ar="عرض التواريخ الرئيسية"
                                 />
-                            </a>
+                            </a> */}
                         </div>
                     </div>
 

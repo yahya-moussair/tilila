@@ -111,9 +111,9 @@ export default function HeroSection({ onParticipate }) {
                                 }}
                             >
                                 <TransText
-                                    en="Discover 2024 Winners"
-                                    fr="Découvrir les lauréats 2024"
-                                    ar="اكتشف فائزات 2024"
+                                    en="Discover last year's Winners"
+                                    fr="Découvrir les lauréats de l'année dernière"
+                                    ar="اكتشف فائزات العام الماضي"
                                 />
                                 <ArrowRight className="ml-2 h-4 w-4" />
                             </button>

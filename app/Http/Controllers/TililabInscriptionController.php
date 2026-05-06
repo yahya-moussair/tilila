@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\TililabParticipant;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class TililabInscriptionController extends Controller
@@ -22,9 +23,31 @@ class TililabInscriptionController extends Controller
             'bio' => ['nullable', 'string', 'max:300'],
             'locale' => ['nullable', 'string', 'max:8'],
 
-            // Store an external link (SwissTransfer, Drive, etc.), not the uploaded file.
-            'original_video_link' => ['required', 'url', 'max:2048'],
+            // New: upload a video file (preferred). We keep the old link as optional backup.
+            // At least one of (original_video, original_video_link) is required.
+            'original_video' => [
+                'nullable',
+                'file',
+                'mimetypes:video/mp4,video/webm,video/quicktime,video/x-matroska',
+                // 200 MB (in KB)
+                'max:204800',
+                'required_without:original_video_link',
+            ],
+            'original_video_link' => [
+                'nullable',
+                'url',
+                'max:2048',
+                'required_without:original_video',
+            ],
         ]);
+
+        $videoPath = null;
+        if ($request->hasFile('original_video')) {
+            $videoPath = $request->file('original_video')->storePublicly(
+                'tililab/participants/videos',
+                'public'
+            );
+        }
 
         TililabParticipant::query()->create([
             'first_name' => $data['first_name'],
@@ -36,7 +59,8 @@ class TililabInscriptionController extends Controller
             'city' => $data['city'] ?? null,
             'country' => $data['country'] ?? null,
             'bio' => $data['bio'] ?? null,
-            'original_video_link' => $data['original_video_link'],
+            'original_video_link' => $data['original_video_link'] ?? null,
+            'original_video_path' => $videoPath,
             'locale' => $data['locale'] ?? null,
             'ip' => $request->ip(),
             'user_agent' => substr((string) $request->userAgent(), 0, 1000),

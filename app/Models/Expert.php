@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Storage;
 
 class Expert extends Model
@@ -17,6 +17,7 @@ class Expert extends Model
         'tags',
         'location',
         'country',
+        'region_scope',
         'industries',
         'languages',
         'badge',
@@ -130,6 +131,7 @@ class Expert extends Model
             'tags' => $this->tags ?? [],
             'location' => $this->locationPlain(),
             'country' => $this->country,
+            'region_scope' => $this->region_scope,
             'industries' => $this->industries ?? [],
             'languages' => $this->languages ?? [],
             'badge' => $this->badge,

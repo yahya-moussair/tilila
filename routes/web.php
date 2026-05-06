@@ -1,14 +1,18 @@
 <?php
 
-use App\Http\Controllers\ExpertController;
 use App\Http\Controllers\ExpertApplicationController;
+use App\Http\Controllers\ExpertController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\NewsletterSubscriptionController;
 use App\Http\Controllers\OpportunityController;
 use App\Http\Controllers\TililabInscriptionController;
+use App\Http\Controllers\TililaConnectController;
 use App\Http\Controllers\TililaParticipationController;
+use App\Models\Event;
+use App\Models\Expert;
+use App\Models\HomeHighlight;
+use App\Models\MediaItem;
 use App\Models\TililabEdition;
-use App\Models\TililabParticipant;
-use App\Models\TililaContestParticipant;
 use App\Models\TililaEdition;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -32,18 +36,88 @@ Route::get('/', function () {
         'tililaEdition' => $tililaEdition,
         'tililabEdition' => $tililabEdition,
         'stats' => [
-            'tilila_editions' => TililaEdition::query()->count(),
-            'tililab_editions' => TililabEdition::query()->count(),
-            'tililab_participants' => TililabParticipant::query()->count(),
-            'tilila_submissions' => TililaContestParticipant::query()->count(),
+            'experts_published' => Expert::query()->where('status', 'published')->count(),
+            'countries_represented' => Expert::query()
+                ->where('status', 'published')
+                ->whereNotNull('country')
+                ->where('country', '!=', '')
+                ->distinct()
+                ->count('country'),
+            'events_and_editions' => Event::query()
+                ->where('visibility', 'public')
+                ->where('status', '!=', 'draft')
+                ->count()
+                + TililaEdition::query()->count()
+                + TililabEdition::query()->count(),
+        ],
+        'homeHighlights' => HomeHighlight::query()
+            ->activeOrdered()
+            ->limit(3)
+            ->get()
+            ->map(fn (HomeHighlight $h) => $h->toPublicArray()),
+        'featuredExperts' => Expert::query()
+            ->where('status', 'published')
+            ->orderByDesc('last_activity_at')
+            ->orderByDesc('id')
+            ->limit(3)
+            ->get()
+            ->map(fn (Expert $e) => $e->toDirectoryArray()),
+        'latestMedia' => MediaItem::query()
+            ->where('visibility', 'public')
+            ->where('status', 'published')
+            ->orderByDesc('updated_at')
+            ->limit(6)
+            ->get()
+            ->map(fn (MediaItem $m) => [
+                'id' => (string) $m->slug,
+                'badge' => $m->badge ?? ['en' => '', 'fr' => '', 'ar' => ''],
+                'title' => $m->title ?? ['en' => '', 'fr' => '', 'ar' => ''],
+                'excerpt' => $m->excerpt ?? ['en' => '', 'fr' => '', 'ar' => ''],
+                'meta' => is_array($m->meta) ? $m->meta : ['en' => '', 'fr' => '', 'ar' => ''],
+                'cta' => MediaItem::defaultCta(),
+                'imageSrc' => $m->image_url,
+            ]),
+        'quickAgenda' => Event::query()
+            ->where('visibility', 'public')
+            ->where('status', '!=', 'draft')
+            ->whereNotNull('date')
+            ->whereDate('date', '>=', now()->toDateString())
+            ->orderBy('date')
+            ->orderBy('time')
+            ->limit(4)
+            ->get()
+            ->map(fn (Event $e) => [
+                'id' => $e->id,
+                'title' => $e->title ?? ['en' => '', 'fr' => '', 'ar' => ''],
+                'date' => $e->date?->format('Y-m-d') ?? '',
+                'type' => $e->type,
+                'href' => route('events.show', $e->id),
+            ]),
+        'partners' => [
+            ['name' => 'SOREAD 2M', 'href' => null],
+            ['name' => 'Programme EDI Tilila', 'href' => null],
         ],
     ]);
 })->name('home');
 
+Route::permanentRedirect('/expertes', '/experts');
+
 Route::get('/experts', [ExpertController::class, 'index'])->name('experts.index');
+Route::get('/experts/connect', [TililaConnectController::class, 'create'])->name('experts.connect');
+Route::post('/experts/connect', [TililaConnectController::class, 'store'])->name('experts.connect.store');
 Route::get('/experts/become', [ExpertApplicationController::class, 'create'])->name('experts.become');
 Route::post('/experts/become', [ExpertApplicationController::class, 'store'])->name('experts.become.store');
 Route::get('/experts/{expert}', [ExpertController::class, 'show'])->name('experts.show');
+
+Route::post('/newsletter', [NewsletterSubscriptionController::class, 'store'])->name('newsletter.store');
+
+Route::get('/plan-du-site', function () {
+    return Inertia::render('legal/plan-du-site');
+})->name('plan-du-site');
+
+Route::get('/mentions-legales', function () {
+    return Inertia::render('legal/mentions-legales');
+})->name('mentions-legales');
 Route::get('/opportunities', [OpportunityController::class, 'index'])->name('opportunities.index');
 Route::get('/opportunities/{opportunity}', [OpportunityController::class, 'show'])->name('opportunities.show');
 Route::post('/opportunities/{opportunity}/apply', [OpportunityController::class, 'apply'])->name('opportunities.apply');
@@ -100,6 +174,10 @@ Route::get('/tilila/editions/{edition}/jury', function (TililaEdition $edition) 
     ]);
 });
 
+Route::get('/tilila/participate', function () {
+    return Inertia::render('user/tilila/partials/ParticipateModal');
+})->name('tilila.participate');
+
 Route::get('/tililab/editions/{edition}', function (TililabEdition $edition) {
     return Inertia::render('user/tililab/edition', [
         'edition' => $edition,
@@ -129,5 +207,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 
 require __DIR__.'/events.php';
+require __DIR__.'/learn.php';
 require __DIR__.'/gouvernance.php';
 require __DIR__.'/settings.php';

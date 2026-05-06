@@ -103,6 +103,7 @@ class TililaContestParticipantController extends Controller
                 'country',
                 'submission_title',
                 'submission_link',
+                'submission_video_url',
                 'accepted_rules',
                 'created_at',
             ], $delimiter);
@@ -122,6 +123,7 @@ class TililaContestParticipantController extends Controller
                         (string) ($p->country ?? ''),
                         (string) ($p->submission_title ?? ''),
                         (string) ($p->submission_link ?? ''),
+                        (string) ($p->submission_video_url ?? ''),
                         $p->accepted_rules ? 'yes' : 'no',
                         optional($p->created_at)->toIso8601String(),
                     ], $delimiter);

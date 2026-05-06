@@ -309,6 +309,7 @@ class ExpertController extends Controller
             'tags' => 'nullable|array',
             'location' => 'nullable|string|max:512',
             'country' => 'required|string|max:255',
+            'region_scope' => 'nullable|in:morocco,africa,diaspora,other',
             'industries' => 'nullable|array',
             'industries.*' => 'string|max:64',
             'languages' => 'nullable|array',

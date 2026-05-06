@@ -196,6 +196,7 @@ export default function FormOFInscription() {
             city: '',
             country: 'ma',
             bio: '',
+            original_video: null,
             original_video_link: '',
             locale,
         });
@@ -210,7 +211,9 @@ export default function FormOFInscription() {
         (data.city ?? '') !== '' &&
         (data.country ?? '') !== '';
 
-    const canSubmitExpertise = (data.original_video_link ?? '').trim() !== '';
+    const canSubmitExpertise =
+        Boolean(data.original_video) ||
+        (data.original_video_link ?? '').trim() !== '';
 
     return (
         <section className="mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
@@ -636,6 +639,7 @@ export default function FormOFInscription() {
                                         clearErrors();
                                         post('/tililab/form', {
                                             preserveScroll: true,
+                                            forceFormData: true,
                                             onSuccess: () => {
                                                 setSubmitted(true);
                                                 setActiveStepId('review');
@@ -647,13 +651,25 @@ export default function FormOFInscription() {
                                         <Field
                                             label={
                                                 <TransText
-                                                    en="Original video link"
-                                                    fr="Lien de la vidéo originale"
-                                                    ar="رابط الفيديو الأصلي"
+                                                    en="Original video (upload)"
+                                                    fr="Vidéo originale (upload)"
+                                                    ar="الفيديو الأصلي (رفع)"
                                                 />
                                             }
                                             required
                                         >
+                                            <Input
+                                                id={`${formId}-original-video`}
+                                                type="file"
+                                                accept="video/*"
+                                                onChange={(e) =>
+                                                    setData(
+                                                        'original_video',
+                                                        e.target.files?.[0] ??
+                                                            null,
+                                                    )
+                                                }
+                                            />
                                             <Input
                                                 id={`${formId}-original-video-link`}
                                                 value={data.original_video_link}
@@ -670,12 +686,18 @@ export default function FormOFInscription() {
                                             />
                                             <div className="mt-2 text-xs text-muted-foreground">
                                                 <TransText
-                                                    en="Paste a link (SwissTransfer, Google Drive, WeTransfer, Dropbox, etc.). We don’t upload or store videos on our server."
-                                                    fr="Collez un lien (SwissTransfer, Google Drive, WeTransfer, Dropbox, etc.). Nous ne téléversons ni ne stockons de vidéos sur notre serveur."
-                                                    ar="الصقي رابطًا (SwissTransfer أو Google Drive أو WeTransfer أو Dropbox...). نحن لا نرفع أو نخزن الفيديوهات على خادمنا."
+                                                    en="Upload your video (recommended). If needed, you can also paste a link (SwissTransfer, Google Drive, WeTransfer, Dropbox, etc.)."
+                                                    fr="Téléversez la vidéo (recommandé). Si besoin, vous pouvez aussi coller un lien (SwissTransfer, Google Drive, WeTransfer, Dropbox, etc.)."
+                                                    ar="ارفعي الفيديو مباشرة (موصى به). وإذا لزم الأمر يمكنك لصق رابط (SwissTransfer أو Google Drive أو WeTransfer أو Dropbox...)."
                                                 />
                                             </div>
                                         </Field>
+
+                                        {errors.original_video ? (
+                                            <div className="mt-2 text-xs text-alpha-danger">
+                                                {errors.original_video}
+                                            </div>
+                                        ) : null}
 
                                         {errors.original_video_link ? (
                                             <div className="mt-2 text-xs text-alpha-danger">

@@ -101,6 +101,7 @@ class TililabParticipantController extends Controller
                 'country',
                 'bio',
                 'original_video_link',
+                'original_video_url',
                 'created_at',
             ], $delimiter);
 
@@ -119,6 +120,7 @@ class TililabParticipantController extends Controller
                         (string) ($p->country ?? ''),
                         (string) ($p->bio ?? ''),
                         (string) ($p->original_video_link ?? ''),
+                        (string) ($p->original_video_url ?? ''),
                         optional($p->created_at)->toIso8601String(),
                     ], $delimiter);
                 }

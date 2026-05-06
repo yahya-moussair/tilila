@@ -1,49 +1,29 @@
-import { Link } from '@inertiajs/react';
+import { Link, useForm, usePage } from '@inertiajs/react';
 import { Mail, MessageCircle, Twitter } from 'lucide-react';
-import { login, register } from '@/routes';
+import { useEffect } from 'react';
+import { login } from '@/routes';
 import { useTranslation } from '@/contexts/TranslationContext';
 import TransText from '@/components/TransText';
 
-const platformLinks = [
-    {
-        en: 'Tililab',
-        fr: 'Tililab',
-        ar: 'تيليلاب',
-        href: '/tililab',
-    },
-    {
-        en: 'Apply to Tililab',
-        fr: 'Postuler à Tililab',
-        ar: 'قدّم إلى تيليلاب',
-        href: '/tililab/form',
-    },
-    {
-        en: 'Partners',
-        fr: 'Partenaires',
-        ar: 'الشركاء',
-        href: '/about#partners',
-    },
-    {
-        en: 'Tilila Editions',
-        fr: 'Éditions Tilila',
-        ar: 'دورات تيليلا',
-        href: '/tilila#archive',
-    },
-];
-
-const initiativesLinks = [
-    { en: 'Tililab', fr: 'Tililab', ar: 'تيليلاب', href: '/tililab' },
-    { en: 'Tilila', fr: 'Tilila', ar: 'تيليلا', href: '/tilila' },
-    {
-        en: 'Opportunities',
-        fr: 'Opportunités',
-        ar: 'الفرص',
-        href: '/opportunities',
-    },
-];
-
 export default function Footer() {
-    const { t } = useTranslation();
+    const { t, locale } = useTranslation();
+    const { flash } = usePage().props;
+    const { data, setData, post, processing, errors, reset } = useForm({
+        email: '',
+        locale,
+    });
+
+    useEffect(() => {
+        setData('locale', locale);
+    }, [locale, setData]);
+
+    const submitNewsletter = (e) => {
+        e.preventDefault();
+        post('/newsletter', {
+            preserveScroll: true,
+            onSuccess: () => reset('email'),
+        });
+    };
 
     return (
         <footer className="border-t border-border bg-background">
@@ -62,9 +42,9 @@ export default function Footer() {
 
                         <p className="mt-5 max-w-xs text-sm leading-6 text-tgray">
                             <TransText
-                                en="Tilila Connect highlights women experts and builds inclusive narratives through Tilila & Tililab editions."
-                                fr="Tilila Connect valorise les expertes et construit des récits inclusifs via Tilila et Tililab."
-                                ar="تُبرز Tilila Connect الخبيرات وتبني سرديات شاملة عبر تيليلا وتيليلاب."
+                                en="Tilila connects experts and institutions across Morocco and Africa — programme EDI by SOREAD 2M."
+                                fr="Tilila relie expertes et institutions au Maroc et en Afrique — programme EDI porté par SOREAD 2M."
+                                ar="تربط تيليلا الخبيرات والمؤسسات في المغرب وإفريقيا — برنامج EDI من SOREAD 2M."
                             />
                         </p>
 
@@ -96,26 +76,80 @@ export default function Footer() {
                     <div className="md:col-span-2 md:col-start-6">
                         <h3 className="text-sm font-semibold text-tblack">
                             <TransText
-                                en="Platform"
-                                fr="Plateforme"
-                                ar="المنصة"
+                                en="Navigate"
+                                fr="Navigation"
+                                ar="التصفح"
                             />
                         </h3>
                         <ul className="mt-4 space-y-3 text-sm text-tgray">
-                            {platformLinks.map((item) => (
-                                <li key={item.en}>
-                                    <Link
-                                        href={item.href}
-                                        className="transition-colors hover:text-tblack"
-                                    >
-                                        <TransText
-                                            en={item.en}
-                                            fr={item.fr}
-                                            ar={item.ar}
-                                        />
-                                    </Link>
-                                </li>
-                            ))}
+                            <li>
+                                <Link
+                                    href="/about"
+                                    className="transition-colors hover:text-tblack"
+                                >
+                                    <TransText
+                                        en="About"
+                                        fr="À propos"
+                                        ar="حول"
+                                    />
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/events"
+                                    className="transition-colors hover:text-tblack"
+                                >
+                                    <TransText
+                                        en="Events"
+                                        fr="Événements"
+                                        ar="الفعاليات"
+                                    />
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/experts"
+                                    className="transition-colors hover:text-tblack"
+                                >
+                                    <TransText
+                                        en="Experts"
+                                        fr="Expertes"
+                                        ar="الخبيرات"
+                                    />
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/learn"
+                                    className="transition-colors hover:text-tblack"
+                                >
+                                    Learn
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/plan-du-site"
+                                    className="transition-colors hover:text-tblack"
+                                >
+                                    <TransText
+                                        en="Site map"
+                                        fr="Plan du site"
+                                        ar="خريطة الموقع"
+                                    />
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/mentions-legales"
+                                    className="transition-colors hover:text-tblack"
+                                >
+                                    <TransText
+                                        en="Legal & RGPD"
+                                        fr="Mentions légales"
+                                        ar="قانوني"
+                                    />
+                                </Link>
+                            </li>
                             <li>
                                 <Link
                                     href={login()}
@@ -131,34 +165,52 @@ export default function Footer() {
                         </ul>
                     </div>
 
-                    <div className="md:col-span-2">
+                    <div className="md:col-span-4">
                         <h3 className="text-sm font-semibold text-tblack">
                             <TransText
-                                en="Initiatives"
-                                fr="Initiatives"
-                                ar="المبادرات"
+                                en="Newsletter"
+                                fr="Newsletter"
+                                ar="النشرة"
                             />
                         </h3>
-                        <ul className="mt-4 space-y-3 text-sm text-tgray">
-                            {initiativesLinks.map((item) => (
-                                <li key={item.en}>
-                                    <Link
-                                        href={item.href}
-                                        className="transition-colors hover:text-tblack"
-                                    >
-                                        <TransText
-                                            en={item.en}
-                                            fr={item.fr}
-                                            ar={item.ar}
-                                        />
-                                    </Link>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                        <form
+                            onSubmit={submitNewsletter}
+                            className="mt-4 flex flex-col gap-2 sm:flex-row"
+                        >
+                            <input
+                                type="email"
+                                required
+                                value={data.email}
+                                onChange={(e) =>
+                                    setData('email', e.target.value)
+                                }
+                                placeholder="email@example.com"
+                                className="flex-1 rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            />
+                            <button
+                                type="submit"
+                                disabled={processing}
+                                className="rounded-lg bg-beta-blue px-4 py-2 text-sm font-semibold text-white hover:opacity-95 disabled:opacity-60"
+                            >
+                                <TransText
+                                    en="Subscribe"
+                                    fr="S’inscrire"
+                                    ar="اشتراك"
+                                />
+                            </button>
+                        </form>
+                        {errors.email ? (
+                            <p className="mt-2 text-xs text-destructive">
+                                {errors.email}
+                            </p>
+                        ) : null}
+                        {flash?.success ? (
+                            <p className="mt-2 text-xs text-alpha-green">
+                                {flash.success}
+                            </p>
+                        ) : null}
 
-                    <div className="md:col-span-3">
-                        <h3 className="text-sm font-semibold text-tblack">
+                        <h3 className="mt-8 text-sm font-semibold text-tblack">
                             <TransText en="Contact" fr="Contact" ar="التواصل" />
                         </h3>
                         <ul className="mt-4 space-y-3 text-sm text-tgray">
@@ -192,9 +244,9 @@ export default function Footer() {
                 <div className="mt-14 flex flex-col gap-3 border-t border-border pt-6 text-xs text-tgray md:flex-row md:items-center md:justify-between">
                     <span>
                         <TransText
-                            en="© 2026 Tilila. All rights reserved."
-                            fr="© 2026 Tilila. Tous droits réservés."
-                            ar="© 2026 تيليلا. جميع الحقوق محفوظة."
+                            en="© 2026 SOREAD 2M · Tilila programme."
+                            fr="© 2026 SOREAD 2M · Programme Tilila."
+                            ar="© 2026 SOREAD 2M · برنامج تيليلا."
                         />
                     </span>
                     <span>

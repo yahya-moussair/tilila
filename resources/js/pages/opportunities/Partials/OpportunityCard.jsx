@@ -42,7 +42,10 @@ function StatusPill({ status }) {
     );
 }
 
-export default function OpportunityCard({ item }) {
+export default function OpportunityCard({
+    item,
+    basePath = '/opportunities',
+}) {
     const { locale, t } = useTranslation();
 
     const resolvedOrg =
@@ -123,7 +126,7 @@ export default function OpportunityCard({ item }) {
                             </span>
                         </div>
                         <Link
-                            href={`/opportunities/${item.id}`}
+                            href={`${basePath.replace(/\/$/, '')}/${item.id}`}
                             className="inline-flex items-center gap-2 text-sm font-semibold text-beta-blue hover:underline"
                         >
                             <TransText

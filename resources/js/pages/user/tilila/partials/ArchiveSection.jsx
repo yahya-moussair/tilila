@@ -1,5 +1,6 @@
 import { GalleryHorizontal, Gavel, Trophy } from 'lucide-react';
 import TransText from '@/components/TransText';
+import { useEffect, useMemo, useRef, useState } from 'react';
 
 function normalizeEdition(raw) {
     if (!raw) return null;
@@ -28,9 +29,48 @@ function normalizeEdition(raw) {
 }
 
 export default function ArchiveSection({ editions = [] }) {
-    const rows = Array.isArray(editions)
-        ? editions.map(normalizeEdition).filter(Boolean)
-        : [];
+    const rows = useMemo(() => {
+        return Array.isArray(editions)
+            ? editions.map(normalizeEdition).filter(Boolean)
+            : [];
+    }, [editions]);
+
+    const trackRef = useRef(null);
+    const [canPrev, setCanPrev] = useState(false);
+    const [canNext, setCanNext] = useState(false);
+
+    const updateNavState = () => {
+        const el = trackRef.current;
+        if (!el) return;
+        const max = el.scrollWidth - el.clientWidth;
+        const x = el.scrollLeft;
+        setCanPrev(x > 4);
+        setCanNext(x < max - 4);
+    };
+
+    useEffect(() => {
+        updateNavState();
+        const el = trackRef.current;
+        if (!el) return;
+        const onScroll = () => updateNavState();
+        el.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', updateNavState, { passive: true });
+        return () => {
+            el.removeEventListener('scroll', onScroll);
+            window.removeEventListener('resize', updateNavState);
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [rows.length]);
+
+    const scrollBySlides = (dir) => {
+        const el = trackRef.current;
+        if (!el) return;
+        const w = el.clientWidth;
+        el.scrollBy({
+            left: dir * Math.max(240, Math.floor(w * 0.92)),
+            behavior: 'smooth',
+        });
+    };
 
     return (
         <section id="archive" className="mx-auto max-w-7xl px-4 pt-10 pb-12">
@@ -52,73 +92,121 @@ export default function ArchiveSection({ editions = [] }) {
             </div>
 
             <div className="mt-10 rounded-2xl bg-background/60 p-4 sm:p-6">
-                <div className="space-y-4">
-                    {rows.map((edition) => (
-                        <div
-                            key={edition.id}
-                            className="flex flex-col gap-4 rounded-2xl bg-beta-white px-4 py-6 sm:flex-row sm:items-center sm:justify-between sm:px-6"
+                <div className="flex items-center justify-between gap-3">
+                    <div className="text-sm font-semibold text-tblack">
+                        <TransText
+                            en="Editions"
+                            fr="Éditions"
+                            ar="الدورات"
+                        />
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <button
+                            type="button"
+                            onClick={() => scrollBySlides(-1)}
+                            disabled={!canPrev}
+                            className={[
+                                'inline-flex items-center justify-center rounded-lg border border-border bg-background px-3 py-2 text-sm font-semibold text-tblack transition-colors hover:bg-secondary',
+                                !canPrev
+                                    ? 'cursor-not-allowed opacity-40'
+                                    : '',
+                            ].join(' ')}
+                            aria-label="Previous editions"
                         >
-                            <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-6">
-                                <div className="text-3xl font-semibold tracking-tight text-tblack/10 sm:text-5xl">
-                                    {edition.year}
-                                </div>
-                                <div>
-                                    <div className="text-lg font-semibold text-tblack">
-                                        <TransText
-                                            en={edition.edition_label?.en ?? ''}
-                                            fr={edition.edition_label?.fr ?? ''}
-                                            ar={edition.edition_label?.ar ?? ''}
-                                        />
-                                    </div>
-                                    <div className="text-sm text-tgray">
-                                        <TransText
-                                            en={`Theme: “${edition.theme?.en ?? ''}”`}
-                                            fr={`Thème : « ${edition.theme?.fr ?? ''} »`}
-                                            ar={`الموضوع: « ${edition.theme?.ar ?? ''} »`}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
+                            ‹
+                        </button>
+                        <button
+                            type="button"
+                            onClick={() => scrollBySlides(1)}
+                            disabled={!canNext}
+                            className={[
+                                'inline-flex items-center justify-center rounded-lg border border-border bg-background px-3 py-2 text-sm font-semibold text-tblack transition-colors hover:bg-secondary',
+                                !canNext
+                                    ? 'cursor-not-allowed opacity-40'
+                                    : '',
+                            ].join(' ')}
+                            aria-label="Next editions"
+                        >
+                            ›
+                        </button>
+                    </div>
+                </div>
 
-                            <div className="flex flex-wrap items-center gap-3 sm:justify-end">
-                                <a
-                                    href={edition.winners_url || '/tilila'}
-                                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-background px-4 py-2 text-sm font-semibold text-tblack transition-colors hover:bg-secondary sm:w-auto"
-                                >
-                                    <Trophy className="size-4 text-tgray" />
-                                    <TransText
-                                        en="Winners"
-                                        fr="Lauréats"
-                                        ar="الفائزون"
-                                    />
-                                </a>
-                                <a
-                                    href={edition.jury_url || '/tilila'}
-                                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-background px-4 py-2 text-sm font-semibold text-tblack transition-colors hover:bg-secondary sm:w-auto"
-                                >
-                                    <Gavel className="size-4 text-tgray" />
-                                    <TransText
-                                        en="Jury"
-                                        fr="Jury"
-                                        ar="لجنة التحكيم"
-                                    />
-                                </a>
-                                {edition.has_gallery ? (
-                                    <a
-                                        href={edition.gallery_url || '/tilila'}
-                                        className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-background px-4 py-2 text-sm font-semibold text-tblack transition-colors hover:bg-secondary sm:w-auto"
-                                    >
-                                        <GalleryHorizontal className="size-4 text-tgray" />
-                                        <TransText
-                                            en="Gallery"
-                                            fr="Galerie"
-                                            ar="المعرض"
-                                        />
-                                    </a>
-                                ) : null}
+                <div className="relative mt-4">
+                    <div
+                        ref={trackRef}
+                        className="flex snap-x snap-mandatory gap-4 overflow-x-auto pb-2 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                        aria-label="Tilila editions carousel"
+                    >
+                        {rows.map((edition) => (
+                            <div
+                                key={edition.id}
+                                className="w-[88%] shrink-0 snap-start sm:w-[70%] md:w-[48%] lg:w-[32%]"
+                            >
+                                <div className="flex h-full flex-col gap-4 rounded-2xl bg-beta-white px-4 py-6 sm:px-6">
+                                    <div className="flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-6">
+                                        <div className="text-3xl font-semibold tracking-tight text-tblack/10 sm:text-5xl">
+                                            {edition.year}
+                                        </div>
+                                        <div className="min-w-0">
+                                            <div className="text-lg font-semibold text-tblack">
+                                                <TransText
+                                                    en={edition.edition_label?.en ?? ''}
+                                                    fr={edition.edition_label?.fr ?? ''}
+                                                    ar={edition.edition_label?.ar ?? ''}
+                                                />
+                                            </div>
+                                            <div className="text-sm text-tgray">
+                                                <TransText
+                                                    en={`Theme: “${edition.theme?.en ?? ''}”`}
+                                                    fr={`Thème : « ${edition.theme?.fr ?? ''} »`}
+                                                    ar={`الموضوع: « ${edition.theme?.ar ?? ''} »`}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="mt-auto flex flex-wrap items-center gap-3">
+                                        <a
+                                            href={edition.winners_url || '/tilila'}
+                                            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-background px-4 py-2 text-sm font-semibold text-tblack transition-colors hover:bg-secondary sm:w-auto"
+                                        >
+                                            <Trophy className="size-4 text-tgray" />
+                                            <TransText
+                                                en="Winners"
+                                                fr="Lauréats"
+                                                ar="الفائزون"
+                                            />
+                                        </a>
+                                        <a
+                                            href={edition.jury_url || '/tilila'}
+                                            className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-background px-4 py-2 text-sm font-semibold text-tblack transition-colors hover:bg-secondary sm:w-auto"
+                                        >
+                                            <Gavel className="size-4 text-tgray" />
+                                            <TransText
+                                                en="Jury"
+                                                fr="Jury"
+                                                ar="لجنة التحكيم"
+                                            />
+                                        </a>
+                                        {edition.has_gallery ? (
+                                            <a
+                                                href={edition.gallery_url || '/tilila'}
+                                                className="inline-flex w-full items-center justify-center gap-2 rounded-lg border border-border bg-background px-4 py-2 text-sm font-semibold text-tblack transition-colors hover:bg-secondary sm:w-auto"
+                                            >
+                                                <GalleryHorizontal className="size-4 text-tgray" />
+                                                <TransText
+                                                    en="Gallery"
+                                                    fr="Galerie"
+                                                    ar="المعرض"
+                                                />
+                                            </a>
+                                        ) : null}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    ))}
+                        ))}
+                    </div>
                 </div>
 
                 <div className="mt-8 flex items-center justify-center">
