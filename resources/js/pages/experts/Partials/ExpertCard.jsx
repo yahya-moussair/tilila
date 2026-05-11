@@ -6,37 +6,39 @@ import { show } from '@/routes/experts';
 
 export default function ExpertCard({ expert, view = 'grid' }) {
     const { locale, t } = useTranslation();
-    const resolvedName =
-        locale === 'ar'
-            ? expert.name?.ar
-            : locale === 'fr'
-              ? expert.name?.fr
-              : expert.name?.en;
-
     const imageSrc = expert.image ?? expert.image_url ?? null;
+    const cityLabel =
+        locale === 'ar'
+            ? expert.city_i18n?.ar
+            : locale === 'fr'
+              ? expert.city_i18n?.fr
+              : expert.city_i18n?.en;
+    const displayCity =
+        cityLabel ||
+        expert.city_i18n?.en ||
+        expert.city_i18n?.fr ||
+        expert.city_i18n?.ar ||
+        expert.location ||
+        '';
 
     return (
-        <div className="rounded-2xl bg-card shadow-sm ring-1 ring-border">
+        <div className="rounded-2xl bg-card- shadow-sm ring-1 ring-border">
             <div className="relative">
-                <div className="relative h-32 w-full overflow-hidden rounded-t-2xl bg-muted">
+                <div className="relative h-32 w-full overflow-hidden rounded-t-2xl bg-muted-">
                     {imageSrc ? (
                         <img
                             src={imageSrc}
-                            alt=""
+                            alt={expert.name?.en ?? ''}
                             className="absolute inset-0 h-full w-full object-cover"
                             loading="lazy"
                             decoding="async"
+                            onError={(e) => {
+                                e.target.src = null;
+                            }}
+
                         />
                     ) : null}
                 </div>
-
-                <button
-                    type="button"
-                    className="absolute top-3 right-3 z-10 inline-flex h-8 w-8 items-center justify-center rounded-full bg-background/80 text-muted-foreground shadow-sm ring-1 ring-border backdrop-blur hover:text-foreground"
-                    aria-label={t('experts.actions.addToFavoritesAria')}
-                >
-                    <span className="text-lg leading-none">♡</span>
-                </button>
 
                 {expert.badge ? (
                     <div className="absolute top-3 left-3 z-10 rounded-full bg-beta-green px-2.5 py-1 text-xs font-semibold text-alpha-green ring-1 ring-border">
@@ -49,7 +51,10 @@ export default function ExpertCard({ expert, view = 'grid' }) {
 
             <div className="p-5">
                 <div className="text-base font-extrabold text-foreground">
-                    {resolvedName}
+
+                    <TransText
+                        {...expert.name}
+                    />
                 </div>
                 <div className="mt-1 text-sm text-muted-foreground">
                     <TransText
@@ -82,7 +87,7 @@ export default function ExpertCard({ expert, view = 'grid' }) {
                     ].join(' ')}
                 >
                     <div className="text-xs text-muted-foreground">
-                        {expert.location ?? ''}
+                        {displayCity}
                     </div>
                     <Link
                         href={show.url(expert.id)}

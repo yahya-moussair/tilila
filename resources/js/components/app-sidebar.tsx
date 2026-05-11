@@ -49,6 +49,11 @@ const expertModuleItems: NavItem[] = [
         href: '/expert/profile',
         icon: Users,
     },
+    {
+        title: 'Network',
+        href: '/expert/network',
+        icon: Users,
+    },
 ];
 
 function SidebarNavLinks({ items }: { items: NavItem[] }) {

@@ -16,6 +16,7 @@ class Expert extends Model
         'title',
         'tags',
         'location',
+        'city_i18n',
         'country',
         'industries',
         'languages',
@@ -48,6 +49,7 @@ class Expert extends Model
             'name' => 'array',
             'title' => 'array',
             'tags' => 'array',
+            'city_i18n' => 'array',
             'industries' => 'array',
             'languages' => 'array',
             'details' => 'array',
@@ -70,6 +72,11 @@ class Expert extends Model
      */
     protected function locationPlain(): string
     {
+        $city = $this->cityI18nPlain();
+        if ($city !== '') {
+            return $city;
+        }
+
         $v = $this->location;
 
         if ($v === null || $v === '') {
@@ -85,6 +92,16 @@ class Expert extends Model
         }
 
         return '';
+    }
+
+    protected function cityI18nPlain(): string
+    {
+        $city = $this->city_i18n;
+        if (! is_array($city)) {
+            return '';
+        }
+
+        return trim((string) ($city['en'] ?? $city['fr'] ?? $city['ar'] ?? ''));
     }
 
     /**
@@ -129,6 +146,7 @@ class Expert extends Model
             'title' => $this->title,
             'tags' => $this->tags ?? [],
             'location' => $this->locationPlain(),
+            'city_i18n' => $this->city_i18n,
             'country' => $this->country,
             'industries' => $this->industries ?? [],
             'languages' => $this->languages ?? [],

@@ -34,11 +34,14 @@ class ExpertApplicationController extends Controller
             ],
             'phone' => ['nullable', 'string', 'max:64'],
             'country' => ['nullable', 'string', 'max:120'],
-            'city' => ['nullable', 'string', 'max:120'],
+            'city' => ['nullable', 'array'],
+            'city.en' => ['nullable', 'string', 'max:120'],
+            'city.fr' => ['nullable', 'string', 'max:120'],
+            'city.ar' => ['nullable', 'string', 'max:120'],
             'industries' => ['nullable', 'array'],
             'industries.*' => ['string', 'max:64'],
             'languages' => ['nullable', 'array'],
-            'languages.*' => ['string', 'max:8'],
+            'languages.*' => ['string', 'max:16'],
             'current_title' => ['nullable', 'string', 'max:255'],
             'title_i18n' => ['nullable', 'array'],
             'title_i18n.en' => ['required_without:current_title', 'string', 'max:255'],
@@ -73,6 +76,7 @@ class ExpertApplicationController extends Controller
         $titleI18n = $this->normalizeTri($data['title_i18n'] ?? null, $data['current_title'] ?? '');
         $expertiseI18n = $this->normalizeTri($data['expertise_i18n'] ?? null, $data['expertise'] ?? '');
         $bioI18n = $this->normalizeTri($data['bio_i18n'] ?? null, $data['bio'] ?? '');
+        $cityI18n = $this->normalizeTri($data['city'] ?? null, '');
         $socials = [
             'linkedin' => trim((string) ($data['linkedin_url'] ?? '')),
             'twitter' => trim((string) ($data['twitter_url'] ?? '')),
@@ -93,7 +97,8 @@ class ExpertApplicationController extends Controller
             'email' => $data['email'],
             'phone' => $data['phone'] ?? null,
             'country' => $data['country'] ?? null,
-            'city' => $data['city'] ?? null,
+            'city' => $cityI18n['en'] ?: ($cityI18n['fr'] ?: $cityI18n['ar']),
+            'city_i18n' => $cityI18n,
             'industries' => $industries,
             'languages' => $languages,
             'current_title' => $titleI18n['en'],

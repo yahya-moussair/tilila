@@ -17,14 +17,17 @@ class DatabaseSeeder extends Seeder
         // User::factory(10)->create();
 
         User::query()->updateOrCreate(
-            ['email' => 'test@example.com'],
+            [
+                'email' => 'test@example.com',
+                'role' => 'admin',
+            ],
             [
                 'name' => 'Test User',
                 'password' => Hash::make('password'),
             ],
         );
 
-        $this->call(ExpertSeeder::class);
+        // $this->call(ExpertSeeder::class);
         $this->call(OpportunitySeeder::class);
         $this->call(EventSeeder::class);
         $this->call(TililaEditionSeeder::class);

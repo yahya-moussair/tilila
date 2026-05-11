@@ -31,6 +31,9 @@ class ExpertApplicationController extends Controller
                     ->orWhere('email', 'like', $like)
                     ->orWhere('country', 'like', $like)
                     ->orWhere('city', 'like', $like)
+                    ->orWhere('city_i18n->en', 'like', $like)
+                    ->orWhere('city_i18n->fr', 'like', $like)
+                    ->orWhere('city_i18n->ar', 'like', $like)
                     ->orWhere('current_title', 'like', $like)
                     ->orWhere('title_i18n->en', 'like', $like)
                     ->orWhere('title_i18n->fr', 'like', $like)
@@ -199,6 +202,11 @@ class ExpertApplicationController extends Controller
         $title = $this->resolveTri($application->title_i18n, (string) ($application->current_title ?: 'Expert'), 'Expert');
         $bio = $this->resolveTri($application->bio_i18n, (string) ($application->bio ?? ''), '');
         $expertiseText = $this->resolveTri($application->expertise_i18n, (string) ($application->expertise ?? ''), '');
+        $cityI18n = $this->resolveTri(
+            is_array($application->city_i18n) ? $application->city_i18n : null,
+            (string) ($application->city ?? ''),
+            ''
+        );
 
         $topicsByLocale = [
             'en' => $this->extractTopics((string) $expertiseText['en']),
@@ -245,7 +253,8 @@ class ExpertApplicationController extends Controller
             'name' => $name,
             'title' => $title,
             'tags' => $topicTags,
-            'location' => $application->city,
+            'location' => $cityI18n['en'] ?: ($cityI18n['fr'] ?: $cityI18n['ar']),
+            'city_i18n' => $cityI18n,
             'country' => $application->country ?: 'Morocco',
             'industries' => $industries,
             'languages' => $languages,
@@ -263,6 +272,7 @@ class ExpertApplicationController extends Controller
                     'twitter' => $twitter,
                     'instagram' => $instagram,
                 ],
+                'city_i18n' => $cityI18n,
                 'portfolio_url' => (string) ($application->portfolio_url ?? ''),
                 'phone' => (string) ($application->phone ?? ''),
                 'expertise_text' => $expertiseText['en'],

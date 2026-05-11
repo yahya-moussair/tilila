@@ -25,25 +25,21 @@ class ProfileController extends Controller
     public function update(Request $request): RedirectResponse
     {
         $expert = $this->resolveExpert($request);
-        $data = $this->validated($request);
+        $data = $this->validated($request, $expert);
+        $details = $data['details'];
+        unset($data['details']);
 
-        $removeImage = (bool) ($data['remove_image'] ?? false);
-        unset($data['remove_image']);
-
-        if ($request->hasFile('profile_image')) {
-            if ($expert->image) {
-                Storage::disk('public')->delete($expert->image);
+        if ($request->hasFile('cv')) {
+            $existingCvPath = trim((string) ($details['cv_path'] ?? ''));
+            if ($existingCvPath !== '') {
+                Storage::disk('public')->delete($existingCvPath);
             }
-            $data = array_merge($data, $this->storeProfileImageFromUpload($request->file('profile_image')));
-        } elseif ($removeImage) {
-            if ($expert->image) {
-                Storage::disk('public')->delete($expert->image);
-            }
-            $data['image'] = null;
+            $details['cv_path'] = $this->storeCvFromUpload($request->file('cv'));
         }
 
         $expert->update([
             ...$data,
+            'details' => $details,
             'last_activity_at' => now(),
         ]);
 
@@ -60,17 +56,25 @@ class ProfileController extends Controller
      */
     private function expertToForm(Expert $expert): array
     {
+        $details = is_array($expert->details) ? $expert->details : [];
+        $socials = is_array($details['socials'] ?? null) ? $details['socials'] : [];
+
         return [
             'id' => $expert->id,
             'name' => $this->triLangValue($expert->name),
             'title' => $this->triLangValue($expert->title),
-            'location' => $this->triLangValue($expert->location),
+            'expertise' => $this->resolveExpertiseForForm($details),
+            'bio' => $this->resolveBioForForm($details),
             'country' => (string) ($expert->country ?? ''),
-            'industries' => $expert->industries ?? [],
+            'city' => $this->resolveCityForForm($expert),
             'languages' => $expert->languages ?? [],
             'email' => (string) ($expert->email ?? ''),
-            'image_url' => $expert->image_url,
-            'details' => $this->normalizeDetailsForForm($expert->details),
+            'phone' => trim((string) ($details['phone'] ?? '')),
+            'linkedin_url' => trim((string) ($socials['linkedin'] ?? '')),
+            'twitter_url' => trim((string) ($socials['twitter'] ?? '')),
+            'instagram_url' => trim((string) ($socials['instagram'] ?? '')),
+            'portfolio_url' => trim((string) ($details['portfolio_url'] ?? '')),
+            'cv_url' => $this->cvUrl($details),
         ];
     }
 
@@ -102,93 +106,206 @@ class ProfileController extends Controller
             'headlineTags' => [],
             'bio' => [],
             'quote' => ['en' => '', 'fr' => '', 'ar' => ''],
-            'socials' => [
-                'linkedin' => '',
-                'twitter' => '',
-                'instagram' => '',
-            ],
+            'socials' => ['linkedin' => '', 'twitter' => '', 'instagram' => ''],
             'expertise' => [],
             'journey' => [],
             'appearances' => [],
             'articles' => [],
+            'portfolio_url' => '',
+            'phone' => '',
+            'cv_path' => '',
         ];
 
         if (! is_array($details)) {
             return $base;
         }
 
-        $base['headlineTags'] = is_array($details['headlineTags'] ?? null) ? $details['headlineTags'] : [];
-        $base['bio'] = is_array($details['bio'] ?? null) ? $details['bio'] : [];
-        $base['quote'] = array_merge($base['quote'], is_array($details['quote'] ?? null) ? $details['quote'] : []);
         $socials = is_array($details['socials'] ?? null) ? $details['socials'] : [];
-        $base['socials'] = [
-            'linkedin' => trim((string) ($socials['linkedin'] ?? '')),
-            'twitter' => trim((string) ($socials['twitter'] ?? '')),
-            'instagram' => trim((string) ($socials['instagram'] ?? '')),
-        ];
-        $base['expertise'] = is_array($details['expertise'] ?? null) ? $details['expertise'] : [];
-        $base['journey'] = is_array($details['journey'] ?? null) ? $details['journey'] : [];
-        $base['appearances'] = is_array($details['appearances'] ?? null) ? $details['appearances'] : [];
-        $base['articles'] = is_array($details['articles'] ?? null) ? $details['articles'] : [];
 
-        return $base;
+        return array_merge($base, $details, [
+            'socials' => [
+                'linkedin' => trim((string) ($socials['linkedin'] ?? '')),
+                'twitter' => trim((string) ($socials['twitter'] ?? '')),
+                'instagram' => trim((string) ($socials['instagram'] ?? '')),
+            ],
+            'portfolio_url' => trim((string) ($details['portfolio_url'] ?? '')),
+            'phone' => trim((string) ($details['phone'] ?? '')),
+            'cv_path' => trim((string) ($details['cv_path'] ?? '')),
+        ]);
     }
 
     /**
      * @return array<string, mixed>
      */
-    private function validated(Request $request): array
+    private function validated(Request $request, Expert $expert): array
     {
         $validated = $request->validate([
             'name' => ['required', 'array'],
             'name.en' => ['required', 'string', 'max:255'],
-            'name.fr' => ['nullable', 'string', 'max:255'],
-            'name.ar' => ['nullable', 'string', 'max:255'],
+            'name.fr' => ['required', 'string', 'max:255'],
+            'name.ar' => ['required', 'string', 'max:255'],
             'title' => ['required', 'array'],
             'title.en' => ['required', 'string', 'max:500'],
-            'title.fr' => ['nullable', 'string', 'max:500'],
-            'title.ar' => ['nullable', 'string', 'max:500'],
-            'location' => ['nullable', 'array'],
-            'location.en' => ['nullable', 'string', 'max:512'],
-            'location.fr' => ['nullable', 'string', 'max:512'],
-            'location.ar' => ['nullable', 'string', 'max:512'],
-            'country' => ['nullable', 'string', 'max:255'],
-            'industries' => ['nullable', 'array'],
-            'industries.*' => ['string', 'max:64'],
+            'title.fr' => ['required', 'string', 'max:500'],
+            'title.ar' => ['required', 'string', 'max:500'],
+            'expertise' => ['required', 'array'],
+            'expertise.en' => ['required', 'string', 'max:2000'],
+            'expertise.fr' => ['required', 'string', 'max:2000'],
+            'expertise.ar' => ['required', 'string', 'max:2000'],
+            'bio' => ['required', 'array'],
+            'bio.en' => ['required', 'string', 'max:5000'],
+            'bio.fr' => ['required', 'string', 'max:5000'],
+            'bio.ar' => ['required', 'string', 'max:5000'],
+            'country' => ['nullable', 'string', 'max:120'],
+            'city' => ['nullable', 'array'],
+            'city.en' => ['nullable', 'string', 'max:120'],
+            'city.fr' => ['nullable', 'string', 'max:120'],
+            'city.ar' => ['nullable', 'string', 'max:120'],
             'languages' => ['nullable', 'array'],
-            'languages.*' => ['string', 'max:8'],
-            'email' => ['nullable', 'email', 'max:255'],
-            'remove_image' => ['sometimes', 'boolean'],
-            'details' => ['nullable', 'array'],
+            'languages.*' => ['string', 'max:16'],
+            'email' => ['required', 'email', 'max:255'],
+            'phone' => ['nullable', 'string', 'max:64'],
+            'linkedin_url' => ['nullable', 'url', 'max:2048'],
+            'twitter_url' => ['nullable', 'url', 'max:2048'],
+            'instagram_url' => ['nullable', 'url', 'max:2048'],
+            'portfolio_url' => ['nullable', 'url', 'max:2048'],
         ]);
 
-        if ($request->hasFile('profile_image')) {
+        if ($request->hasFile('cv')) {
             $request->validate([
-                'profile_image' => ['required', 'file', 'max:5120', 'mimes:jpeg,png,webp,gif'],
+                'cv' => ['required', 'file', 'max:5120', 'mimes:pdf,doc,docx'],
             ]);
         }
 
         $validated['name'] = $this->triLangValue($validated['name'] ?? []);
         $validated['title'] = $this->triLangValue($validated['title'] ?? []);
-        $validated['location'] = $this->triLangValue($validated['location'] ?? []);
+        $validated['expertise'] = $this->triLangValue($validated['expertise'] ?? []);
+        $validated['bio'] = $this->triLangValue($validated['bio'] ?? []);
         $validated['country'] = trim((string) ($validated['country'] ?? ''));
-        $validated['industries'] = $validated['industries'] ?? [];
-        $validated['languages'] = $validated['languages'] ?? [];
+        $validated['city'] = $this->triLangValue($validated['city'] ?? []);
+        $validated['languages'] = array_values(array_unique(array_filter(array_map(
+            static fn (string $value): string => trim($value),
+            $validated['languages'] ?? []
+        ))));
         $validated['email'] = trim((string) ($validated['email'] ?? ''));
-        $validated['details'] = $this->normalizeDetailsForForm($validated['details'] ?? null);
+        $validated['phone'] = trim((string) ($validated['phone'] ?? ''));
+        $validated['linkedin_url'] = trim((string) ($validated['linkedin_url'] ?? ''));
+        $validated['twitter_url'] = trim((string) ($validated['twitter_url'] ?? ''));
+        $validated['instagram_url'] = trim((string) ($validated['instagram_url'] ?? ''));
+        $validated['portfolio_url'] = trim((string) ($validated['portfolio_url'] ?? ''));
+
+        $details = $this->normalizeDetailsForForm(is_array($expert->details) ? $expert->details : null);
+        $details['phone'] = $validated['phone'];
+        $details['portfolio_url'] = $validated['portfolio_url'];
+        $details['expertise_text'] = $validated['expertise']['en'];
+        $details['bio'] = [$validated['bio']];
+        $details['city_i18n'] = $validated['city'];
+        $details['socials'] = [
+            'linkedin' => $validated['linkedin_url'],
+            'twitter' => $validated['twitter_url'],
+            'instagram' => $validated['instagram_url'],
+        ];
+
+        $validated['details'] = $details;
+
+        unset(
+            $validated['phone'],
+            $validated['portfolio_url'],
+            $validated['linkedin_url'],
+            $validated['twitter_url'],
+            $validated['instagram_url'],
+            $validated['expertise'],
+            $validated['bio']
+        );
+        $validated['city_i18n'] = $validated['city'];
+        $validated['location'] = $validated['city']['en'] !== ''
+            ? $validated['city']['en']
+            : ($validated['city']['fr'] !== '' ? $validated['city']['fr'] : $validated['city']['ar']);
+        unset($validated['city']);
 
         return $validated;
     }
 
     /**
-     * Persist file on public disk and store relative path in `image`.
-     *
-     * @return array{image: string}
+     * Persist CV file on public disk.
      */
-    private function storeProfileImageFromUpload(UploadedFile $file): array
+    private function storeCvFromUpload(UploadedFile $file): string
     {
-        return [
-            'image' => $file->store('experts', 'public'),
-        ];
+        return $file->store('experts/cv', 'public');
+    }
+
+    /**
+     * @param  array<string, mixed>  $details
+     */
+    private function resolveExpertiseForForm(array $details): array
+    {
+        $fromBio = is_array($details['expertise'] ?? null) ? $details['expertise'] : [];
+        $firstCard = is_array($fromBio[0] ?? null) ? $fromBio[0] : [];
+        $description = is_array($firstCard['description'] ?? null) ? $firstCard['description'] : [];
+
+        return $this->triLangValue([
+            'en' => (string) ($details['expertise_text'] ?? $description['en'] ?? ''),
+            'fr' => (string) ($description['fr'] ?? ''),
+            'ar' => (string) ($description['ar'] ?? ''),
+        ]);
+    }
+
+    /**
+     * @param  array<string, mixed>  $details
+     */
+    private function resolveBioForForm(array $details): array
+    {
+        $bio = is_array($details['bio'] ?? null) ? $details['bio'] : [];
+        $first = is_array($bio[0] ?? null) ? $bio[0] : [];
+
+        return $this->triLangValue($first);
+    }
+
+    /**
+     * @param  array<string, mixed>  $details
+     */
+    private function cvUrl(array $details): ?string
+    {
+        $path = trim((string) ($details['cv_path'] ?? ''));
+        if ($path === '') {
+            return null;
+        }
+
+        return Storage::disk('public')->exists($path) ? Storage::url($path) : null;
+    }
+
+    private function plainLocationValue(mixed $location): string
+    {
+        if (is_array($location)) {
+            return trim((string) ($location['en'] ?? $location['fr'] ?? $location['ar'] ?? ''));
+        }
+
+        return trim((string) ($location ?? ''));
+    }
+
+    /**
+     * @return array{en: string, fr: string, ar: string}
+     */
+    private function resolveCityForForm(Expert $expert): array
+    {
+        $details = is_array($expert->details) ? $expert->details : [];
+        $cityFromColumn = is_array($expert->city_i18n) ? $expert->city_i18n : null;
+        if ($cityFromColumn !== null) {
+            return $this->triLangValue($cityFromColumn);
+        }
+
+        $city = is_array($details['city_i18n'] ?? null) ? $details['city_i18n'] : null;
+
+        if ($city !== null) {
+            return $this->triLangValue($city);
+        }
+
+        $fallback = $this->plainLocationValue($expert->location);
+
+        return $this->triLangValue([
+            'en' => $fallback,
+            'fr' => '',
+            'ar' => '',
+        ]);
     }
 }

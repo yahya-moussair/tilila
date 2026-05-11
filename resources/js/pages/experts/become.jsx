@@ -1,11 +1,12 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { useTranslation } from '@/contexts/TranslationContext';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import TransText from '@/components/TransText';
+import { buildCountryOptions, buildLanguageOptions } from '@/components/helpers/expert-form-options';
 
 export default function BecomeExpert() {
-    const { t } = useTranslation();
+    const { locale, t } = useTranslation();
     const maxCvSizeBytes = 5 * 1024 * 1024;
 
     const {
@@ -22,9 +23,8 @@ export default function BecomeExpert() {
         email: '',
         phone: '',
         country: '',
-        city: '',
-        industries_text: '',
-        languages_text: '',
+        city: { en: '', fr: '', ar: '' },
+        languages: [],
         title_i18n: { en: '', fr: '', ar: '' },
         expertise_i18n: { en: '', fr: '', ar: '' },
         bio_i18n: { en: '', fr: '', ar: '' },
@@ -36,12 +36,16 @@ export default function BecomeExpert() {
         locale: 'en',
     });
     const [cvSizeError, setCvSizeError] = useState('');
-
-    const splitCsv = (value) =>
-        String(value ?? '')
-            .split(',')
-            .map((item) => item.trim())
-            .filter(Boolean);
+    const [languageQuery, setLanguageQuery] = useState('');
+    const countryOptions = useMemo(() => buildCountryOptions(locale), [locale]);
+    const languageOptions = useMemo(() => buildLanguageOptions(locale), [locale]);
+    const filteredLanguageOptions = useMemo(() => {
+        const query = languageQuery.trim().toLowerCase();
+        if (!query) {
+            return languageOptions;
+        }
+        return languageOptions.filter((item) => item.searchText.includes(query));
+    }, [languageOptions, languageQuery]);
 
     const cvHasError = Boolean(errors.cv || cvSizeError);
     const hasErrors = Object.keys(errors).length > 0 || cvSizeError !== '';
@@ -59,15 +63,7 @@ export default function BecomeExpert() {
 
         setCvSizeError('');
 
-        transform((current) => {
-            const { industries_text, languages_text, ...rest } = current;
-
-            return {
-                ...rest,
-                industries: splitCsv(industries_text),
-                languages: splitCsv(languages_text),
-            };
-        });
+        transform((current) => current);
 
         post('/experts/become', {
             forceFormData: true,
@@ -78,8 +74,7 @@ export default function BecomeExpert() {
                     'phone',
                     'country',
                     'city',
-                    'industries_text',
-                    'languages_text',
+                    'languages',
                     'title_i18n',
                     'expertise_i18n',
                     'bio_i18n',
@@ -354,7 +349,7 @@ export default function BecomeExpert() {
                                                 ar="البلد"
                                             />
                                         </label>
-                                        <input
+                                        <select
                                             value={data.country}
                                             onChange={(e) =>
                                                 setData(
@@ -363,8 +358,19 @@ export default function BecomeExpert() {
                                                 )
                                             }
                                             className={inputClass}
-                                            placeholder="Morocco"
-                                        />
+                                        >
+                                            <option value="">
+                                                {t('experts.filters.all')}
+                                            </option>
+                                            {countryOptions.map((country) => (
+                                                <option
+                                                    key={country.value}
+                                                    value={country.value}
+                                                >
+                                                    {country.label}
+                                                </option>
+                                            ))}
+                                        </select>
                                         {errors.country ? (
                                             <p className="mt-1 text-xs text-alpha-danger">
                                                 {errors.country}
@@ -372,82 +378,127 @@ export default function BecomeExpert() {
                                         ) : null}
                                     </div>
 
-                                    <div>
-                                        <label className="mb-2 block text-sm font-semibold text-tblack">
-                                            <TransText
-                                                en="City"
-                                                fr="Ville"
-                                                ar="المدينة"
+                                    {['en', 'fr', 'ar'].map((lang) => (
+                                        <div key={`city-${lang}`}>
+                                            <label className="mb-2 block text-sm font-semibold text-tblack">
+                                                <TransText
+                                                    en="City"
+                                                    fr="Ville"
+                                                    ar="المدينة"
+                                                />{' '}
+                                                ({lang.toUpperCase()})
+                                            </label>
+                                            <input
+                                                value={data.city?.[lang] ?? ''}
+                                                onChange={(e) =>
+                                                    setTri(
+                                                        'city',
+                                                        lang,
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                className={inputClass}
                                             />
-                                        </label>
-                                        <input
-                                            value={data.city}
-                                            onChange={(e) =>
-                                                setData('city', e.target.value)
-                                            }
-                                            className={inputClass}
-                                            placeholder="Casablanca"
-                                        />
-                                        {errors.city ? (
-                                            <p className="mt-1 text-xs text-alpha-danger">
-                                                {errors.city}
-                                            </p>
-                                        ) : null}
-                                    </div>
+                                            {errors[`city.${lang}`] ? (
+                                                <p className="mt-1 text-xs text-alpha-danger">
+                                                    {
+                                                        errors[
+                                                            `city.${lang}`
+                                                        ]
+                                                    }
+                                                </p>
+                                            ) : null}
+                                        </div>
+                                    ))}
 
-                                    <div>
+                                    <div className="sm:col-span-2">
                                         <label className="mb-2 block text-sm font-semibold text-tblack">
                                             <TransText
-                                                en="Industries (comma separated)"
-                                                fr="Secteurs (séparés par des virgules)"
-                                                ar="القطاعات (مفصولة بفواصل)"
+                                                en="Languages"
+                                                fr="Langues"
+                                                ar="اللغات"
                                             />
                                         </label>
                                         <input
-                                            value={data.industries_text}
+                                            value={languageQuery}
                                             onChange={(e) =>
-                                                setData(
-                                                    'industries_text',
+                                                setLanguageQuery(
                                                     e.target.value,
                                                 )
                                             }
                                             className={inputClass}
-                                            placeholder="economics, media, policy"
+                                            placeholder="Search language"
                                         />
-                                        {errors.industries ? (
-                                            <p className="mt-1 text-xs text-alpha-danger">
-                                                {errors.industries}
-                                            </p>
-                                        ) : getFirstArrayError(
-                                              'industries.',
-                                          ) ? (
-                                            <p className="mt-1 text-xs text-alpha-danger">
-                                                {getFirstArrayError(
-                                                    'industries.',
+                                        <div className="mt-2 max-h-56 overflow-y-auto rounded-md border border-border bg-background p-3">
+                                            <div className="grid gap-2 sm:grid-cols-2">
+                                                {filteredLanguageOptions.map(
+                                                    (language) => {
+                                                        const checked =
+                                                            (
+                                                                data.languages ??
+                                                                []
+                                                            ).includes(
+                                                                language.value,
+                                                            );
+
+                                                        return (
+                                                            <label
+                                                                key={
+                                                                    language.value
+                                                                }
+                                                                className={[
+                                                                    'flex cursor-pointer items-center gap-2 rounded-md border px-2 py-1.5 text-sm',
+                                                                    checked
+                                                                        ? 'border-beta-blue bg-beta-blue/10'
+                                                                        : 'border-border bg-card',
+                                                                ].join(' ')}
+                                                            >
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={
+                                                                        checked
+                                                                    }
+                                                                    onChange={(
+                                                                        e,
+                                                                    ) => {
+                                                                        setData(
+                                                                            'languages',
+                                                                            e
+                                                                                .target
+                                                                                .checked
+                                                                                ? [
+                                                                                      ...(data.languages ??
+                                                                                          []),
+                                                                                      language.value,
+                                                                                  ]
+                                                                                : (
+                                                                                      data.languages ??
+                                                                                      []
+                                                                                  ).filter(
+                                                                                      (
+                                                                                          item,
+                                                                                      ) =>
+                                                                                          item !==
+                                                                                          language.value,
+                                                                                  ),
+                                                                        );
+                                                                    }}
+                                                                />
+                                                                <span>
+                                                                    {
+                                                                        language.label
+                                                                    }
+                                                                </span>
+                                                            </label>
+                                                        );
+                                                    },
                                                 )}
-                                            </p>
-                                        ) : null}
-                                    </div>
-
-                                    <div>
-                                        <label className="mb-2 block text-sm font-semibold text-tblack">
-                                            <TransText
-                                                en="Languages (comma separated)"
-                                                fr="Langues (séparées par des virgules)"
-                                                ar="اللغات (مفصولة بفواصل)"
-                                            />
-                                        </label>
-                                        <input
-                                            value={data.languages_text}
-                                            onChange={(e) =>
-                                                setData(
-                                                    'languages_text',
-                                                    e.target.value,
-                                                )
-                                            }
-                                            className={inputClass}
-                                            placeholder="en, fr, ar"
-                                        />
+                                            </div>
+                                        </div>
+                                        <p className="mt-1 text-xs text-muted-foreground">
+                                            Selected:{' '}
+                                            {(data.languages ?? []).length}
+                                        </p>
                                         {errors.languages ? (
                                             <p className="mt-1 text-xs text-alpha-danger">
                                                 {errors.languages}

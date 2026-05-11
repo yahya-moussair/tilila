@@ -32,6 +32,16 @@ function statusClass(status) {
     }
 }
 
+function getCityLabel(application) {
+    return (
+        application?.city_i18n?.en ||
+        application?.city_i18n?.fr ||
+        application?.city_i18n?.ar ||
+        application?.city ||
+        ''
+    );
+}
+
 export default function AdminExpertApplicationsIndex({
     applications,
     filters,
@@ -250,7 +260,7 @@ export default function AdminExpertApplicationsIndex({
                                             </div>
                                             <div className="text-xs text-tgray">
                                                 {[
-                                                    application.city,
+                                                    getCityLabel(application),
                                                     application.country,
                                                 ]
                                                     .filter(Boolean)

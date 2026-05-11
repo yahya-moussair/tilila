@@ -20,16 +20,38 @@ export default function ExpertsIndex({ experts: expertsProp = [] }) {
         availability: 'all',
     });
 
+    const getCityLabel = (expert) => {
+        if (!expert) {
+            return '';
+        }
+
+        const cityByLocale =
+            locale === 'ar'
+                ? expert.city_i18n?.ar
+                : locale === 'fr'
+                  ? expert.city_i18n?.fr
+                  : expert.city_i18n?.en;
+
+        return (
+            cityByLocale ||
+            expert.city_i18n?.en ||
+            expert.city_i18n?.fr ||
+            expert.city_i18n?.ar ||
+            expert.location ||
+            ''
+        );
+    };
+
     const locationOptions = useMemo(
         () =>
             Array.from(
                 new Set(
                     (expertsProp ?? [])
-                        .map((item) => item.location)
+                        .map((item) => getCityLabel(item))
                         .filter(Boolean),
                 ),
             ).sort((a, b) => a.localeCompare(b)),
-        [expertsProp],
+        [expertsProp, locale],
     );
 
     const filterLabels = useMemo(
@@ -124,7 +146,7 @@ export default function ExpertsIndex({ experts: expertsProp = [] }) {
             const selectedLocation = filters.location.trim().toLowerCase();
             list = list.filter(
                 (expert) =>
-                    String(expert.location ?? '').trim().toLowerCase() ===
+                    String(getCityLabel(expert)).trim().toLowerCase() ===
                     selectedLocation,
             );
         }
@@ -146,7 +168,7 @@ export default function ExpertsIndex({ experts: expertsProp = [] }) {
                         .map((tag) => tag.en)
                         .join(' ')
                         .toLowerCase();
-                    const location = (expert.location ?? '').toLowerCase();
+                    const location = getCityLabel(expert).toLowerCase();
                     const haystack = [
                         nameEn,
                         nameFr,
@@ -418,7 +440,11 @@ export default function ExpertsIndex({ experts: expertsProp = [] }) {
                                         disabled={currentPage === 1}
                                         className="rounded-md border border-border bg-card px-3 py-2 font-semibold text-muted-foreground shadow-sm hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
                                     >
-                                        Previous
+                                        <TransText
+                                            en="Previous"
+                                            fr="Précédent"
+                                            ar="السابق"
+                                        />
                                     </button>
 
                                     {paginationButtons.map((item) =>
@@ -449,7 +475,11 @@ export default function ExpertsIndex({ experts: expertsProp = [] }) {
                                         disabled={currentPage === totalPages}
                                         className="rounded-md border border-border bg-card px-3 py-2 font-semibold text-muted-foreground shadow-sm hover:text-foreground disabled:cursor-not-allowed disabled:opacity-50"
                                     >
-                                        Next
+                                        <TransText
+                                            en="Next"
+                                            fr="Suivant"
+                                            ar="التالي"
+                                        />
                                     </button>
                                 </div>
                             ) : null}

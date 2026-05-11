@@ -2,6 +2,7 @@ import React from 'react';
 import { Instagram, Linkedin, Mail, Twitter } from 'lucide-react';
 import TransText from '@/components/TransText';
 import { useTranslation } from '@/contexts/TranslationContext';
+import { buildCountryOptions } from '@/components/helpers/expert-form-options';
 
 /** @param {string | null | undefined} url */
 function withHttps(url) {
@@ -17,12 +18,6 @@ function withHttps(url) {
 
 export default function ProfileSidebar({ expert, details }) {
     const { locale, t } = useTranslation();
-    const resolvedName =
-        locale === 'ar'
-            ? expert.name?.ar
-            : locale === 'fr'
-              ? expert.name?.fr
-              : expert.name?.en;
 
     const socials = details?.socials ?? {};
     const linkedin = withHttps(socials.linkedin);
@@ -46,52 +41,37 @@ export default function ProfileSidebar({ expert, details }) {
                             />
                         ) : null}
                     </div>
-                    {expert.badge ? (
-                        <div className="absolute top-4 left-4 rounded-full bg-beta-green px-2.5 py-1 text-xs font-semibold text-alpha-green ring-1 ring-border">
-                            {expert.badge.toUpperCase()}
-                        </div>
-                    ) : null}
                 </div>
 
                 <div className="p-5">
                     <div className="flex items-center justify-between gap-3">
                         <div>
                             <div className="text-lg font-extrabold text-foreground">
-                                {resolvedName}
+                                <TransText
+                                    {...expert?.name}
+                                />
                             </div>
                             <div className="mt-1 text-sm text-muted-foreground">
                                 <TransText
-                                    en={expert.title?.en ?? ''}
-                                    fr={expert.title?.fr ?? ''}
-                                    ar={expert.title?.ar ?? ''}
+                                    {...expert?.title}
                                 />
                             </div>
                         </div>
-
-                        <button
-                            type="button"
-                            className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-background/80 text-muted-foreground shadow-sm ring-1 ring-border backdrop-blur hover:text-foreground"
-                            aria-label={t('experts.actions.addToFavoritesAria')}
-                        >
-                            <span className="text-lg leading-none">♡</span>
-                        </button>
                     </div>
 
                     <div className="mt-4 flex flex-wrap gap-2">
-                        {(details?.headlineTags ?? expert.tags ?? [])
-                            .slice(0, 3)
-                            .map((tg) => (
-                                <span
-                                    key={tg.en}
-                                    className="rounded-full bg-secondary px-2.5 py-1 text-xs font-semibold text-secondary-foreground"
-                                >
-                                    <TransText
-                                        en={tg.en}
-                                        fr={tg.fr}
-                                        ar={tg.ar}
-                                    />
-                                </span>
-                            ))}
+                        <span
+                            className="rounded-full bg-secondary px-2.5 py-1 text-xs font-semibold text-secondary-foreground"
+                        >
+                            {buildCountryOptions(locale).find(option => option.value === expert?.country)?.label}
+                        </span>
+                        <span
+                            className="rounded-full bg-secondary px-2.5 py-1 text-xs font-semibold text-secondary-foreground"
+                        >
+                            <TransText
+                                {...expert?.city_i18n}
+                            />
+                        </span>
                     </div>
 
                     {linkedin || twitter || instagram || email ? (

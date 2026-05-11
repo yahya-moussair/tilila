@@ -93,6 +93,16 @@ function statusClass(status) {
     }
 }
 
+function getCityLabel(application) {
+    return (
+        application?.city_i18n?.en ||
+        application?.city_i18n?.fr ||
+        application?.city_i18n?.ar ||
+        application?.city ||
+        ''
+    );
+}
+
 export default function AdminExpertApplicationShow({ application }) {
     setLayoutProps({
         breadcrumbs: [
@@ -170,7 +180,7 @@ export default function AdminExpertApplicationShow({ application }) {
                             <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                                 <span className="inline-flex items-center gap-1">
                                     <MapPin className="size-4" />
-                                    {a.city || '—'}
+                                    {getCityLabel(a) || '—'}
                                     {a.country ? `, ${a.country}` : ''}
                                 </span>
                                 <span className="inline-flex items-center gap-1">
@@ -267,7 +277,7 @@ export default function AdminExpertApplicationShow({ application }) {
                             <Row label="Phone" value={a.phone} />
                             <Row label="Locale" value={a.locale} />
                             <Row label="Country" value={a.country} />
-                            <Row label="City" value={a.city} />
+                            <Row label="City" value={getCityLabel(a)} />
                         </SectionCard>
 
                         <SectionCard

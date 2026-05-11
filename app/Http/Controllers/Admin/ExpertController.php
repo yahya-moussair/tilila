@@ -25,6 +25,9 @@ class ExpertController extends Controller
                 $q->where('email', 'like', $like)
                     ->orWhere('status', 'like', $like)
                     ->orWhere('country', 'like', $like)
+                    ->orWhere('city_i18n->en', 'like', $like)
+                    ->orWhere('city_i18n->fr', 'like', $like)
+                    ->orWhere('city_i18n->ar', 'like', $like)
                     ->orWhere('location', 'like', $like);
 
                 foreach (['en', 'fr', 'ar'] as $loc) {
@@ -74,7 +77,7 @@ class ExpertController extends Controller
                         (string) ($expert->email ?? ''),
                         (string) ($expert->status ?? ''),
                         (string) ($expert->country ?? ''),
-                        is_string($expert->location) ? $expert->location : '',
+                        (string) ($expert->city_i18n['en'] ?? $expert->city_i18n['fr'] ?? $expert->city_i18n['ar'] ?? $expert->location ?? ''),
                         $industries,
                     ], $delimiter);
                 }
@@ -96,6 +99,9 @@ class ExpertController extends Controller
                 $q->where('email', 'like', $like)
                     ->orWhere('status', 'like', $like)
                     ->orWhere('country', 'like', $like)
+                    ->orWhere('city_i18n->en', 'like', $like)
+                    ->orWhere('city_i18n->fr', 'like', $like)
+                    ->orWhere('city_i18n->ar', 'like', $like)
                     ->orWhere('location', 'like', $like);
 
                 foreach (['en', 'fr', 'ar'] as $loc) {
@@ -176,7 +182,7 @@ class ExpertController extends Controller
             'name' => $expert->name,
             'title' => $expert->title,
             'tags' => $expert->tags ?? [],
-            'location' => $this->normalizeLocationForForm($expert->location),
+            'location' => $this->normalizeLocationForForm($expert->city_i18n, $expert->location),
             'country' => $expert->country,
             'industries' => $expert->industries ?? [],
             'languages' => $expert->languages ?? [],
@@ -257,8 +263,12 @@ class ExpertController extends Controller
         ];
     }
 
-    private function normalizeLocationForForm(mixed $location): string
+    private function normalizeLocationForForm(mixed $cityI18n, mixed $location): string
     {
+        if (is_array($cityI18n)) {
+            return (string) ($cityI18n['en'] ?? $cityI18n['fr'] ?? $cityI18n['ar'] ?? '');
+        }
+
         if (is_string($location)) {
             return $location;
         }

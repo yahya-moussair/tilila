@@ -34,6 +34,16 @@ class ExpertController extends Controller
         if (is_array($incoming['socials'] ?? null)) {
             $details['socials'] = array_merge($defaults['socials'], $incoming['socials']);
         }
+        if (
+            (! is_array($details['city_i18n'] ?? null) || ($details['city_i18n']['en'] ?? '') === '')
+            && is_array($expert->city_i18n)
+        ) {
+            $details['city_i18n'] = [
+                'en' => trim((string) ($expert->city_i18n['en'] ?? $expert->location)),
+                'fr' => trim((string) ($expert->city_i18n['fr'] ?? $expert->city_i18n['en'] ?? $expert->location)),
+                'ar' => trim((string) ($expert->city_i18n['ar'] ?? $expert->city_i18n['en'] ?? $expert->location)),
+            ];
+        }
 
         return Inertia::render('experts/[id]', [
             'id' => $expert->id,
@@ -56,6 +66,7 @@ class ExpertController extends Controller
                 'twitter' => '',
                 'instagram' => '',
             ],
+            'city_i18n' => ['en' => '', 'fr' => '', 'ar' => ''],
             'expertise' => [],
             'journey' => [],
             'appearances' => [],
