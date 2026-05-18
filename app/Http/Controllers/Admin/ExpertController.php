@@ -25,7 +25,9 @@ class ExpertController extends Controller
                 $q->where('email', 'like', $like)
                     ->orWhere('status', 'like', $like)
                     ->orWhere('country', 'like', $like)
-                    ->orWhere('location', 'like', $like);
+                    ->orWhere('city_i18n->en', 'like', $like)
+                    ->orWhere('city_i18n->fr', 'like', $like)
+                    ->orWhere('city_i18n->ar', 'like', $like);
 
                 foreach (['en', 'fr', 'ar'] as $loc) {
                     $q->orWhere("name->{$loc}", 'like', $like);
@@ -58,15 +60,12 @@ class ExpertController extends Controller
                 'email',
                 'status',
                 'country',
-                'location',
-                'industries',
+                'city',
             ], $delimiter);
 
             $query->chunkById(200, function ($rows) use ($out, $delimiter): void {
                 foreach ($rows as $expert) {
                     /** @var Expert $expert */
-                    $industries = is_array($expert->industries) ? implode('|', $expert->industries) : '';
-
                     fputcsv($out, [
                         $expert->id,
                         (string) ($expert->name['en'] ?? ''),
@@ -74,8 +73,7 @@ class ExpertController extends Controller
                         (string) ($expert->email ?? ''),
                         (string) ($expert->status ?? ''),
                         (string) ($expert->country ?? ''),
-                        is_string($expert->location) ? $expert->location : '',
-                        $industries,
+                        (string) ($expert->city_i18n['en'] ?? $expert->city_i18n['fr'] ?? $expert->city_i18n['ar'] ?? ''),
                     ], $delimiter);
                 }
             });
@@ -96,7 +94,9 @@ class ExpertController extends Controller
                 $q->where('email', 'like', $like)
                     ->orWhere('status', 'like', $like)
                     ->orWhere('country', 'like', $like)
-                    ->orWhere('location', 'like', $like);
+                    ->orWhere('city_i18n->en', 'like', $like)
+                    ->orWhere('city_i18n->fr', 'like', $like)
+                    ->orWhere('city_i18n->ar', 'like', $like);
 
                 foreach (['en', 'fr', 'ar'] as $loc) {
                     $q->orWhere("name->{$loc}", 'like', $like);
@@ -166,6 +166,28 @@ class ExpertController extends Controller
             ->with('success', 'Expert deleted.');
     }
 
+    public function feature(Request $request, Expert $expert): RedirectResponse
+    {
+        $data = $request->validate([
+            'on_front' => ['required', 'boolean'],
+        ]);
+
+        if ($expert->status !== 'published') {
+            return back()->with('error', 'Only published experts can be featured.');
+        }
+
+        $expert->update([
+            'on_front' => (bool) $data['on_front'],
+        ]);
+
+        return back()->with(
+            'success',
+            $expert->on_front
+                ? 'Expert featured on the front section.'
+                : 'Expert removed from the front section.'
+        );
+    }
+
     /**
      * @return array<string, mixed>
      */
@@ -176,11 +198,8 @@ class ExpertController extends Controller
             'name' => $expert->name,
             'title' => $expert->title,
             'tags' => $expert->tags ?? [],
-            'location' => $this->normalizeLocationForForm($expert->location),
             'country' => $expert->country,
-            'industries' => $expert->industries ?? [],
             'languages' => $expert->languages ?? [],
-            'badge' => $expert->badge,
             'status' => $expert->status,
             'email' => $expert->email,
             'image_url' => $expert->image_url,
@@ -195,34 +214,22 @@ class ExpertController extends Controller
     private function normalizeDetailsForForm(?array $details): array
     {
         $base = [
-            'headlineTags' => [],
             'bio' => [],
-            'quote' => ['en' => '', 'fr' => '', 'ar' => ''],
             'socials' => [
                 'linkedin' => '',
                 'twitter' => '',
                 'instagram' => '',
             ],
             'expertise' => [],
-            'journey' => [],
-            'appearances' => [],
-            'articles' => [],
         ];
 
         if (! is_array($details)) {
             return $base;
         }
 
-        $base['headlineTags'] = is_array($details['headlineTags'] ?? null)
-            ? $details['headlineTags']
-            : [];
         $base['bio'] = is_array($details['bio'] ?? null)
             ? $details['bio']
             : [];
-        $base['quote'] = array_merge(
-            $base['quote'],
-            is_array($details['quote'] ?? null) ? $details['quote'] : []
-        );
         $socialIn = is_array($details['socials'] ?? null) ? $details['socials'] : [];
         $base['socials'] = [
             'linkedin' => trim((string) ($socialIn['linkedin'] ?? '')),
@@ -231,15 +238,6 @@ class ExpertController extends Controller
         ];
         $base['expertise'] = is_array($details['expertise'] ?? null)
             ? $details['expertise']
-            : [];
-        $base['journey'] = is_array($details['journey'] ?? null)
-            ? $details['journey']
-            : [];
-        $base['appearances'] = is_array($details['appearances'] ?? null)
-            ? $details['appearances']
-            : [];
-        $base['articles'] = is_array($details['articles'] ?? null)
-            ? $details['articles']
             : [];
 
         return $base;
@@ -255,19 +253,6 @@ class ExpertController extends Controller
         return [
             'image' => $file->store('experts', 'public'),
         ];
-    }
-
-    private function normalizeLocationForForm(mixed $location): string
-    {
-        if (is_string($location)) {
-            return $location;
-        }
-
-        if (is_array($location)) {
-            return (string) ($location['en'] ?? $location['fr'] ?? $location['ar'] ?? '');
-        }
-
-        return '';
     }
 
     private function uniqueSlugFromName(string $englishName, ?int $ignoreId = null): string
@@ -307,14 +292,9 @@ class ExpertController extends Controller
             'title.fr' => 'nullable|string|max:500',
             'title.ar' => 'nullable|string|max:500',
             'tags' => 'nullable|array',
-            'location' => 'nullable|string|max:512',
             'country' => 'required|string|max:255',
-            'region_scope' => 'nullable|in:morocco,africa,diaspora,other',
-            'industries' => 'nullable|array',
-            'industries.*' => 'string|max:64',
             'languages' => 'nullable|array',
             'languages.*' => 'string|max:8',
-            'badge' => 'nullable|string|max:64',
             'status' => 'required|in:draft,pending,published,suspended',
             'email' => 'nullable|email|max:255',
             'remove_image' => 'sometimes|boolean',
@@ -329,17 +309,7 @@ class ExpertController extends Controller
 
         // Optional keys are omitted from $validated when absent — avoid undefined index (PHP 8+).
         $validated['tags'] = $validated['tags'] ?? [];
-        $validated['location'] = $validated['location'] ?? null;
-        $validated['industries'] = $validated['industries'] ?? [];
         $validated['languages'] = $validated['languages'] ?? [];
-
-        if ($validated['tags'] === [] && $validated['industries'] !== []) {
-            $validated['tags'] = array_map(static function (string $ind) {
-                $label = ucfirst(str_replace('-', ' ', $ind));
-
-                return ['en' => $label, 'fr' => $label, 'ar' => $label];
-            }, $validated['industries']);
-        }
 
         $validated['details'] = $this->normalizeDetailsForForm($validated['details'] ?? null);
 

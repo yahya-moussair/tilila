@@ -17,6 +17,24 @@ class DashboardController extends Controller
         ]);
     }
 
+    public function network(Request $request): Response
+    {
+        $currentExpert = Expert::query()->where('user_id', $request->user()->id)->firstOrFail();
+
+        $experts = Expert::query()
+            ->where('status', 'published')
+            ->orderBy('id')
+            ->get()
+            ->map(fn (Expert $expert) => $expert->toDirectoryArray())
+            ->values();
+
+        return Inertia::render('expert/network', [
+            'expert' => $this->resolveExpert($request),
+            'currentExpertId' => $currentExpert->id,
+            'experts' => $experts,
+        ]);
+    }
+
     /**
      * @return array<string, mixed>
      */
@@ -31,7 +49,7 @@ class DashboardController extends Controller
             'email' => $expert->email,
             'status' => $expert->status,
             'country' => $expert->country,
-            'location' => $expert->location,
+            'city_i18n' => $expert->city_i18n,
             'updated_at' => optional($expert->updated_at)?->toISOString(),
         ];
     }

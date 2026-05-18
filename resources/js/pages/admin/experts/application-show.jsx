@@ -93,6 +93,19 @@ function statusClass(status) {
     }
 }
 
+function getCityLabel(application) {
+    return (
+        application?.city_i18n?.en ||
+        application?.city_i18n?.fr ||
+        application?.city_i18n?.ar ||
+        ''
+    );
+}
+
+function getI18nValue(value) {
+    return value?.en || value?.fr || value?.ar || '';
+}
+
 export default function AdminExpertApplicationShow({ application }) {
     setLayoutProps({
         breadcrumbs: [
@@ -101,15 +114,15 @@ export default function AdminExpertApplicationShow({ application }) {
                 href: '/admin/dashboard',
             },
             {
-                title: 'Expert Applications',
+                title: 'Expertes Applications',
                 href: '/admin/expert-applications',
             },
             {
-                title: `Request #${application?.id ?? ''}`,
+                title: `#${application?.id ?? ''}`,
                 href: '#',
             }
         ],
-        title: `Expert Application #${application?.id ?? ''}`,
+        title: `Experte Application #${application?.id ?? ''}`,
         description:
             'Review the details of this expert application and accept or deny it accordingly.',
     });
@@ -117,7 +130,6 @@ export default function AdminExpertApplicationShow({ application }) {
     const a = application ?? {};
     const [denyOpen, setDenyOpen] = useState(false);
     const [denyNote, setDenyNote] = useState('');
-    const industries = Array.isArray(a.industries) ? a.industries : [];
     const languages = Array.isArray(a.languages) ? a.languages : [];
     const submittedAt = a.created_at
         ? new Date(a.created_at).toLocaleString()
@@ -162,15 +174,15 @@ export default function AdminExpertApplicationShow({ application }) {
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                         <div>
                             <p className="text-xs font-semibold tracking-[0.3em] text-tgray uppercase">
-                                Experts Directory
+                                Expertes Directory jnnnn
                             </p>
                             <h1 className="mt-2 text-2xl font-bold tracking-tight text-tblack sm:text-3xl">
-                                {a.full_name || 'Application details'}
+                                {getI18nValue(a.name_i18n) || 'Application details'}
                             </h1>
                             <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                                 <span className="inline-flex items-center gap-1">
                                     <MapPin className="size-4" />
-                                    {a.city || '—'}
+                                    {getCityLabel(a) || '—'}
                                     {a.country ? `, ${a.country}` : ''}
                                 </span>
                                 <span className="inline-flex items-center gap-1">
@@ -256,6 +268,12 @@ export default function AdminExpertApplicationShow({ application }) {
                                         : ''
                                 }
                             />
+                            {a.status !== 'pending' ? (
+                                <Row
+                                    label="Featured on front"
+                                    value={a.expert?.on_front ? 'Yes' : 'No'}
+                                />
+                            ) : null}
                             <Row label="Admin notes" value={a.admin_notes} />
                         </SectionCard>
 
@@ -267,7 +285,7 @@ export default function AdminExpertApplicationShow({ application }) {
                             <Row label="Phone" value={a.phone} />
                             <Row label="Locale" value={a.locale} />
                             <Row label="Country" value={a.country} />
-                            <Row label="City" value={a.city} />
+                            <Row label="City" value={getCityLabel(a)} />
                         </SectionCard>
 
                         <SectionCard
@@ -280,14 +298,11 @@ export default function AdminExpertApplicationShow({ application }) {
                                     items={[
                                         {
                                             label: 'Name',
-                                            value:
-                                                a.name_i18n?.en || a.full_name,
+                                            value: a.name_i18n?.en,
                                         },
                                         {
                                             label: 'Current title',
-                                            value:
-                                                a.title_i18n?.en ||
-                                                a.current_title,
+                                            value: a.title_i18n?.en,
                                         },
                                     ]}
                                 />
@@ -330,13 +345,11 @@ export default function AdminExpertApplicationShow({ application }) {
                                     items={[
                                         {
                                             label: 'Expertise',
-                                            value:
-                                                a.expertise_i18n?.en ||
-                                                a.expertise,
+                                            value: a.expertise_i18n?.en,
                                         },
                                         {
                                             label: 'Bio',
-                                            value: a.bio_i18n?.en || a.bio,
+                                            value: a.bio_i18n?.en,
                                         },
                                     ]}
                                 />
@@ -370,17 +383,9 @@ export default function AdminExpertApplicationShow({ application }) {
                         </SectionCard>
 
                         <SectionCard
-                            title="Industries and Languages"
-                            description="Focus industries and spoken languages."
+                            title="Languages"
+                            description="Spoken languages from the application."
                         >
-                            <div>
-                                <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-                                    Industries
-                                </p>
-                                <div className="mt-2">
-                                    <TagList items={industries} />
-                                </div>
-                            </div>
                             <div>
                                 <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                                     Languages
@@ -395,7 +400,10 @@ export default function AdminExpertApplicationShow({ application }) {
                             title="Social Links"
                             description="Optional public profiles."
                         >
-                            <Row label="LinkedIn" value={a.linkedin_url} />
+                            <Row
+                                label="LinkedIn"
+                                value={a.socials?.linkedin}
+                            />
                             <Row
                                 label="Twitter / X"
                                 value={a.socials?.twitter}
@@ -404,7 +412,10 @@ export default function AdminExpertApplicationShow({ application }) {
                                 label="Instagram"
                                 value={a.socials?.instagram}
                             />
-                            <Row label="Portfolio" value={a.portfolio_url} />
+                            <Row
+                                label="Portfolio"
+                                value={a.socials?.portfolio}
+                            />
                         </SectionCard>
                     </div>
 

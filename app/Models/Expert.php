@@ -15,13 +15,13 @@ class Expert extends Model
         'name',
         'title',
         'tags',
-        'location',
+        'city_i18n',
         'country',
         'region_scope',
         'industries',
         'languages',
-        'badge',
         'status',
+        'on_front',
         'email',
         'image',
         'details',
@@ -49,9 +49,10 @@ class Expert extends Model
             'name' => 'array',
             'title' => 'array',
             'tags' => 'array',
-            'industries' => 'array',
+            'city_i18n' => 'array',
             'languages' => 'array',
             'details' => 'array',
+            'on_front' => 'boolean',
             'last_activity_at' => 'datetime',
         ];
     }
@@ -64,28 +65,6 @@ class Expert extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    /**
-     * Single-line location for directory / cards (legacy JSON rows are normalized).
-     */
-    protected function locationPlain(): string
-    {
-        $v = $this->location;
-
-        if ($v === null || $v === '') {
-            return '';
-        }
-
-        if (is_string($v)) {
-            return $v;
-        }
-
-        if (is_array($v)) {
-            return (string) ($v['en'] ?? $v['fr'] ?? $v['ar'] ?? '');
-        }
-
-        return '';
     }
 
     /**
@@ -129,12 +108,10 @@ class Expert extends Model
             'name' => $this->name,
             'title' => $this->title,
             'tags' => $this->tags ?? [],
-            'location' => $this->locationPlain(),
+            'city_i18n' => $this->city_i18n,
             'country' => $this->country,
-            'region_scope' => $this->region_scope,
-            'industries' => $this->industries ?? [],
             'languages' => $this->languages ?? [],
-            'badge' => $this->badge,
+            'on_front' => (bool) $this->on_front,
             'image' => $this->image_url,
             'email' => $this->email,
         ];

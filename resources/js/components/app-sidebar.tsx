@@ -84,8 +84,13 @@ const adminModuleItems: NavItem[] = [
 
 const expertModuleItems: NavItem[] = [
     {
-        title: 'My Profile',
+        title: 'Information',
         href: '/expert/profile',
+        icon: Users,
+    },
+    {
+        title: 'Network',
+        href: '/expert/network',
         icon: Users,
     },
 ];
