@@ -15,6 +15,8 @@ export default function AdminTililaEditionsCreate() {
         year: '',
         edition_label: emptyTri(),
         theme: emptyTri(),
+        cover_image: null,
+        cover_image_path: null,
         winners: [],
         jury: [],
         gallery_images: [],

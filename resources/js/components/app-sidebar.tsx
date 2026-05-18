@@ -1,5 +1,14 @@
 import { Link, usePage } from '@inertiajs/react';
-import { Calendar, LayoutGrid, Megaphone, Trophy, Users } from 'lucide-react';
+import {
+    Calendar,
+    LayoutGrid,
+    Mail,
+    Megaphone,
+    Newspaper,
+    Trophy,
+    Users,
+} from 'lucide-react';
+
 import { NavUser } from '@/components/nav-user';
 import {
     Sidebar,
@@ -21,6 +30,26 @@ const adminModuleItems: NavItem[] = [
         href: '/admin/expert-applications',
         icon: Users,
     },
+    {
+        title: 'Tililab Editions',
+        href: '/admin/tililab/editions',
+        icon: Trophy,
+    },
+    {
+        title: 'Tilila Editions',
+        href: '/admin/tilila/editions',
+        icon: Trophy,
+    },
+    {
+        title: 'Tilila Submissions',
+        href: '/admin/tilila/participants',
+        icon: Users,
+    },
+    {   
+        title: 'Tililab Participants',
+        href: '/admin/tililab/participants',
+        icon: Users,
+    },
     // {
     //     title: 'Media',
     //     href: '/admin/media',
@@ -35,6 +64,16 @@ const adminModuleItems: NavItem[] = [
         title: 'Events',
         href: '/admin/events',
         icon: Calendar,
+    },
+    {
+        title: 'Home highlights',
+        href: '/admin/home-highlights',
+        icon: Newspaper,
+    },
+    {
+        title: 'Connect requests',
+        href: '/admin/tilila-connect-requests',
+        icon: Mail,
     },
     // {
     //     title: 'Community',

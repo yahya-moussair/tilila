@@ -33,7 +33,10 @@ function daysUntil(iso) {
     return Math.ceil((t - now) / (1000 * 60 * 60 * 24));
 }
 
-export default function OpportunitiesIndex({ opportunities = [] }) {
+export default function OpportunitiesIndex({
+    opportunities = [],
+    opportunitiesBasePath = '/opportunities',
+}) {
     const { locale, t } = useTranslation();
     const [query, setQuery] = useState('');
     const [sort, setSort] = useState('newest');
@@ -233,6 +236,7 @@ export default function OpportunitiesIndex({ opportunities = [] }) {
                                         <OpportunityCard
                                             key={item.id}
                                             item={item}
+                                            basePath={opportunitiesBasePath}
                                         />
                                     ))}
                                 </div>

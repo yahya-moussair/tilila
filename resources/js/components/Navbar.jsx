@@ -23,28 +23,14 @@ export default function Navbar() {
                 href: home(),
             },
             { en: 'About', fr: 'À propos', ar: 'حول', href: '/about' },
-            { en: 'Tililab', fr: 'Tililab', ar: 'تيليلاب', href: '/tililab' },
-            { en: 'Tilila', fr: 'Tilila', ar: 'تيليلا', href: '/tilila' },
-            // {
-            //     en: 'Governance',
-            //     fr: 'Gouvernance',
-            //     ar: 'الحوكمة',
-            //     href: '/gouvernance',
-            // },
-            { en: 'Experts', fr: 'Expertes', ar: 'الخبيرات', href: '/experts' },
             {
                 en: 'Events',
                 fr: 'Événements',
                 ar: 'الفعاليات',
                 href: '/events',
             },
-            {
-                en: 'Opportunities',
-                fr: 'Opportunités',
-                ar: 'الفرص',
-                href: '/opportunities',
-            },
-            // { en: 'Media', fr: 'Média', ar: 'الوسائط', href: '/media' },
+            { en: 'Experts', fr: 'Expertes', ar: 'الخبيرات', href: '/experts' },
+            { en: 'Learn', fr: 'Learn', ar: 'تعلم', href: '/learn' },
         ],
         [],
     );
@@ -115,6 +101,8 @@ export default function Navbar() {
 
     const authButtonClass =
         'inline-flex items-center justify-center rounded-full bg-alpha-blue px-5 py-2 text-sm font-semibold text-beta-blue transition-colors hover:bg-beta-blue hover:text-twhite';
+    const registerButtonClass =
+        'inline-flex items-center justify-center rounded-full border border-beta-blue/30 bg-transparent px-5 py-2 text-sm font-semibold text-beta-blue transition-colors hover:bg-beta-blue hover:text-twhite';
     const dashboardHref =
         auth?.user?.role === 'expert' ? '/expert/dashboard' : '/admin/dashboard';
 
@@ -138,7 +126,7 @@ export default function Navbar() {
                     />
                 </Link>
 
-                <nav className="hidden flex-1 items-center justify-center gap-8 md:flex">
+                <nav className="hidden flex-1 items-center justify-center gap-6 lg:gap-8 md:flex">
                     {navItems.map((item) => (
                         <Link
                             key={item.href}
@@ -161,8 +149,18 @@ export default function Navbar() {
                     ))}
                 </nav>
 
-                <div className="ml-auto flex items-center gap-3">
-                    <LanguageSwitcher className="hidden md:flex" />
+                <div className="ml-auto hidden items-center gap-3 md:flex">
+                    <Link
+                        href="/experts"
+                        className={registerButtonClass}
+                    >
+                        <TransText
+                            en="Find an expert"
+                            fr="Trouver une experte"
+                            ar="اعثر على خبيرة"
+                        />
+                    </Link>
+                    <LanguageSwitcher />
                     {auth?.user ? (
                         <Link href={dashboardHref} className={authButtonClass}>
                             <TransText
@@ -246,6 +244,17 @@ export default function Navbar() {
                                     />
                                 </Link>
                             ))}
+                            <Link
+                                href="/experts"
+                                className={`${registerButtonClass} justify-center`}
+                                onClick={closeMobile}
+                            >
+                                <TransText
+                                    en="Find an expert"
+                                    fr="Trouver une experte"
+                                    ar="اعثر على خبيرة"
+                                />
+                            </Link>
                             <div className="my-2 border-t border-border" />
                             {auth?.user ? (
                                 <Link

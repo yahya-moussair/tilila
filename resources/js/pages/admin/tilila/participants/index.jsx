@@ -120,7 +120,7 @@ export default function AdminTililaSubmissionsIndex({
                         <Input
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            placeholder="Search by name, email, org, title…"
+                            placeholder="Search by name, email, title…"
                             className="h-10 pl-10"
                             name="search"
                         />
@@ -154,9 +154,6 @@ export default function AdminTililaSubmissionsIndex({
                                 <TableHead className="py-3 text-tgray uppercase sm:px-3">
                                     Submission
                                 </TableHead>
-                                <TableHead className="py-3 text-tgray uppercase sm:px-3">
-                                    Submitted
-                                </TableHead>
                                 <TableHead className="py-3 text-right text-tgray uppercase sm:px-3">
                                     Actions
                                 </TableHead>
@@ -166,7 +163,7 @@ export default function AdminTililaSubmissionsIndex({
                             {data.length === 0 ? (
                                 <TableRow>
                                     <TableCell
-                                        colSpan={4}
+                                        colSpan={3}
                                         className="py-14 text-center text-sm text-muted-foreground"
                                     >
                                         No submissions found.
@@ -174,12 +171,26 @@ export default function AdminTililaSubmissionsIndex({
                                 </TableRow>
                             ) : (
                                 data.map((p) => (
-                                    <TableRow key={p.id}>
+                                    <TableRow
+                                        key={p.id}
+                                        className="cursor-pointer hover:bg-muted/40"
+                                        onClick={() =>
+                                            router.visit(
+                                                `/admin/tilila/participants/${p.id}`,
+                                            )
+                                        }
+                                    >
                                         <TableCell className="py-4 sm:px-3">
                                             <div className="min-w-0">
-                                                <div className="truncate font-semibold text-foreground">
+                                                <Link
+                                                    href={`/admin/tilila/participants/${p.id}`}
+                                                    className="truncate font-semibold text-foreground hover:underline"
+                                                    onClick={(e) =>
+                                                        e.stopPropagation()
+                                                    }
+                                                >
                                                     {p.first_name} {p.last_name}
-                                                </div>
+                                                </Link>
                                                 <div className="truncate text-xs text-muted-foreground">
                                                     {p.email ?? '—'}
                                                 </div>
@@ -189,43 +200,23 @@ export default function AdminTililaSubmissionsIndex({
                                             <div className="truncate text-sm text-foreground">
                                                 {p.submission_title ?? '—'}
                                             </div>
-                                            <div className="truncate text-xs text-muted-foreground">
-                                                {p.organization ?? ''}
-                                            </div>
-                                        </TableCell>
-                                        <TableCell className="py-4 text-sm text-foreground sm:px-3">
-                                            {p.created_at
-                                                ? new Date(
-                                                      p.created_at,
-                                                  ).toLocaleString()
-                                                : '—'}
                                         </TableCell>
                                         <TableCell className="py-4 text-right sm:px-3">
                                             <div className="inline-flex items-center justify-end gap-2">
-                                                <Button
-                                                    asChild
-                                                    size="sm"
-                                                    variant="outline"
-                                                >
-                                                    <Link
-                                                        href={`/admin/tilila/participants/${p.id}`}
-                                                    >
-                                                        Details
-                                                    </Link>
-                                                </Button>
                                                 {p.submission_link ? (
                                                     <Button
                                                         type="button"
                                                         size="sm"
                                                         variant="outline"
                                                         className="gap-2"
-                                                        onClick={() =>
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
                                                             window.open(
                                                                 p.submission_link,
                                                                 '_blank',
                                                                 'noopener,noreferrer',
-                                                            )
-                                                        }
+                                                            );
+                                                        }}
                                                     >
                                                         <ExternalLink className="size-4" />
                                                         Link
@@ -236,7 +227,8 @@ export default function AdminTililaSubmissionsIndex({
                                                     size="sm"
                                                     variant="ghost"
                                                     className="text-alpha-danger"
-                                                    onClick={() => {
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
                                                         if (
                                                             confirm(
                                                                 'Delete this submission? This cannot be undone.',

@@ -66,6 +66,14 @@ function buildExpertPayload(data) {
         name: rest.name,
         title: rest.title,
         country: rest.country,
+        region_scope:
+            typeof rest.region_scope === 'string' && rest.region_scope.trim() !== ''
+                ? rest.region_scope.trim()
+                : null,
+        industries: String(industriesStr ?? '')
+            .split(',')
+            .map((s) => s.trim())
+            .filter(Boolean),
         languages: String(languagesStr ?? '')
             .split(',')
             .map((s) => s.trim())
@@ -132,6 +140,8 @@ export default function AdminExpertsEdit({ expert, statuses = [] }) {
         name: expert.name ?? { en: '', fr: '', ar: '' },
         title: expert.title ?? { en: '', fr: '', ar: '' },
         country: expert.country ?? 'Morocco',
+        region_scope: expert.region_scope ?? '',
+        industriesStr: (expert.industries ?? []).join(', '),
         languagesStr: (expert.languages ?? []).join(', '),
         status: expert.status ?? 'draft',
         email: expert.email ?? '',
@@ -475,6 +485,43 @@ export default function AdminExpertsEdit({ expert, statuses = [] }) {
                                             />
                                             <InputError
                                                 message={errors.country}
+                                            />
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="region_scope">
+                                                Catalog region
+                                            </Label>
+                                            <select
+                                                id="region_scope"
+                                                value={data.region_scope}
+                                                onChange={(e) =>
+                                                    setData(
+                                                        'region_scope',
+                                                        e.target.value,
+                                                    )
+                                                }
+                                                className={cn(
+                                                    'flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-xs ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none',
+                                                )}
+                                            >
+                                                <option value="">
+                                                    Auto / unspecified
+                                                </option>
+                                                <option value="morocco">
+                                                    Morocco
+                                                </option>
+                                                <option value="africa">
+                                                    Africa
+                                                </option>
+                                                <option value="diaspora">
+                                                    Diaspora
+                                                </option>
+                                                <option value="other">
+                                                    Other
+                                                </option>
+                                            </select>
+                                            <InputError
+                                                message={errors.region_scope}
                                             />
                                         </div>
                                         <div className="space-y-2">

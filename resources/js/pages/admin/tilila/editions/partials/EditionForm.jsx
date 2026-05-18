@@ -188,10 +188,11 @@ function PersonRow({ peopleKey, idx, person, updateRow, removeRow }) {
     );
 }
 
-function PeopleSection({ title, peopleKey, data, setData }) {
+function PeopleSection({ title, peopleKey, data, setData, maxItems }) {
     const rows = Array.isArray(data?.[peopleKey]) ? data[peopleKey] : [];
 
     const addRow = () => {
+        if (typeof maxItems === 'number' && rows.length >= maxItems) return;
         setData(peopleKey, [
             ...rows,
             {
@@ -226,7 +227,14 @@ function PeopleSection({ title, peopleKey, data, setData }) {
                         Add name, photo, and a short bio.
                     </div>
                 </div>
-                <Button type="button" variant="outline" onClick={addRow}>
+                <Button
+                    type="button"
+                    variant="outline"
+                    onClick={addRow}
+                    disabled={
+                        typeof maxItems === 'number' && rows.length >= maxItems
+                    }
+                >
                     Add
                 </Button>
             </div>
@@ -297,6 +305,12 @@ export default function EditionForm({
     onSubmit,
     processing,
 }) {
+    const coverExistingSrc = data?.cover_image_path
+        ? `/storage/${data.cover_image_path}`
+        : '';
+    const coverPreviewUrl = useFilePreview(data?.cover_image ?? null);
+    const coverSrc = coverPreviewUrl || coverExistingSrc || '';
+
     const selectedGalleryFiles = Array.isArray(data?.gallery_images_files)
         ? data.gallery_images_files.filter((f) => f instanceof File)
         : [];
@@ -343,6 +357,55 @@ export default function EditionForm({
                         </div>
                     </div>
 
+                    <div className="mt-6">
+                        <div className="text-sm font-semibold text-foreground">
+                            Cover image (used in archive carousel)
+                        </div>
+                        <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-[220px_1fr] sm:items-start">
+                            <div className="overflow-hidden rounded-xl border border-border bg-muted">
+                                <div className="aspect-4/3">
+                                    {coverSrc ? (
+                                        <img
+                                            src={coverSrc}
+                                            alt=""
+                                            className="h-full w-full object-cover"
+                                            loading="lazy"
+                                            decoding="async"
+                                        />
+                                    ) : (
+                                        <div className="flex h-full w-full items-center justify-center text-xs font-semibold text-muted-foreground">
+                                            No cover image
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            <div>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    className="block w-full text-sm"
+                                    onChange={(e) =>
+                                        setData(
+                                            'cover_image',
+                                            e.target.files?.[0] ?? null,
+                                        )
+                                    }
+                                />
+                                <input
+                                    type="hidden"
+                                    value={data?.cover_image_path ?? ''}
+                                    readOnly
+                                />
+                                {errors?.cover_image ? (
+                                    <div className="mt-2 text-xs text-alpha-danger">
+                                        {errors.cover_image}
+                                    </div>
+                                ) : null}
+                            </div>
+                        </div>
+                    </div>
+
                     <div className="mt-6 space-y-6">
                         <TriInputs
                             label="Edition label"
@@ -367,6 +430,7 @@ export default function EditionForm({
                     peopleKey="winners"
                     data={data}
                     setData={setData}
+                    maxItems={1}
                 />
                 <PeopleSection
                     title="Jury"

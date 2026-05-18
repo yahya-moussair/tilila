@@ -1,15 +1,9 @@
-import { useForm } from '@inertiajs/react';
+import { useForm, usePage } from '@inertiajs/react';
 import { useEffect } from 'react';
+import { Award, CheckCircle2, ClipboardList } from 'lucide-react';
 
 import TransText from '@/components/TransText';
 import { Checkbox } from '@/components/ui/checkbox';
-import {
-    Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogHeader,
-    DialogTitle,
-} from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
@@ -25,37 +19,38 @@ function Field({ label, children, error }) {
     );
 }
 
-export default function ParticipateModal({ open, onOpenChange }) {
+export default function ParticipateSection() {
+    const flash = usePage().props?.flash ?? {};
     const { data, setData, post, processing, errors, clearErrors, reset } =
         useForm({
             first_name: '',
             last_name: '',
             email: '',
             phone: '',
-            organization: '',
-            job_title: '',
             city: '',
             country: 'ma',
             submission_title: '',
             submission_description: '',
             submission_link: '',
+            submission_video: null,
             accepted_rules: false,
         });
 
     useEffect(() => {
-        if (!open) {
-            clearErrors();
-        }
-    }, [open, clearErrors]);
+        clearErrors();
+    }, [clearErrors]);
 
     const submit = (e) => {
         e.preventDefault();
         clearErrors();
         post('/tilila/participate', {
-            preserveScroll: true,
+            preserveScroll: false,
+            forceFormData: true,
             onSuccess: () => {
                 reset();
-                onOpenChange(false);
+                requestAnimationFrame(() => {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
             },
             onError: () => {
                 requestAnimationFrame(() => {
@@ -69,33 +64,157 @@ export default function ParticipateModal({ open, onOpenChange }) {
     };
 
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-h-[85vh] overflow-hidden p-0 sm:max-w-4xl">
+        <section
+            id="tilila-participate-section"
+            className="relative mx-auto w-full max-w-7xl px-4 py-12 sm:px-6 lg:px-10"
+        >
+            <div className="pointer-events-none absolute inset-x-0 -top-24 h-48 bg-linear-to-b from-gold/10 via-beta-blue/5 to-transparent blur-2xl" />
+            {flash?.success ? (
+                <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-900">
+                    {flash.success}
+                </div>
+            ) : null}
+
+            <div className="mt-8 grid grid-cols-1 gap-6 lg:grid-cols-12 lg:items-start">
+                <div className="lg:col-span-5">
+                    <div className="rounded-3xl border border-border bg-white shadow-sm">
+                        <div className="px-6 pt-6 pb-4">
+                            <div className="text-xs font-semibold tracking-widest text-beta-blue uppercase">
+                                <TransText en="Notes" fr="Notes" ar="ملاحظات" />
+                            </div>
+                            <div className="mt-2 text-2xl font-semibold tracking-tight text-tblack">
+                                <TransText
+                                    en="Everything you need to know"
+                                    fr="Tout ce qu’il faut savoir"
+                                    ar="كل ما تحتاج معرفته"
+                                />
+                            </div>
+                            <div className="mt-2 text-sm leading-6 text-tgray">
+                                <TransText
+                                    en="Conditions, steps, and reward — explained clearly before you submit."
+                                    fr="Conditions, étapes et récompense — expliquées clairement avant de soumettre."
+                                    ar="الشروط والخطوات والمكافأة — شرح واضح قبل الإرسال."
+                                />
+                            </div>
+                        </div>
+
+                        <div className="space-y-3 px-4 pb-5 sm:px-6">
+                            <div className="rounded-2xl border border-border bg-beta-white p-5">
+                                <div className="flex items-center gap-3">
+                                    <div className="rounded-xl bg-beta-blue/10 p-2 text-beta-blue">
+                                        <ClipboardList className="size-5" />
+                                    </div>
+                                    <div className="text-sm font-bold tracking-wide text-tblack uppercase">
+                                        Conditions
+                                    </div>
+                                </div>
+                                <ul className="mt-4 space-y-2 text-sm leading-6 text-tgray">
+                                    <li className="flex gap-2">
+                                        <span className="mt-2 size-1.5 shrink-0 rounded-full bg-beta-blue/60" />
+                                        <span>
+                                            La participation pour l’édition en cours est ouverte
+                                            jusqu’à la date de clôture annoncée.
+                                        </span>
+                                    </li>
+                                    <li className="flex gap-2">
+                                        <span className="mt-2 size-1.5 shrink-0 rounded-full bg-beta-blue/60" />
+                                        <span>
+                                            Les publicités télévisuelles en concours doivent impérativement
+                                            avoir été diffusées (ou avoir une diffusion programmée) sur 2M
+                                            durant la période d’éligibilité.
+                                        </span>
+                                    </li>
+                                    <li className="flex gap-2">
+                                        <span className="mt-2 size-1.5 shrink-0 rounded-full bg-beta-blue/60" />
+                                        <span>Les campagnes digitales sont également éligibles.</span>
+                                    </li>
+                                    <li className="flex gap-2">
+                                        <span className="mt-2 size-1.5 shrink-0 rounded-full bg-beta-blue/60" />
+                                        <span>
+                                            Un comité de sélection présélectionne des spots inscrits et en retient
+                                            10 (dix) à soumettre à l’évaluation du jury.
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+
+                            <div className="rounded-2xl border border-border bg-beta-white p-5">
+                                <div className="flex items-center gap-3">
+                                    <div className="rounded-xl bg-gold/15 p-2 text-gold">
+                                        <CheckCircle2 className="size-5" />
+                                    </div>
+                                    <div className="text-sm font-bold tracking-wide text-tblack uppercase">
+                                        Étapes
+                                    </div>
+                                </div>
+                                <ul className="mt-4 space-y-2 text-sm leading-6 text-tgray">
+                                    {[
+                                        'Remplir le formulaire de participation.',
+                                        'Accepter le règlement du concours.',
+                                        'Un accusé de réception sera envoyé à l’adresse e-mail.',
+                                        'Les gagnants seront annoncés lors de la cérémonie Trophée Tilila.',
+                                    ].map((txt) => (
+                                        <li key={txt} className="flex gap-2">
+                                            <span className="mt-2 size-1.5 shrink-0 rounded-full bg-gold/70" />
+                                            <span>{txt}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+
+                            <div className="rounded-2xl border border-border bg-beta-white p-5">
+                                <div className="flex items-center gap-3">
+                                    <div className="rounded-xl bg-emerald-500/10 p-2 text-emerald-700">
+                                        <Award className="size-5" />
+                                    </div>
+                                    <div className="text-sm font-bold tracking-wide text-tblack uppercase">
+                                        Récompense
+                                    </div>
+                                </div>
+                                <ul className="mt-4 space-y-2 text-sm leading-6 text-tgray">
+                                    {[
+                                        'Le Trophée Tilila récompense les spots publicitaires les plus égalitaires et inclusifs.',
+                                        'Les annonceurs gagnants remporteront un trophée et un prix.',
+                                        'Les agences auteures des spots gagnants recevront un trophée.',
+                                    ].map((txt) => (
+                                        <li key={txt} className="flex gap-2">
+                                            <span className="mt-2 size-1.5 shrink-0 rounded-full bg-emerald-500/60" />
+                                            <span>{txt}</span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="lg:col-span-7">
+                    <div className="rounded-3xl border border-border bg-background shadow-sm">
                 <div className="border-b border-border bg-background/95 px-6 py-5 backdrop-blur supports-backdrop-filter:bg-background/80">
-                    <DialogHeader className="space-y-2">
-                        <DialogTitle className="text-xl">
+                    <div className="space-y-2">
+                        <div className="text-xl font-semibold text-foreground">
                             <TransText
                                 en="Participate in the Trophée Tilila"
                                 fr="Participer au Trophée Tilila"
                                 ar="المشاركة في جائزة تيليلا"
                             />
-                        </DialogTitle>
-                        <DialogDescription>
+                        </div>
+                        <div className="text-sm text-muted-foreground">
                             <TransText
                                 en="Fill in the participation form, accept the contest rules, and receive an acknowledgment by email."
                                 fr="Remplir le formulaire de participation, accepter le règlement du concours, puis recevoir un accusé de réception par e-mail."
                                 ar="املأ استمارة المشاركة، اقبل نظام المسابقة، وستصلك رسالة تأكيد عبر البريد الإلكتروني."
                             />
-                        </DialogDescription>
-                    </DialogHeader>
+                        </div>
+                    </div>
                 </div>
 
                 <form
                     onSubmit={submit}
                     id="tilila-participate-scroll"
-                    className="max-h-[calc(85vh-140px)] overflow-y-auto px-6 py-6"
+                    className="px-6 py-6"
                 >
-                    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                         <Field
                             label={
                                 <TransText
@@ -184,43 +303,6 @@ export default function ParticipateModal({ open, onOpenChange }) {
                             />
                         </Field>
 
-                        <div className="grid grid-cols-1 gap-5 sm:col-span-2 sm:grid-cols-2">
-                            <Field
-                                label={
-                                    <TransText
-                                        en="Organization"
-                                        fr="Organisation"
-                                        ar="المنظمة"
-                                    />
-                                }
-                                error={errors.organization}
-                            >
-                                <Input
-                                    value={data.organization}
-                                    onChange={(e) =>
-                                        setData('organization', e.target.value)
-                                    }
-                                />
-                            </Field>
-                            <Field
-                                label={
-                                    <TransText
-                                        en="Job title"
-                                        fr="Poste"
-                                        ar="المنصب"
-                                    />
-                                }
-                                error={errors.job_title}
-                            >
-                                <Input
-                                    value={data.job_title}
-                                    onChange={(e) =>
-                                        setData('job_title', e.target.value)
-                                    }
-                                />
-                            </Field>
-                        </div>
-
                         <div className="sm:col-span-2">
                             <Field
                                 label={
@@ -292,14 +374,24 @@ export default function ParticipateModal({ open, onOpenChange }) {
                             <Field
                                 label={
                                     <TransText
-                                        en="Submission link"
-                                        fr="Lien de soumission"
-                                        ar="رابط المشاركة"
+                                        en="Submission video (upload)"
+                                        fr="Vidéo de soumission (upload)"
+                                        ar="فيديو المشاركة (رفع)"
                                     />
                                 }
-                                error={errors.submission_link}
+                                error={errors.submission_video}
                             >
                                 <Input
+                                    type="file"
+                                    accept="video/*"
+                                    onChange={(e) =>
+                                        setData(
+                                            'submission_video',
+                                            e.target.files?.[0] ?? null,
+                                        )
+                                    }
+                                />
+                                {/* <Input
                                     type="url"
                                     placeholder="https://wetransfer.com/…"
                                     value={data.submission_link}
@@ -309,12 +401,12 @@ export default function ParticipateModal({ open, onOpenChange }) {
                                             e.target.value,
                                         )
                                     }
-                                />
+                                /> */}
                                 <div className="mt-2 text-xs text-muted-foreground">
                                     <TransText
-                                        en="Paste a link to your files (Drive, SwissTransfer, WeTransfer, Dropbox…)."
-                                        fr="Collez un lien vers vos fichiers (Drive, SwissTransfer, WeTransfer, Dropbox…)."
-                                        ar="الصق رابط ملفاتك (Drive أو SwissTransfer أو WeTransfer أو Dropbox...)."
+                                        en="Upload your video (recommended). If you prefer, you can still paste a link (Drive, SwissTransfer, WeTransfer, Dropbox…)."
+                                        fr="Téléversez votre vidéo (recommandé). Sinon, vous pouvez aussi coller un lien (Drive, SwissTransfer, WeTransfer, Dropbox…)."
+                                        ar="ارفعي الفيديو مباشرة (موصى به). أو يمكنك لصق رابط (Drive أو SwissTransfer أو WeTransfer أو Dropbox...)."
                                     />
                                 </div>
                             </Field>
@@ -388,7 +480,9 @@ export default function ParticipateModal({ open, onOpenChange }) {
                         </div>
                     </div>
                 </form>
-            </DialogContent>
-        </Dialog>
+                    </div>
+                </div>
+            </div>
+        </section>
     );
 }

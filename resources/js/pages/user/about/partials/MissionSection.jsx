@@ -8,10 +8,16 @@ const stats = [
         ar: 'سنة التأسيس',
     },
     {
-        value: '1000+',
-        en: 'Experts onboard',
-        fr: 'Expertes intégrées',
-        ar: 'خبيرات منضمات',
+        value: '4',
+        en: 'Pillars',
+        fr: 'Piliers',
+        ar: 'محاور',
+    },
+    {
+        value: '3',
+        en: 'Home news cards (max)',
+        fr: 'Cartes actu (max)',
+        ar: 'بطاقات أخبار (حد أقصى)',
     },
 ];
 
@@ -62,13 +68,13 @@ export default function MissionSection() {
 
                     <p className="mt-4 text-sm leading-6 text-tgray">
                         <TransText
-                            en="Through our programs and initiatives, we encourage participation, celebrate excellence, and provide resources that help media teams build stronger, fairer narratives."
-                            fr="Grâce à nos programmes et initiatives, nous encourageons la participation, célébrons l’excellence et fournissons des ressources qui aident les équipes médias à construire des récits plus solides et plus justes."
-                            ar="ومن خلال برامجنا ومبادراتنا، نشجع المشاركة ونحتفي بالتميز ونوفر موارد تساعد فرق الإعلام على بناء سرديات أقوى وأكثر إنصافًا."
+                            en="Our flagship activities include Tilila Awards, Tililab, and TiliTalks—plus an expert directory and CPD media resources (articles, podcasts, newsletters, video capsules)."
+                            fr="Nos actions phares : Tilila Awards, Tililab, TiliTalks—ainsi qu’un annuaire d’expertes et des ressources média CPD (articles, podcasts, newsletters, capsules vidéo)."
+                            ar="أنشطتنا الرئيسية: جوائز تيليلا وتيليلاب وTiliTalks—إضافةً إلى دليل الخبيرات وموارد إعلام CPD (مقالات وبودكاست ونشرات وكبسولات فيديو)."
                         />
                     </p>
 
-                    <div className="mt-8 grid grid-cols-2 gap-4">
+                    <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3">
                         {stats.map((item) => (
                             <div
                                 key={item.label}

@@ -14,19 +14,34 @@ class EventController extends Controller
 {
     public function index(Request $request): Response
     {
-        $events = Event::query()
+        $rows = Event::query()
             ->where('visibility', 'public')
             ->where('status', '!=', 'draft')
             ->orderByRaw('CASE WHEN date IS NULL THEN 1 ELSE 0 END')
             ->orderBy('date')
             ->orderBy('time')
             ->orderByDesc('id')
-            ->get()
-            ->map(fn (Event $e) => $this->publicIndexPayload($e));
+            ->get();
+
+        $events = $rows->map(fn (Event $e) => $this->publicIndexPayload($e));
+
+        $eventsByYear = [];
+        foreach ($rows as $e) {
+            if (! $e->date) {
+                continue;
+            }
+            $y = (int) $e->date->format('Y');
+            $eventsByYear[$y] = ($eventsByYear[$y] ?? 0) + 1;
+        }
+        ksort($eventsByYear);
+
+        $initialPanel = $request->query('view') === 'calendar' ? 'calendar' : 'hub';
 
         return Inertia::render('events/index', [
             'events' => $events,
             'eventStatuses' => ['upcoming', 'live', 'finished', 'archived'],
+            'eventsByYear' => $eventsByYear,
+            'eventsInitialPanel' => $initialPanel,
         ]);
     }
 

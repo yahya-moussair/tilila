@@ -10,9 +10,21 @@ function Row({ label, value }) {
             <div className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
                 {label}
             </div>
-            <div className="text-sm wrap-break-word text-foreground sm:col-span-3">
-                {value ?? '—'}
-            </div>
+            {typeof value === 'string' && value.startsWith('http') ? (
+                <a
+                    href={value}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-sm text-beta-blue hover:underline sm:col-span-3"
+                    onClick={(e) => e.stopPropagation()}
+                >
+                    {value}
+                </a>
+            ) : (
+                <div className="text-sm wrap-break-word text-foreground sm:col-span-3">
+                    {value ?? '—'}
+                </div>
+            )}
         </div>
     );
 }
@@ -33,12 +45,6 @@ export default function AdminTililaSubmissionShow({ participant }) {
                         <h1 className="text-2xl font-bold tracking-tight text-tblack">
                             {p.first_name} {p.last_name}
                         </h1>
-                        <p className="mt-1 text-sm text-tgray">
-                            Submitted{' '}
-                            {p.created_at
-                                ? new Date(p.created_at).toLocaleString()
-                                : '—'}
-                        </p>
                     </div>
 
                     <div className="flex flex-wrap gap-2">
@@ -61,6 +67,24 @@ export default function AdminTililaSubmissionShow({ participant }) {
                             >
                                 <ExternalLink className="size-4" />
                                 Open submission link
+                            </Button>
+                        ) : null}
+
+                        {p.submission_video_url ? (
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="gap-2"
+                                onClick={() =>
+                                    window.open(
+                                        p.submission_video_url,
+                                        '_blank',
+                                        'noopener,noreferrer',
+                                    )
+                                }
+                            >
+                                <ExternalLink className="size-4" />
+                                Open uploaded video
                             </Button>
                         ) : null}
 
@@ -95,20 +119,22 @@ export default function AdminTililaSubmissionShow({ participant }) {
                 <div className="space-y-4 rounded-xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
                     <Row label="Email" value={p.email} />
                     <Row label="Phone" value={p.phone} />
-                    <Row label="Organization" value={p.organization} />
-                    <Row label="Job title" value={p.job_title} />
                     <Row label="City" value={p.city} />
                     <Row label="Country" value={p.country} />
                     <Row label="Title" value={p.submission_title} />
                     <Row label="Description" value={p.submission_description} />
                     <Row label="Link" value={p.submission_link} />
-                    <Row
-                        label="Accepted rules"
-                        value={p.accepted_rules ? 'Yes' : 'No'}
-                    />
-                    <Row label="Locale" value={p.locale} />
-                    <Row label="IP" value={p.ip} />
-                    <Row label="User agent" value={p.user_agent} />
+                    {/* <Row label="Uploaded video" value={p.submission_video_url} /> */}
+                    {p.submission_video_url ? (
+                        <div className="pt-2">
+                            <video
+                                className="w-full rounded-lg ring-1 ring-border"
+                                controls
+                                preload="metadata"
+                                src={p.submission_video_url}
+                            />
+                        </div>
+                    ) : null}
                 </div>
             </div>
         </>

@@ -187,17 +187,50 @@ export default function TililabEditionDetails() {
                     </div>
                 </div>
 
-                <PeopleGrid
-                    title={
+                <nav
+                    className="mt-8 flex flex-wrap gap-2 text-sm font-semibold text-beta-blue"
+                    aria-label="Edition sections"
+                >
+                    <a href="#winners" className="hover:underline">
                         <TransText en="Winners" fr="Lauréats" ar="الفائزون" />
-                    }
-                    people={winners}
-                />
-                <PeopleGrid
-                    title={<TransText en="Jury" fr="Jury" ar="لجنة التحكيم" />}
-                    people={jury}
-                />
-                <GalleryGrid images={images} />
+                    </a>
+                    <span className="text-tgray">·</span>
+                    <a href="#jury" className="hover:underline">
+                        <TransText en="Jury" fr="Jury" ar="لجنة التحكيم" />
+                    </a>
+                    <span className="text-tgray">·</span>
+                    <a href="#gallery" className="hover:underline">
+                        <TransText en="Gallery" fr="Galerie" ar="المعرض" />
+                    </a>
+                </nav>
+
+                <div id="winners">
+                    <PeopleGrid
+                        title={
+                            <TransText
+                                en="Winners"
+                                fr="Lauréats"
+                                ar="الفائزون"
+                            />
+                        }
+                        people={winners}
+                    />
+                </div>
+                <div id="jury">
+                    <PeopleGrid
+                        title={
+                            <TransText
+                                en="Jury"
+                                fr="Jury"
+                                ar="لجنة التحكيم"
+                            />
+                        }
+                        people={jury}
+                    />
+                </div>
+                <div id="gallery">
+                    <GalleryGrid images={images} />
+                </div>
             </section>
         </>
     );

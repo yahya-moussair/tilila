@@ -10,8 +10,18 @@ import {
     buildLanguageOptions,
 } from '@/components/helpers/expert-form-options';
 
+const AFRICA_COUNTRY_LABELS = new Set([
+    'Senegal',
+    'Kenya',
+    'Nigeria',
+    'Tunisia',
+    'Egypt',
+    "Côte d'Ivoire",
+]);
+
 export default function ExpertsIndex({ experts: expertsProp = [] }) {
     const { locale, t } = useTranslation();
+    const [regionQuick, setRegionQuick] = useState('all');
     const [query, setQuery] = useState('');
     const [sort, setSort] = useState('relevance');
     const [view, setView] = useState('grid');
@@ -128,6 +138,21 @@ export default function ExpertsIndex({ experts: expertsProp = [] }) {
             );
         }
 
+        if (regionQuick === 'morocco') {
+            list = list.filter(
+                (e) =>
+                    e.region_scope === 'morocco' || e.country === 'Morocco',
+            );
+        } else if (regionQuick === 'africa') {
+            list = list.filter(
+                (e) =>
+                    e.region_scope === 'africa' ||
+                    (e.country && AFRICA_COUNTRY_LABELS.has(e.country)),
+            );
+        } else if (regionQuick === 'diaspora') {
+            list = list.filter((e) => e.region_scope === 'diaspora');
+        }
+
         if (filters.language !== 'all') {
             list = list.filter((expert) =>
                 (expert.languages ?? []).includes(filters.language),
@@ -221,6 +246,7 @@ export default function ExpertsIndex({ experts: expertsProp = [] }) {
         filters.location,
         locale,
         query,
+        regionQuick,
         sort,
         expertsProp,
     ]);
@@ -318,6 +344,88 @@ export default function ExpertsIndex({ experts: expertsProp = [] }) {
                 <div className="bg-twhite py-10">
                     <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
                         <div className="mx-auto max-w-5xl">
+                            <div className="flex flex-wrap items-center gap-2">
+                                <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                                    <TransText
+                                        en="Directory"
+                                        fr="Annuaire"
+                                        ar="الدليل"
+                                    />
+                                </span>
+                                {[
+                                    {
+                                        id: 'all',
+                                        en: 'All',
+                                        fr: 'Toutes',
+                                        ar: 'الكل',
+                                    },
+                                    {
+                                        id: 'morocco',
+                                        en: 'Morocco',
+                                        fr: 'Maroc',
+                                        ar: 'المغرب',
+                                    },
+                                    {
+                                        id: 'africa',
+                                        en: 'Africa',
+                                        fr: 'Afrique',
+                                        ar: 'إفريقيا',
+                                    },
+                                    {
+                                        id: 'diaspora',
+                                        en: 'Diaspora',
+                                        fr: 'Diaspora',
+                                        ar: 'الشتات',
+                                    },
+                                ].map((tab) => (
+                                    <button
+                                        key={tab.id}
+                                        type="button"
+                                        onClick={() =>
+                                            setRegionQuick(tab.id)
+                                        }
+                                        className={[
+                                            'rounded-full px-3 py-1.5 text-xs font-semibold ring-1 ring-border transition',
+                                            regionQuick === tab.id
+                                                ? 'bg-beta-blue text-white'
+                                                : 'bg-card text-muted-foreground hover:text-foreground',
+                                        ].join(' ')}
+                                    >
+                                        <TransText
+                                            en={tab.en}
+                                            fr={tab.fr}
+                                            ar={tab.ar}
+                                        />
+                                    </button>
+                                ))}
+                            </div>
+
+                            <div className="mt-6 flex flex-wrap gap-4 text-sm font-semibold text-beta-blue">
+                                <Link
+                                    href="/experts/connect"
+                                    className="hover:underline"
+                                >
+                                    Tilila Connect
+                                </Link>
+                                <Link href="/media" className="hover:underline">
+                                    <TransText
+                                        en="CPD Media"
+                                        fr="Média CPD"
+                                        ar="إعلام CPD"
+                                    />
+                                </Link>
+                                <Link
+                                    href="/events?view=calendar"
+                                    className="hover:underline"
+                                >
+                                    <TransText
+                                        en="Les Débats Tilila"
+                                        fr="Les Débats Tilila"
+                                        ar="نقاشات تيليلا"
+                                    />
+                                </Link>
+                            </div>
+
                             <FiltersBar
                                 advancedOnly
                                 locationOptions={locationOptions}

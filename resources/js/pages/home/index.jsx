@@ -1,21 +1,26 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
 import Hero from '@/pages/home/Partials/Hero';
+import HomeCtaStrip from '@/pages/home/Partials/HomeCtaStrip';
+import HomeNews from '@/pages/home/Partials/HomeNews';
 import ImpactStats from '@/pages/home/Partials/ImpactStats';
-import AudienceCards from '@/pages/home/Partials/AudienceCards';
-import Highlights from '@/pages/home/Partials/Highlights';
+import PillarTiles from '@/pages/home/Partials/PillarTiles';
+import FeaturedExperts from '@/pages/home/Partials/FeaturedExperts';
+import LatestMedia from '@/pages/home/Partials/LatestMedia';
+import QuickAgenda from '@/pages/home/Partials/QuickAgenda';
+import PartnersStrip from '@/pages/home/Partials/PartnersStrip';
 import { useTranslation } from '@/contexts/TranslationContext';
 
 export default function HomeIndex({
     canRegister = true,
-    tililaEdition = null,
-    tililabEdition = null,
     stats = null,
+    homeHighlights = [],
+    featuredExperts = [],
+    latestMedia = [],
+    quickAgenda = [],
+    partners = [],
 }) {
     const { t } = useTranslation();
-    const heroImageSrc = '/assets/hero.png';
-    const tropheeImageSrc = '/assets/trophee.png';
-    const talkImageSrc = '/assets/talk.png';
 
     return (
         <>
@@ -27,17 +32,16 @@ export default function HomeIndex({
                 />
             </Head>
 
-            <Hero imageSrc={heroImageSrc} />
+            <Hero />
+            <HomeCtaStrip />
+            <HomeNews items={homeHighlights} />
             <ImpactStats stats={stats} />
-            <AudienceCards />
-            <Highlights
-                tropheeImageSrc={tropheeImageSrc}
-                talkImageSrc={talkImageSrc}
-                tililaEdition={tililaEdition}
-                tililabEdition={tililabEdition}
-            />
+            <PillarTiles />
+            <FeaturedExperts items={featuredExperts} />
+            <LatestMedia items={latestMedia} />
+            <QuickAgenda items={quickAgenda} />
+            {/* <PartnersStrip items={partners} /> */}
 
-            {/* kept for future auth-related CTA wiring */}
             <div
                 className="sr-only"
                 data-can-register={canRegister ? '1' : '0'}

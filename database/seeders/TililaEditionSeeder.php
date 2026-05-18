@@ -67,15 +67,6 @@ class TililaEditionSeeder extends Seeder
                             ],
                             'photo_path' => $winnerPhoto,
                         ],
-                        [
-                            'full_name' => 'Meriem Benyahia',
-                            'bio' => [
-                                'en' => 'Recognized for storytelling with social impact.',
-                                'fr' => 'Distinguée pour un récit à impact social.',
-                                'ar' => 'تم تكريمها لسرد قصص ذات أثر اجتماعي.',
-                            ],
-                            'photo_path' => $winnerPhoto,
-                        ],
                     ],
                     'jury' => [
                         [

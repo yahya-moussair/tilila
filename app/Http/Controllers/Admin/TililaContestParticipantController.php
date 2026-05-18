@@ -22,8 +22,6 @@ class TililaContestParticipantController extends Controller
                 $q->where('first_name', 'like', $like)
                     ->orWhere('last_name', 'like', $like)
                     ->orWhere('email', 'like', $like)
-                    ->orWhere('organization', 'like', $like)
-                    ->orWhere('job_title', 'like', $like)
                     ->orWhere('submission_title', 'like', $like)
                     ->orWhere('country', 'like', $like)
                     ->orWhere('city', 'like', $like);
@@ -72,8 +70,6 @@ class TililaContestParticipantController extends Controller
                 $q->where('first_name', 'like', $like)
                     ->orWhere('last_name', 'like', $like)
                     ->orWhere('email', 'like', $like)
-                    ->orWhere('organization', 'like', $like)
-                    ->orWhere('job_title', 'like', $like)
                     ->orWhere('submission_title', 'like', $like)
                     ->orWhere('country', 'like', $like)
                     ->orWhere('city', 'like', $like);
@@ -97,12 +93,11 @@ class TililaContestParticipantController extends Controller
                 'last_name',
                 'email',
                 'phone',
-                'organization',
-                'job_title',
                 'city',
                 'country',
                 'submission_title',
                 'submission_link',
+                'submission_video_url',
                 'accepted_rules',
                 'created_at',
             ], $delimiter);
@@ -116,12 +111,11 @@ class TililaContestParticipantController extends Controller
                         (string) ($p->last_name ?? ''),
                         (string) ($p->email ?? ''),
                         (string) ($p->phone ?? ''),
-                        (string) ($p->organization ?? ''),
-                        (string) ($p->job_title ?? ''),
                         (string) ($p->city ?? ''),
                         (string) ($p->country ?? ''),
                         (string) ($p->submission_title ?? ''),
                         (string) ($p->submission_link ?? ''),
+                        (string) ($p->submission_video_url ?? ''),
                         $p->accepted_rules ? 'yes' : 'no',
                         optional($p->created_at)->toIso8601String(),
                     ], $delimiter);

@@ -3,14 +3,16 @@
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\ExpertApplicationController;
 use App\Http\Controllers\Admin\ExpertController;
+use App\Http\Controllers\Admin\HomeHighlightController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\MediaSidebarController;
 use App\Http\Controllers\Admin\OpportunityController;
+use App\Http\Controllers\Admin\TililabAnalyticsController;
+use App\Http\Controllers\Admin\TililabEditionController;
+use App\Http\Controllers\Admin\TililabParticipantController;
+use App\Http\Controllers\Admin\TililaConnectRequestController;
 use App\Http\Controllers\Admin\TililaContestParticipantController;
 use App\Http\Controllers\Admin\TililaEditionController;
-use App\Http\Controllers\Admin\TililabEditionController;
-use App\Http\Controllers\Admin\TililabAnalyticsController;
-use App\Http\Controllers\Admin\TililabParticipantController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -28,6 +30,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('opportunities', OpportunityController::class);
 
     Route::resource('events', EventController::class);
+
+    Route::resource('home-highlights', HomeHighlightController::class)
+        ->except(['show'])
+        ->names('home-highlights');
+
+    Route::get('tilila-connect-requests', [TililaConnectRequestController::class, 'index'])
+        ->name('tilila-connect-requests.index');
 
     Route::get('media/export.csv', [MediaController::class, 'exportCsv'])->name('media.export');
     Route::get('media/sidebar/edit', [MediaSidebarController::class, 'edit'])->name('media.sidebar.edit');

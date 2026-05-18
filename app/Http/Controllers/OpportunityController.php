@@ -21,15 +21,25 @@ class OpportunityController extends Controller
             ->get()
             ->map(fn (Opportunity $o) => $this->toListItem($o));
 
+        $basePath = str_starts_with($request->path(), 'learn/opportunities')
+            ? '/learn/opportunities'
+            : '/opportunities';
+
         return Inertia::render('opportunities/index', [
             'opportunities' => $opportunities,
+            'opportunitiesBasePath' => $basePath,
         ]);
     }
 
-    public function show(Opportunity $opportunity): Response
+    public function show(Request $request, Opportunity $opportunity): Response
     {
+        $basePath = str_starts_with($request->path(), 'learn/opportunities')
+            ? '/learn/opportunities'
+            : '/opportunities';
+
         return Inertia::render('opportunities/[id]', [
             'opportunity' => $this->toDetailsItem($opportunity),
+            'opportunitiesBasePath' => $basePath,
         ]);
     }
 
@@ -56,7 +66,7 @@ class OpportunityController extends Controller
         }
 
         DB::transaction(function () use ($request, $opportunity, $data, $resumePath): void {
-            /** @var \App\Models\Opportunity $locked */
+            /** @var Opportunity $locked */
             $locked = Opportunity::query()->whereKey($opportunity->id)->lockForUpdate()->firstOrFail();
 
             if ($locked->applications_limit !== null && $locked->applications_limit <= 0) {
@@ -186,4 +196,3 @@ class OpportunityController extends Controller
         ];
     }
 }
-

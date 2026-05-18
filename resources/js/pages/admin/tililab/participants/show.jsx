@@ -64,6 +64,24 @@ export default function AdminTililabParticipantShow({ participant }) {
                             </Button>
                         ) : null}
 
+                        {p.original_video_url ? (
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="gap-2"
+                                onClick={() =>
+                                    window.open(
+                                        p.original_video_url,
+                                        '_blank',
+                                        'noopener,noreferrer',
+                                    )
+                                }
+                            >
+                                <ExternalLink className="size-4" />
+                                Open uploaded video
+                            </Button>
+                        ) : null}
+
                         <Button
                             type="button"
                             variant="destructive"
@@ -101,6 +119,17 @@ export default function AdminTililabParticipantShow({ participant }) {
                     <Row label="Country" value={p.country} />
                     <Row label="Bio" value={p.bio} />
                     <Row label="Video link" value={p.original_video_link} />
+                    <Row label="Uploaded video" value={p.original_video_url} />
+                    {p.original_video_url ? (
+                        <div className="pt-2">
+                            <video
+                                className="w-full rounded-lg ring-1 ring-border"
+                                controls
+                                preload="metadata"
+                                src={p.original_video_url}
+                            />
+                        </div>
+                    ) : null}
                     <Row label="Locale" value={p.locale} />
                     <Row label="IP" value={p.ip} />
                     <Row label="User agent" value={p.user_agent} />

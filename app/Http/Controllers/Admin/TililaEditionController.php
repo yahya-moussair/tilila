@@ -51,6 +51,13 @@ class TililaEditionController extends Controller
         $data = $this->validated($request);
         $data['sort'] = (int) (TililaEdition::query()->max('sort') ?? 0) + 1;
 
+        $cover = $request->file('cover_image');
+        if ($cover instanceof UploadedFile && $cover->isValid()) {
+            $data['cover_image_path'] = $cover->store('tilila-editions/covers', 'public');
+        } else {
+            $data['cover_image_path'] = ($data['cover_image_path'] ?? null) ?: null;
+        }
+
         $edition = TililaEdition::query()->create($data);
 
         $edition->winners = $this->applyPeopleUploads($request, 'winners', 'tilila-editions/winners', []);
@@ -72,6 +79,19 @@ class TililaEditionController extends Controller
     public function update(Request $request, TililaEdition $edition): RedirectResponse
     {
         $data = $this->validated($request);
+
+        $cover = $request->file('cover_image');
+        if ($cover instanceof UploadedFile && $cover->isValid()) {
+            $old = $edition->cover_image_path;
+            if (is_string($old) && $old !== '') {
+                Storage::disk('public')->delete($old);
+            }
+            $data['cover_image_path'] = $cover->store('tilila-editions/covers', 'public');
+        } else {
+            // Keep existing unless explicitly cleared.
+            $data['cover_image_path'] = ($data['cover_image_path'] ?? null) ?: $edition->cover_image_path;
+        }
+
         $edition->update($data);
 
         $existingWinners = is_array($edition->winners) ? $edition->winners : [];
@@ -99,6 +119,10 @@ class TililaEditionController extends Controller
 
     public function destroy(TililaEdition $edition): RedirectResponse
     {
+        if (is_string($edition->cover_image_path) && $edition->cover_image_path !== '') {
+            Storage::disk('public')->delete($edition->cover_image_path);
+        }
+
         $winners = is_array($edition->winners) ? $edition->winners : [];
         foreach ($winners as $row) {
             if (! is_array($row)) {
@@ -146,7 +170,8 @@ class TililaEditionController extends Controller
             'theme.en' => ['nullable', 'string', 'max:255'],
             'theme.fr' => ['nullable', 'string', 'max:255'],
             'theme.ar' => ['nullable', 'string', 'max:255'],
-            'winners' => ['nullable', 'array'],
+            'cover_image_path' => ['nullable', 'string', 'max:500'],
+            'winners' => ['nullable', 'array', 'max:1'],
             'winners.*.full_name' => ['nullable', 'string', 'max:255'],
             'winners.*.bio' => ['nullable', 'array'],
             'winners.*.bio.en' => ['nullable', 'string', 'max:800'],
@@ -167,6 +192,12 @@ class TililaEditionController extends Controller
             'remove_gallery_images' => ['nullable', 'array'],
             'remove_gallery_images.*' => ['string', 'max:500'],
         ]);
+
+        if ($request->hasFile('cover_image')) {
+            $request->validate([
+                'cover_image' => ['file', 'image', 'max:10240'],
+            ]);
+        }
 
         if ($request->hasFile('gallery_images_files')) {
             $request->validate([

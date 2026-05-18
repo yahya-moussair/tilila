@@ -26,7 +26,10 @@ function Pill({ children, variant = 'secondary' }) {
     );
 }
 
-export default function OpportunityDetails({ opportunity }) {
+export default function OpportunityDetails({
+    opportunity,
+    opportunitiesBasePath = '/opportunities',
+}) {
     const { locale, t } = useTranslation();
 
     const resolve = (value) =>
@@ -59,7 +62,7 @@ export default function OpportunityDetails({ opportunity }) {
                         </Link>
                         <span aria-hidden="true">›</span>
                         <Link
-                            href="/opportunities"
+                            href={opportunitiesBasePath}
                             className="hover:text-foreground hover:underline"
                         >
                             <TransText
@@ -384,6 +387,7 @@ export default function OpportunityDetails({ opportunity }) {
                 onClose={() => setApplyOpen(false)}
                 opportunityTitle={details?.title ?? base?.title}
                 opportunitySlug={base?.slug ?? base?.id}
+                applyPathPrefix={opportunitiesBasePath}
             />
         </>
     );
