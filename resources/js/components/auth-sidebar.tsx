@@ -13,7 +13,7 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { home, login, register as registerRoute } from '@/routes';
+import { home, login } from '@/routes';
 import type { NavItem } from '@/types';
 
 const authNavItems: NavItem[] = [
@@ -29,7 +29,7 @@ const authNavItems: NavItem[] = [
     },
     {
         title: 'Register',
-        href: registerRoute.url(),
+        href: '/register',
         icon: UserPlus,
     },
 ];

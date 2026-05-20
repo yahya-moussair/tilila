@@ -32,6 +32,19 @@ function statusClass(status) {
     }
 }
 
+function getCityLabel(application) {
+    return (
+        application?.city_i18n?.en ||
+        application?.city_i18n?.fr ||
+        application?.city_i18n?.ar ||
+        ''
+    );
+}
+
+function getI18nValue(value) {
+    return value?.en || value?.fr || value?.ar || '';
+}
+
 export default function AdminExpertApplicationsIndex({
     applications,
     filters,
@@ -48,7 +61,7 @@ export default function AdminExpertApplicationsIndex({
                 href: '#',
             },
         ],
-        title: 'Expertes',
+        title: 'Expert Applications',
         description:
             'Manage applications submitted by experts who want to be listed in the directory.',
     });
@@ -69,7 +82,6 @@ export default function AdminExpertApplicationsIndex({
             '/admin/expert-applications',
             {
                 search,
-                status: filters?.status,
             },
             {
                 preserveState: true,
@@ -122,22 +134,7 @@ export default function AdminExpertApplicationsIndex({
         <>
             <Head title="Expert Applications" />
 
-            <div className="mx-auto flex w-full max-w-[min(100%,90rem)] flex-col gap-8 px-4 py-6 sm:gap-10 sm:px-6 sm:py-8 lg:px-10 lg:pb-10">
-                {/* <div className="flex flex-col gap-4 border-b border-border/60 pb-6 sm:pb-8 lg:flex-row lg:items-start lg:justify-between">
-                    <div>
-                        <p className="text-sm font-medium text-tgray">
-                            Experts Directory
-                        </p>
-                        <h1 className="text-2xl font-bold tracking-tight text-tblack">
-                            Become Expert Requests
-                        </h1>
-                        <p className="mt-1 max-w-2xl text-sm text-tgray">
-                            Review incoming expert applications and accept or
-                            deny each request.
-                        </p>
-                    </div>
-                </div> */}
-
+            <div className="mx-auto flex w-full max-w-[min(100%,90rem)] flex-col gap-8 px-4 py-4 sm:gap-10 md:px-6">
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                     <div className="rounded-xl border border-border/70 bg-card p-4">
                         <div className="text-xs text-tgray uppercase">
@@ -182,23 +179,20 @@ export default function AdminExpertApplicationsIndex({
                         <Input
                             value={search}
                             onChange={(e) => setSearch(e.target.value)}
-                            placeholder="Search by name, email, city or status..."
+                            placeholder="Search by name, email, title..."
                             className="h-10 pl-10"
                         />
                     </div>
                     <div className="flex gap-2">
-                        <Button type="submit" variant="secondary">
+                        <Button type="submit" variant="outline">
                             Search
                         </Button>
                         <Button
                             type="button"
-                            variant="outline"
+                            variant="secondary"
                             onClick={() => {
                                 setSearch('');
-                                router.get('/admin/expert-applications', {
-                                    search: '',
-                                    status: '',
-                                });
+                                router.get('/admin/expert-applications');
                             }}
                         >
                             Reset
@@ -242,15 +236,16 @@ export default function AdminExpertApplicationsIndex({
                                     <TableRow key={application.id}>
                                         <TableCell className="py-4 sm:px-3">
                                             <div className="font-semibold text-tblack">
-                                                {application.name_i18n?.en ||
-                                                    application.full_name}
+                                                {getI18nValue(
+                                                    application.name_i18n,
+                                                ) || '—'}
                                             </div>
                                             <div className="text-xs text-tgray">
                                                 {application.email}
                                             </div>
                                             <div className="text-xs text-tgray">
                                                 {[
-                                                    application.city,
+                                                    getCityLabel(application),
                                                     application.country,
                                                 ]
                                                     .filter(Boolean)
@@ -259,10 +254,9 @@ export default function AdminExpertApplicationsIndex({
                                         </TableCell>
                                         <TableCell className="max-w-sm py-4 text-sm text-tgray sm:px-3">
                                             <div className="line-clamp-2">
-                                                {application.expertise_i18n
-                                                    ?.en ||
-                                                    application.expertise ||
-                                                    '—'}
+                                                {getI18nValue(
+                                                    application.expertise_i18n,
+                                                ) || '—'}
                                             </div>
                                         </TableCell>
                                         <TableCell className="py-4 sm:px-3">
@@ -345,10 +339,6 @@ export default function AdminExpertApplicationsIndex({
                                                             Deny
                                                         </Button>
                                                     </>
-                                                ) : application.expert_id ? (
-                                                    <span className="text-xs font-medium text-alpha-green">
-                                                        Published
-                                                    </span>
                                                 ) : null}
                                             </div>
                                         </TableCell>

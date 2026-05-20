@@ -24,7 +24,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('expert-applications/{application}/review', [ExpertApplicationController::class, 'review'])->name('expert-applications.review');
 
     Route::get('experts/export.csv', [ExpertController::class, 'exportCsv'])->name('experts.export');
-    Route::resource('experts', ExpertController::class);
+    Route::patch('experts/{expert}/feature', [ExpertController::class, 'feature'])->name('experts.feature');
+    Route::post('experts/{expert}/expert-of-month', [ExpertController::class, 'storeExpertOfMonth'])
+        ->name('experts.expert-of-month.store');
+    Route::patch('expert-of-months/{expertOfMonth}', [ExpertController::class, 'updateExpertOfMonth'])
+        ->name('expert-of-months.update');
+    Route::delete('expert-of-months/{expertOfMonth}', [ExpertController::class, 'destroyExpertOfMonth'])
+        ->name('expert-of-months.destroy');
+    Route::get('experts', [ExpertController::class, 'index'])->name('experts.index');
 
     Route::get('opportunities/export.csv', [OpportunityController::class, 'exportCsv'])->name('opportunities.export');
     Route::resource('opportunities', OpportunityController::class);

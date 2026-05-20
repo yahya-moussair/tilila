@@ -123,6 +123,11 @@
     --sidebar-ring: var(--color-beta-blue);
 }
 
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 0rem;
+}
+
 .dark {
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
@@ -165,6 +170,14 @@
 
     body {
         @apply bg-background text-foreground;
+    }
+
+    button {
+        @apply cursor-pointer;
+
+        &:disabled {
+            @apply cursor-not-allowed;
+        }
     }
 }
 

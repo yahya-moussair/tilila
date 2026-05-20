@@ -4,11 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Expert;
+use App\Models\ExpertOfMonth;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -25,7 +23,9 @@ class ExpertController extends Controller
                 $q->where('email', 'like', $like)
                     ->orWhere('status', 'like', $like)
                     ->orWhere('country', 'like', $like)
-                    ->orWhere('location', 'like', $like);
+                    ->orWhere('city_i18n->en', 'like', $like)
+                    ->orWhere('city_i18n->fr', 'like', $like)
+                    ->orWhere('city_i18n->ar', 'like', $like);
 
                 foreach (['en', 'fr', 'ar'] as $loc) {
                     $q->orWhere("name->{$loc}", 'like', $like);
@@ -58,15 +58,12 @@ class ExpertController extends Controller
                 'email',
                 'status',
                 'country',
-                'location',
-                'industries',
+                'city',
             ], $delimiter);
 
             $query->chunkById(200, function ($rows) use ($out, $delimiter): void {
                 foreach ($rows as $expert) {
                     /** @var Expert $expert */
-                    $industries = is_array($expert->industries) ? implode('|', $expert->industries) : '';
-
                     fputcsv($out, [
                         $expert->id,
                         (string) ($expert->name['en'] ?? ''),
@@ -74,8 +71,7 @@ class ExpertController extends Controller
                         (string) ($expert->email ?? ''),
                         (string) ($expert->status ?? ''),
                         (string) ($expert->country ?? ''),
-                        is_string($expert->location) ? $expert->location : '',
-                        $industries,
+                        (string) ($expert->city_i18n['en'] ?? $expert->city_i18n['fr'] ?? $expert->city_i18n['ar'] ?? ''),
                     ], $delimiter);
                 }
             });
@@ -96,7 +92,9 @@ class ExpertController extends Controller
                 $q->where('email', 'like', $like)
                     ->orWhere('status', 'like', $like)
                     ->orWhere('country', 'like', $like)
-                    ->orWhere('location', 'like', $like);
+                    ->orWhere('city_i18n->en', 'like', $like)
+                    ->orWhere('city_i18n->fr', 'like', $like)
+                    ->orWhere('city_i18n->ar', 'like', $like);
 
                 foreach (['en', 'fr', 'ar'] as $loc) {
                     $q->orWhere("name->{$loc}", 'like', $like);
@@ -109,6 +107,28 @@ class ExpertController extends Controller
         }
 
         $experts = $query->paginate(15)->withQueryString();
+        $expertOfMonths = ExpertOfMonth::query()
+            ->with(['expert:id,name,title,image'])
+            ->orderByDesc('year')
+            ->orderByDesc('month')
+            ->get()
+            ->map(function (ExpertOfMonth $entry): array {
+                return [
+                    'id' => $entry->id,
+                    'month' => $entry->month,
+                    'year' => $entry->year,
+                    'video_url' => $entry->video_url,
+                    'expert' => $entry->expert
+                        ? [
+                            'id' => $entry->expert->id,
+                            'name' => $entry->expert->name,
+                            'title' => $entry->expert->title,
+                            'image_url' => $entry->expert->image_url,
+                        ]
+                        : null,
+                ];
+            })
+            ->values();
 
         return Inertia::render('admin/experts/index', [
             'experts' => $experts,
@@ -116,233 +136,76 @@ class ExpertController extends Controller
                 'search' => $request->query('search', ''),
                 'status' => $request->query('status', ''),
             ],
+            'expertOfMonths' => $expertOfMonths,
         ]);
     }
 
-    public function edit(Expert $expert): Response
+    public function feature(Request $request, Expert $expert): RedirectResponse
     {
-        return Inertia::render('admin/experts/edit', [
-            'expert' => $this->expertToForm($expert),
-            'statuses' => ['draft', 'pending', 'published', 'suspended'],
+        $data = $request->validate([
+            'on_front' => ['required', 'boolean'],
         ]);
-    }
 
-    public function update(Request $request, Expert $expert): RedirectResponse
-    {
-        $data = $this->validated($request, $expert);
-
-        if (($data['name']['en'] ?? '') !== ($expert->name['en'] ?? '')) {
-            $data['slug'] = $this->uniqueSlugFromName($data['name']['en'], $expert->id);
+        if ($expert->status !== 'published') {
+            return back()->with('error', 'Only published experts can be featured.');
         }
 
-        $removeImage = (bool) ($data['remove_image'] ?? false);
-        unset($data['remove_image']);
+        $expert->update([
+            'on_front' => (bool) $data['on_front'],
+        ]);
 
-        if ($request->hasFile('profile_image')) {
-            if ($expert->image) {
-                Storage::disk('public')->delete($expert->image);
-            }
-            $data = array_merge($data, $this->storeProfileImageFromUpload($request->file('profile_image')));
-        } elseif ($removeImage) {
-            if ($expert->image) {
-                Storage::disk('public')->delete($expert->image);
-            }
-            $data['image'] = null;
-        } else {
-            unset($data['image']);
-        }
-
-        $expert->update($data);
-
-        return redirect()->route('admin.experts.index')
-            ->with('success', 'Expert updated.');
-    }
-
-    public function destroy(Expert $expert): RedirectResponse
-    {
-        $expert->delete();
-
-        return redirect()->route('admin.experts.index')
-            ->with('success', 'Expert deleted.');
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function expertToForm(Expert $expert): array
-    {
-        return [
-            'id' => $expert->id,
-            'name' => $expert->name,
-            'title' => $expert->title,
-            'tags' => $expert->tags ?? [],
-            'location' => $this->normalizeLocationForForm($expert->location),
-            'country' => $expert->country,
-            'industries' => $expert->industries ?? [],
-            'languages' => $expert->languages ?? [],
-            'badge' => $expert->badge,
-            'status' => $expert->status,
-            'email' => $expert->email,
-            'image_url' => $expert->image_url,
-            'details' => $this->normalizeDetailsForForm($expert->details),
-        ];
-    }
-
-    /**
-     * @param  array<string, mixed>|null  $details
-     * @return array<string, mixed>
-     */
-    private function normalizeDetailsForForm(?array $details): array
-    {
-        $base = [
-            'headlineTags' => [],
-            'bio' => [],
-            'quote' => ['en' => '', 'fr' => '', 'ar' => ''],
-            'socials' => [
-                'linkedin' => '',
-                'twitter' => '',
-                'instagram' => '',
-            ],
-            'expertise' => [],
-            'journey' => [],
-            'appearances' => [],
-            'articles' => [],
-        ];
-
-        if (! is_array($details)) {
-            return $base;
-        }
-
-        $base['headlineTags'] = is_array($details['headlineTags'] ?? null)
-            ? $details['headlineTags']
-            : [];
-        $base['bio'] = is_array($details['bio'] ?? null)
-            ? $details['bio']
-            : [];
-        $base['quote'] = array_merge(
-            $base['quote'],
-            is_array($details['quote'] ?? null) ? $details['quote'] : []
+        return back()->with(
+            'success',
+            $expert->on_front
+                ? 'Expert featured on the front section.'
+                : 'Expert removed from the front section.'
         );
-        $socialIn = is_array($details['socials'] ?? null) ? $details['socials'] : [];
-        $base['socials'] = [
-            'linkedin' => trim((string) ($socialIn['linkedin'] ?? '')),
-            'twitter' => trim((string) ($socialIn['twitter'] ?? '')),
-            'instagram' => trim((string) ($socialIn['instagram'] ?? '')),
-        ];
-        $base['expertise'] = is_array($details['expertise'] ?? null)
-            ? $details['expertise']
-            : [];
-        $base['journey'] = is_array($details['journey'] ?? null)
-            ? $details['journey']
-            : [];
-        $base['appearances'] = is_array($details['appearances'] ?? null)
-            ? $details['appearances']
-            : [];
-        $base['articles'] = is_array($details['articles'] ?? null)
-            ? $details['articles']
-            : [];
-
-        return $base;
     }
 
-    /**
-     * Persist file on the public disk; DB stores only the relative path in `image`.
-     *
-     * @return array{image: string}
-     */
-    private function storeProfileImageFromUpload(UploadedFile $file): array
+    public function storeExpertOfMonth(Request $request, Expert $expert): RedirectResponse
     {
-        return [
-            'image' => $file->store('experts', 'public'),
-        ];
-    }
-
-    private function normalizeLocationForForm(mixed $location): string
-    {
-        if (is_string($location)) {
-            return $location;
+        if (! $expert->isPublished()) {
+            return back()->with('error', 'Only published experts can be featured.');
         }
 
-        if (is_array($location)) {
-            return (string) ($location['en'] ?? $location['fr'] ?? $location['ar'] ?? '');
-        }
-
-        return '';
-    }
-
-    private function uniqueSlugFromName(string $englishName, ?int $ignoreId = null): string
-    {
-        $base = Str::slug($englishName);
-        if ($base === '') {
-            $base = 'expert';
-        }
-
-        $slug = $base;
-        $n = 1;
-
-        while (
-            Expert::query()
-                ->when($ignoreId !== null, fn ($q) => $q->where('id', '!=', $ignoreId))
-                ->where('slug', $slug)
-                ->exists()
-        ) {
-            $slug = $base.'-'.$n++;
-        }
-
-        return $slug;
-    }
-
-    /**
-     * @return array<string, mixed>
-     */
-    private function validated(Request $request, ?Expert $expert = null): array
-    {
-        $validated = $request->validate([
-            'name' => 'required|array',
-            'name.en' => 'required|string|max:255',
-            'name.fr' => 'nullable|string|max:255',
-            'name.ar' => 'nullable|string|max:255',
-            'title' => 'required|array',
-            'title.en' => 'required|string|max:500',
-            'title.fr' => 'nullable|string|max:500',
-            'title.ar' => 'nullable|string|max:500',
-            'tags' => 'nullable|array',
-            'location' => 'nullable|string|max:512',
-            'country' => 'required|string|max:255',
-            'region_scope' => 'nullable|in:morocco,africa,diaspora,other',
-            'industries' => 'nullable|array',
-            'industries.*' => 'string|max:64',
-            'languages' => 'nullable|array',
-            'languages.*' => 'string|max:8',
-            'badge' => 'nullable|string|max:64',
-            'status' => 'required|in:draft,pending,published,suspended',
-            'email' => 'nullable|email|max:255',
-            'remove_image' => 'sometimes|boolean',
-            'details' => 'nullable|array',
+        $data = $request->validate([
+            'month' => ['required', 'integer', 'between:1,12'],
+            'year' => ['required', 'integer', 'between:2000,2100'],
+            'video_url' => ['required', 'string', 'max:2048', 'url'],
         ]);
 
-        if ($request->hasFile('profile_image')) {
-            $request->validate([
-                'profile_image' => ['required', 'file', 'max:5120', 'mimes:jpeg,png,webp,gif'],
-            ]);
-        }
+        ExpertOfMonth::query()->updateOrCreate(
+            [
+                'month' => (int) $data['month'],
+                'year' => (int) $data['year'],
+            ],
+            [
+                'expert_id' => $expert->id,
+                'video_url' => $data['video_url'],
+            ]
+        );
 
-        // Optional keys are omitted from $validated when absent — avoid undefined index (PHP 8+).
-        $validated['tags'] = $validated['tags'] ?? [];
-        $validated['location'] = $validated['location'] ?? null;
-        $validated['industries'] = $validated['industries'] ?? [];
-        $validated['languages'] = $validated['languages'] ?? [];
-
-        if ($validated['tags'] === [] && $validated['industries'] !== []) {
-            $validated['tags'] = array_map(static function (string $ind) {
-                $label = ucfirst(str_replace('-', ' ', $ind));
-
-                return ['en' => $label, 'fr' => $label, 'ar' => $label];
-            }, $validated['industries']);
-        }
-
-        $validated['details'] = $this->normalizeDetailsForForm($validated['details'] ?? null);
-
-        return $validated;
+        return back()->with('success', 'Expert of the month updated.');
     }
+
+    public function updateExpertOfMonth(Request $request, ExpertOfMonth $expertOfMonth): RedirectResponse
+    {
+        $data = $request->validate([
+            'video_url' => ['required', 'string', 'max:2048', 'url'],
+        ]);
+
+        $expertOfMonth->update([
+            'video_url' => $data['video_url'],
+        ]);
+
+        return back()->with('success', 'Expert of the month updated.');
+    }
+
+    public function destroyExpertOfMonth(ExpertOfMonth $expertOfMonth): RedirectResponse
+    {
+        $expertOfMonth->delete();
+
+        return back()->with('success', 'Expert of the month removed.');
+    }
+
 }

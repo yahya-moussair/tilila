@@ -27,23 +27,19 @@ export default function AreasOfExpertise({ items = [] }) {
                         />
                     </p>
                 ) : null}
-                {items.map((x) => (
+                {items.map((x, i) => (
                     <div
-                        key={x.title.en}
+                        key={i}
                         className="rounded-xl bg-background p-4 ring-1 ring-border"
                     >
                         <div className="text-sm font-extrabold text-foreground">
                             <TransText
-                                en={x.title.en}
-                                fr={x.title.fr}
-                                ar={x.title.ar}
+                                {...x.title}
                             />
                         </div>
                         <div className="mt-2 text-sm leading-relaxed text-muted-foreground">
                             <TransText
-                                en={x.description.en}
-                                fr={x.description.fr}
-                                ar={x.description.ar}
+                                {...x.description}
                             />
                         </div>
                     </div>

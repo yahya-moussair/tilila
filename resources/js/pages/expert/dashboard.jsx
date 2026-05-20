@@ -17,6 +17,19 @@ function getLocaleValue(value) {
     return '';
 }
 
+function getCityValue(expert) {
+    if (typeof expert?.city_i18n === 'object' && expert.city_i18n !== null) {
+        return (
+            expert.city_i18n.en ||
+            expert.city_i18n.fr ||
+            expert.city_i18n.ar ||
+            ''
+        );
+    }
+
+    return '';
+}
+
 export default function ExpertDashboard({ expert }) {
     setLayoutProps({
         breadcrumbs: [
@@ -63,7 +76,7 @@ export default function ExpertDashboard({ expert }) {
                     <div className="rounded-xl border border-border/70 bg-card p-4 shadow-sm">
                         <div className="text-xs text-tgray uppercase">City</div>
                         <div className="mt-1 text-lg font-semibold text-tblack">
-                            {expert?.location || '—'}
+                            {getCityValue(expert) || '—'}
                         </div>
                     </div>
                 </div>
@@ -78,6 +91,9 @@ export default function ExpertDashboard({ expert }) {
                         needed.
                     </p>
                     <div className="mt-4 flex flex-wrap gap-2">
+                        <Button asChild>
+                            <Link href="/expert/network">Explore network</Link>
+                        </Button>
                         <Button asChild variant="outline">
                             <Link href="/settings/profile">
                                 Profile settings

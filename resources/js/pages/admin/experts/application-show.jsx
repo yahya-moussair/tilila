@@ -11,6 +11,7 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import AppLayout from '@/layouts/app-layout';
+import { cn } from '@/lib/utils';
 
 function Row({ label, value }) {
     return (
@@ -25,9 +26,14 @@ function Row({ label, value }) {
     );
 }
 
-function SectionCard({ title, description, children }) {
+function SectionCard({ title, description, children, className = '' }) {
     return (
-        <section className="rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6">
+        <section
+            className={cn(
+                'rounded-2xl border border-border/70 bg-card p-5 shadow-sm sm:p-6',
+                className,
+            )}
+        >
             <div className="mb-4">
                 <h2 className="text-base font-semibold text-tblack">{title}</h2>
                 {description ? (
@@ -93,6 +99,19 @@ function statusClass(status) {
     }
 }
 
+function getCityLabel(application) {
+    return (
+        application?.city_i18n?.en ||
+        application?.city_i18n?.fr ||
+        application?.city_i18n?.ar ||
+        ''
+    );
+}
+
+function getI18nValue(value) {
+    return value?.en || value?.fr || value?.ar || '';
+}
+
 export default function AdminExpertApplicationShow({ application }) {
     setLayoutProps({
         breadcrumbs: [
@@ -101,15 +120,15 @@ export default function AdminExpertApplicationShow({ application }) {
                 href: '/admin/dashboard',
             },
             {
-                title: 'Expert Applications',
+                title: 'Expertes Applications',
                 href: '/admin/expert-applications',
             },
             {
-                title: `Request #${application?.id ?? ''}`,
+                title: `#${application?.id ?? ''}`,
                 href: '#',
-            }
+            },
         ],
-        title: `Expert Application #${application?.id ?? ''}`,
+        title: `Experte Application #${application?.id ?? ''}`,
         description:
             'Review the details of this expert application and accept or deny it accordingly.',
     });
@@ -117,7 +136,6 @@ export default function AdminExpertApplicationShow({ application }) {
     const a = application ?? {};
     const [denyOpen, setDenyOpen] = useState(false);
     const [denyNote, setDenyNote] = useState('');
-    const industries = Array.isArray(a.industries) ? a.industries : [];
     const languages = Array.isArray(a.languages) ? a.languages : [];
     const submittedAt = a.created_at
         ? new Date(a.created_at).toLocaleString()
@@ -155,22 +173,20 @@ export default function AdminExpertApplicationShow({ application }) {
 
     return (
         <>
-            <Head title={`Expert Request #${a.id ?? ''}`} />
+            <Head title={`Expert Application #${a.id ?? ''}`} />
 
-            <div className="mx-auto flex w-full max-w-[min(100%,72rem)] flex-col gap-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
+            <div className="mx-auto flex w-full max-w-[min(100%,90rem)] flex-col gap-8 px-4 py-4 sm:gap-10 md:px-6">
                 <div className="rounded-2xl border border-border/70 bg-card px-5 py-5 shadow-sm sm:px-6">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
                         <div>
-                            <p className="text-xs font-semibold tracking-[0.3em] text-tgray uppercase">
-                                Experts Directory
-                            </p>
                             <h1 className="mt-2 text-2xl font-bold tracking-tight text-tblack sm:text-3xl">
-                                {a.full_name || 'Application details'}
+                                {getI18nValue(a.name_i18n) ||
+                                    'Application details'}
                             </h1>
                             <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
                                 <span className="inline-flex items-center gap-1">
                                     <MapPin className="size-4" />
-                                    {a.city || '—'}
+                                    {getCityLabel(a) || '—'}
                                     {a.country ? `, ${a.country}` : ''}
                                 </span>
                                 <span className="inline-flex items-center gap-1">
@@ -242,33 +258,49 @@ export default function AdminExpertApplicationShow({ application }) {
 
                 <div className="grid gap-6">
                     <div className="flex flex-col gap-6">
-                        <SectionCard
-                            title="Review"
-                            description="Decision and reviewer metadata."
-                        >
-                            <Row label="Status" value={a.status || 'pending'} />
-                            <Row label="Reviewed at" value={reviewedAt} />
-                            <Row
-                                label="Reviewed by"
-                                value={
-                                    a.reviewed_by
-                                        ? `${a.reviewed_by.name ?? ''} (${a.reviewed_by.email ?? ''})`
-                                        : ''
-                                }
-                            />
-                            <Row label="Admin notes" value={a.admin_notes} />
-                        </SectionCard>
+                        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                            <SectionCard
+                                title="Review"
+                                description="Decision and reviewer metadata."
+                            >
+                                <Row
+                                    label="Status"
+                                    value={a.status || 'pending'}
+                                />
+                                <Row label="Reviewed at" value={reviewedAt} />
+                                <Row
+                                    label="Reviewed by"
+                                    value={
+                                        a.reviewed_by
+                                            ? `${a.reviewed_by.name ?? ''} (${a.reviewed_by.email ?? ''})`
+                                            : ''
+                                    }
+                                />
+                                {a.status !== 'pending' ? (
+                                    <Row
+                                        label="Featured on front"
+                                        value={
+                                            a.expert?.on_front ? 'Yes' : 'No'
+                                        }
+                                    />
+                                ) : null}
+                                <Row
+                                    label="Admin notes"
+                                    value={a.admin_notes}
+                                />
+                            </SectionCard>
 
-                        <SectionCard
-                            title="Identity"
-                            description="Primary contact details and localization."
-                        >
-                            <Row label="Email" value={a.email} />
-                            <Row label="Phone" value={a.phone} />
-                            <Row label="Locale" value={a.locale} />
-                            <Row label="Country" value={a.country} />
-                            <Row label="City" value={a.city} />
-                        </SectionCard>
+                            <SectionCard
+                                title="Identity"
+                                description="Primary contact details and localization."
+                            >
+                                <Row label="Email" value={a.email} />
+                                <Row label="Phone" value={a.phone} />
+                                <Row label="Locale" value={a.locale} />
+                                <Row label="Country" value={a.country} />
+                                <Row label="City" value={getCityLabel(a)} />
+                            </SectionCard>
+                        </div>
 
                         <SectionCard
                             title="Names and Titles"
@@ -280,14 +312,11 @@ export default function AdminExpertApplicationShow({ application }) {
                                     items={[
                                         {
                                             label: 'Name',
-                                            value:
-                                                a.name_i18n?.en || a.full_name,
+                                            value: a.name_i18n?.en,
                                         },
                                         {
                                             label: 'Current title',
-                                            value:
-                                                a.title_i18n?.en ||
-                                                a.current_title,
+                                            value: a.title_i18n?.en,
                                         },
                                     ]}
                                 />
@@ -330,13 +359,11 @@ export default function AdminExpertApplicationShow({ application }) {
                                     items={[
                                         {
                                             label: 'Expertise',
-                                            value:
-                                                a.expertise_i18n?.en ||
-                                                a.expertise,
+                                            value: a.expertise_i18n?.en,
                                         },
                                         {
                                             label: 'Bio',
-                                            value: a.bio_i18n?.en || a.bio,
+                                            value: a.bio_i18n?.en,
                                         },
                                     ]}
                                 />
@@ -369,46 +396,46 @@ export default function AdminExpertApplicationShow({ application }) {
                             </div>
                         </SectionCard>
 
-                        <SectionCard
-                            title="Industries and Languages"
-                            description="Focus industries and spoken languages."
-                        >
-                            <div>
-                                <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-                                    Industries
-                                </p>
-                                <div className="mt-2">
-                                    <TagList items={industries} />
+                        <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
+                            <SectionCard
+                                className="lg:col-span-2"
+                                title="Languages"
+                                description="Spoken languages from the application."
+                            >
+                                <div>
+                                    <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                                        Languages
+                                    </p>
+                                    <div className="mt-2">
+                                        <TagList items={languages} />
+                                    </div>
                                 </div>
-                            </div>
-                            <div>
-                                <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-                                    Languages
-                                </p>
-                                <div className="mt-2">
-                                    <TagList items={languages} />
-                                </div>
-                            </div>
-                        </SectionCard>
+                            </SectionCard>
 
-                        <SectionCard
-                            title="Social Links"
-                            description="Optional public profiles."
-                        >
-                            <Row label="LinkedIn" value={a.linkedin_url} />
-                            <Row
-                                label="Twitter / X"
-                                value={a.socials?.twitter}
-                            />
-                            <Row
-                                label="Instagram"
-                                value={a.socials?.instagram}
-                            />
-                            <Row label="Portfolio" value={a.portfolio_url} />
-                        </SectionCard>
+                            <SectionCard
+                                title="Social Links"
+                                className="lg:col-span-3"
+                                description="Optional public profiles."
+                            >
+                                <Row
+                                    label="LinkedIn"
+                                    value={a.socials?.linkedin}
+                                />
+                                <Row
+                                    label="Twitter / X"
+                                    value={a.socials?.twitter}
+                                />
+                                <Row
+                                    label="Instagram"
+                                    value={a.socials?.instagram}
+                                />
+                                <Row
+                                    label="Portfolio"
+                                    value={a.socials?.portfolio}
+                                />
+                            </SectionCard>
+                        </div>
                     </div>
-
-                    <div className="flex flex-col gap-6"></div>
                 </div>
             </div>
 

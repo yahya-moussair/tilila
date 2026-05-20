@@ -25,31 +25,6 @@ import { useCurrentUrl } from '@/hooks/use-current-url';
 import type { NavItem } from '@/types';
 
 const adminModuleItems: NavItem[] = [
-    {
-        title: 'Expertes',
-        href: '/admin/expert-applications',
-        icon: Users,
-    },
-    {
-        title: 'Tililab Editions',
-        href: '/admin/tililab/editions',
-        icon: Trophy,
-    },
-    {
-        title: 'Tilila Editions',
-        href: '/admin/tilila/editions',
-        icon: Trophy,
-    },
-    {
-        title: 'Tilila Submissions',
-        href: '/admin/tilila/participants',
-        icon: Users,
-    },
-    {   
-        title: 'Tililab Participants',
-        href: '/admin/tililab/participants',
-        icon: Users,
-    },
     // {
     //     title: 'Media',
     //     href: '/admin/media',
@@ -84,8 +59,13 @@ const adminModuleItems: NavItem[] = [
 
 const expertModuleItems: NavItem[] = [
     {
-        title: 'My Profile',
+        title: 'Information',
         href: '/expert/profile',
+        icon: Users,
+    },
+    {
+        title: 'Network',
+        href: '/expert/network',
         icon: Users,
     },
 ];
@@ -184,6 +164,23 @@ export function AppSidebar() {
 
                 {role === 'admin' && (
                     <>
+                        <SidebarGroup className="mt-4 py-0">
+                            <SidebarGroupLabel>Experts</SidebarGroupLabel>
+                            <SidebarNavLinks
+                                items={[
+                                    {
+                                        title: 'Profiles',
+                                        href: '/admin/experts',
+                                        icon: Users,
+                                    },
+                                    {
+                                        title: 'Applications',
+                                        href: '/admin/expert-applications',
+                                        icon: Users,
+                                    },
+                                ]}
+                            />
+                        </SidebarGroup>
                         <SidebarGroup className="mt-4 py-0">
                             <SidebarGroupLabel>Tilila</SidebarGroupLabel>
                             <SidebarNavLinks
