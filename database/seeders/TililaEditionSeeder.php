@@ -25,7 +25,7 @@ class TililaEditionSeeder extends Seeder
                 'winners_url' => null,
                 'jury_url' => null,
                 'gallery_url' => null,
-                'sort' => (int) $year - 2017,
+                'sort' => $this->sortForYear($year),
             ];
 
             $ceremonyUrl = $this->ceremonyVideoUrl($year);
@@ -38,6 +38,20 @@ class TililaEditionSeeder extends Seeder
                 $payload,
             );
         }
+    }
+
+    private function sortForYear(string $year): int
+    {
+        return match ($year) {
+            '2018' => 1,
+            '2019' => 2,
+            '2021' => 4,
+            '2022' => 5,
+            '2023' => 6,
+            '2024' => 7,
+            '2025' => 8,
+            default => max(1, (int) $year - 2017),
+        };
     }
 
     private function ceremonyVideoUrl(string $year): ?string

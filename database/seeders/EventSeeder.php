@@ -234,8 +234,9 @@ class EventSeeder extends Seeder
                 $date = $payload['dateIso'] ?? null;
             }
 
-            $eventDate = $date ? Carbon::parse($date)->endOfDay() : null;
-            $isPast = $eventDate?->isPast() ?? false;
+            $status = $slug === 'replay-financial-inclusion-for-women-entrepreneurs'
+                ? 'finished'
+                : 'upcoming';
 
             Event::query()->updateOrCreate(
                 ['slug' => $slug],
@@ -243,7 +244,7 @@ class EventSeeder extends Seeder
                     'type' => EventOptions::normalizeStoredType(
                         (string) ($payload['type'] ?? EventOptions::TYPE_TILITALKS),
                     ),
-                    'status' => $isPast ? 'finished' : 'upcoming',
+                    'status' => $status,
                     'visibility' => 'public',
                     'title' => $payload['title'] ?? ['en' => '', 'fr' => '', 'ar' => ''],
                     'location' => $payload['location'] ?? ['en' => '', 'fr' => '', 'ar' => ''],
