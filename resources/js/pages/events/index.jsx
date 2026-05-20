@@ -7,6 +7,7 @@ import EventsSidebar from '@/pages/events/Partials/EventsSidebar';
 import EventCard from '@/pages/events/Partials/EventCard';
 import { useTranslation } from '@/contexts/TranslationContext';
 import TransText from '@/components/TransText';
+import { categoryKeyForFilter } from '@/lib/eventOptions';
 
 function isPastByDate(event) {
     const iso = event?.dateTimeIso ?? event?.dateIso ?? '';
@@ -17,7 +18,7 @@ function isPastByDate(event) {
     return ts < Date.now();
 }
 
-/** Live/upcoming stay in Upcoming until status is finished or archived. */
+/** Live/upcoming stay in Upcoming until status is finished. */
 function isPastEvent(event) {
     const status = String(event?.status ?? 'upcoming').toLowerCase();
 
@@ -30,22 +31,6 @@ function isPastEvent(event) {
     }
 
     return isPastByDate(event);
-}
-
-/** Map DB types to top-level IA categories (Awards | Tililab | TiliTalks). */
-function categoryKeyForFilter(type) {
-    const t = String(type ?? '').toLowerCase();
-
-    if (t === 'tililab') return 'tililab';
-
-    // Awards (historically stored as "trophy" in our DB).
-    if (t === 'trophy' || t === 'awards' || t === 'tilila-awards') {
-        return 'awards';
-    }
-
-    // Everything else is treated as a public conversation / session.
-    // Includes: tilitalk, talk, webinar, workshop, other...
-    return 'tilitalks';
 }
 
 function panelFromUrl(url, fallback) {
@@ -88,7 +73,7 @@ export default function EventsIndex({
         Object.fromEntries(
             (eventStatuses?.length
                 ? eventStatuses
-                : ['upcoming', 'live', 'finished', 'archived']
+                : ['upcoming', 'live', 'finished']
             ).map((s) => [s, true]),
         ),
     );
@@ -197,7 +182,6 @@ export default function EventsIndex({
                                                   'upcoming',
                                                   'live',
                                                   'finished',
-                                                  'archived',
                                               ]
                                     }
                                     statusFilters={statusFilters}

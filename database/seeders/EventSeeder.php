@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Event;
+use App\Support\EventOptions;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 
@@ -239,7 +240,9 @@ class EventSeeder extends Seeder
             Event::query()->updateOrCreate(
                 ['slug' => $slug],
                 [
-                    'type' => $payload['type'] ?? 'other',
+                    'type' => EventOptions::normalizeStoredType(
+                        (string) ($payload['type'] ?? EventOptions::TYPE_TILITALKS),
+                    ),
                     'status' => $isPast ? 'finished' : 'upcoming',
                     'visibility' => 'public',
                     'title' => $payload['title'] ?? ['en' => '', 'fr' => '', 'ar' => ''],

@@ -44,7 +44,7 @@ class EventController extends Controller
 
         return Inertia::render('events/index', [
             'events' => $events,
-            'eventStatuses' => ['upcoming', 'live', 'finished', 'archived'],
+            'eventStatuses' => ['upcoming', 'live', 'finished'],
             'eventsByYear' => $eventsByYear,
             'eventsInitialPanel' => $initialPanel,
         ]);
@@ -278,7 +278,8 @@ class EventController extends Controller
 
     private function eventAllowsReplayAndGallery(Event $event): bool
     {
-        return in_array($event->status, ['finished', 'archived'], true);
+        return $event->status === 'finished'
+            || $event->status === 'archived';
     }
 
     /**
