@@ -122,7 +122,7 @@ export default function EventsIndex({
             <div>
                 <div className="bg-beta-white py-10">
                     <div className="mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8">
-                        <header className="mx-auto max-w-3xl text-center">
+                        {/* <header className="mx-auto max-w-3xl text-center">
                             <h1 className="text-3xl font-extrabold tracking-tight text-foreground sm:text-4xl">
                                 <TransText
                                     en="TILILA EVENTS"
@@ -191,7 +191,7 @@ export default function EventsIndex({
                                     />
                                 </div>
                             ) : null}
-                        </header>
+                        </header> */}
                     </div>
                 </div>
 

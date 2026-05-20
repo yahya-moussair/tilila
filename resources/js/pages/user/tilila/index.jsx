@@ -3,7 +3,6 @@ import AppLayout from '@/layouts/app-layout';
 import ArchiveSection from '@/pages/user/tilila/partials/ArchiveSection';
 import CtaSection from '@/pages/user/tilila/partials/CtaSection';
 import FeaturedLaureatesSection from '@/pages/user/tilila/partials/FeaturedLaureatesSection';
-import HeroSection from '@/pages/user/tilila/partials/HeroSection';
 import ParticipateSection from '@/pages/user/tilila/partials/ParticipateModal';
 import {
     TililaApplySection,
@@ -22,23 +21,6 @@ export default function TililaIndex() {
         <>
             <TililaHead />
             <div>
-                <div className="pb-8">
-                    <HeroSection
-                        onParticipate={() => {
-                            requestAnimationFrame(() => {
-                                const el = document.getElementById(
-                                    'tilila-participate-section',
-                                );
-                                if (el) {
-                                    el.scrollIntoView({
-                                        behavior: 'smooth',
-                                        block: 'start',
-                                    });
-                                }
-                            });
-                        }}
-                    />
-                </div>
                 <div className="bg-twhite px-8 py-10">
                     <FeaturedLaureatesSection />
                 </div>

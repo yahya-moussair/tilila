@@ -1,6 +1,5 @@
 import React from 'react';
 import { Head } from '@inertiajs/react';
-import Hero from '@/pages/home/Partials/Hero';
 import HomeCtaStrip from '@/pages/home/Partials/HomeCtaStrip';
 import HomeNews from '@/pages/home/Partials/HomeNews';
 import ImpactStats from '@/pages/home/Partials/ImpactStats';
@@ -32,8 +31,7 @@ export default function HomeIndex({
                 />
             </Head>
 
-            <Hero />
-            <HomeCtaStrip />
+            {/* <HomeCtaStrip /> */}
             <HomeNews items={homeHighlights} />
             <ImpactStats stats={stats} />
             <PillarTiles />

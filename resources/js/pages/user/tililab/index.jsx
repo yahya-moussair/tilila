@@ -1,7 +1,6 @@
 import { Head, usePage } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import GuidelinesSection from '@/pages/user/tililab/partials/GuidelinesSection';
-import HeroSection from '@/pages/user/tililab/partials/HeroSection';
 import KeyDatesSection from '@/pages/user/tililab/partials/KeyDatesSection';
 import MissionSection from '@/pages/user/tililab/partials/MissionSection';
 import PastWinnersSection from '@/pages/user/tililab/partials/PastWinnersSection';
@@ -19,10 +18,6 @@ export default function TililabIndex() {
         <>
             <TililabHead />
             <div>
-                <div className="bg-beta-white py-8">
-                    <HeroSection />
-                </div>
-
                 <nav className="bg-background/70 backdrop-blur">
                     <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-3 px-4 py-4 text-sm font-semibold text-beta-blue">
                         <a href="#mission" className="hover:underline">

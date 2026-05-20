@@ -89,16 +89,16 @@ export default function HomeNews({ items = [] }) {
                 <div className="mx-auto max-w-2xl text-center">
                     <h2 className="text-2xl font-extrabold tracking-tight text-foreground sm:text-3xl">
                         <TransText
-                            en="News"
-                            fr="Actualités"
-                            ar="أخبار"
+                            en="Latest updates"
+                            fr="Dernières actualités"
+                            ar="آخر المستجدات"
                         />
                     </h2>
-                    <p className="mt-2 text-sm text-muted-foreground">
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground sm:text-[0.9375rem]">
                         <TransText
-                            en="Up to three featured stories from the CMS."
-                            fr="Jusqu’à trois contenus mis en avant (CMS)."
-                            ar="حتى ثلاثة محتويات مميزة من نظام الإدارة."
+                            en="Highlights from our programmes, events, and partnerships—curated to keep you informed about Tilila's work."
+                            fr="Temps forts de nos programmes, événements et partenariats—une sélection pour suivre l’actualité de Tilila."
+                            ar="محطات من برامجنا وفعالياتنا وشراكاتنا، بعناية لإبقائكم على اطلاع بمسار عمل تيليلا."
                         />
                     </p>
                 </div>
