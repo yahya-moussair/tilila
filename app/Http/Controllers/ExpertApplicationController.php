@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ExpertApplication;
+use App\Support\ExpertDomains;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -44,10 +45,11 @@ class ExpertApplicationController extends Controller
             'title_i18n.en' => ['nullable', 'string', 'max:255'],
             'title_i18n.fr' => ['required', 'string', 'max:255'],
             'title_i18n.ar' => ['nullable', 'string', 'max:255'],
-            'expertise_i18n' => ['required', 'array'],
-            'expertise_i18n.en' => ['nullable', 'string', 'max:2000'],
-            'expertise_i18n.fr' => ['required', 'string', 'max:2000'],
-            'expertise_i18n.ar' => ['nullable', 'string', 'max:2000'],
+            'expertise_domains' => ['required', 'array', 'min:1', 'max:6'],
+            'expertise_domains.*.en' => ['required', 'string', 'max:255'],
+            'expertise_domains.*.fr' => ['required', 'string', 'max:255'],
+            'expertise_domains.*.ar' => ['required', 'string', 'max:255'],
+            'accept_terms' => ['accepted'],
             'bio_i18n' => ['required', 'array'],
             'bio_i18n.en' => ['nullable', 'string', 'max:5000'],
             'bio_i18n.fr' => ['required', 'string', 'max:5000'],
@@ -76,7 +78,7 @@ class ExpertApplicationController extends Controller
 
         $nameI18n = $this->normalizeTri($data['name_i18n'] ?? null);
         $titleI18n = $this->normalizeTri($data['title_i18n'] ?? null);
-        $expertiseI18n = $this->normalizeTri($data['expertise_i18n'] ?? null);
+        $expertiseI18n = ExpertDomains::normalizeSelection($data['expertise_domains'] ?? []);
         $bioI18n = $this->normalizeTri($data['bio_i18n'] ?? null);
         $cityI18n = $this->normalizeTri($data['city'] ?? null, '');
         $socials = [

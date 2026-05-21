@@ -8,19 +8,31 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 import { buildCountryOptions, buildLanguageOptions } from '@/components/helpers/expert-form-options';
+import ExpertDomainsPicker from '@/components/expert/ExpertDomainsPicker';
 
 function FieldError({ error }) {
     if (!error) return null;
     return <p className="mt-1 text-xs text-alpha-danger">{error}</p>;
 }
 
-function TriLangField({ idPrefix, label, values, setValues, errors, as = 'input' }) {
+function TriLangField({
+    idPrefix,
+    label,
+    values,
+    setValues,
+    errors,
+    as = 'input',
+    requiredLang = 'fr',
+}) {
+    const requiredMark = <span className="text-alpha-danger">*</span>;
+
     return (
         <div className="grid gap-4 sm:grid-cols-3">
             {['en', 'fr', 'ar'].map((lang) => (
                 <div key={`${idPrefix}-${lang}`} className="space-y-1.5">
                     <Label htmlFor={`${idPrefix}-${lang}`}>
-                        {label} ({lang.toUpperCase()}) *
+                        {label} ({lang.toUpperCase()}){' '}
+                        {lang === requiredLang ? requiredMark : null}
                     </Label>
                     {as === 'textarea' ? (
                         <textarea
@@ -73,7 +85,7 @@ export default function ExpertProfileEdit({ expert }) {
         phone: expert?.phone ?? '',
         name: expert?.name ?? { en: '', fr: '', ar: '' },
         title: expert?.title ?? { en: '', fr: '', ar: '' },
-        expertise: expert?.expertise ?? { en: '', fr: '', ar: '' },
+        expertise_domains: expert?.expertise_domains ?? [],
         bio: expert?.bio ?? { en: '', fr: '', ar: '' },
         country: expert?.country ?? 'Morocco',
         city: expert?.city ?? { en: '', fr: '', ar: '' },
@@ -132,6 +144,11 @@ export default function ExpertProfileEdit({ expert }) {
 
     const submit = (e) => {
         e.preventDefault();
+
+        if ((data.expertise_domains?.length ?? 0) === 0) {
+            return;
+        }
+
         clearErrors();
         router.post(
             '/expert/profile',
@@ -217,13 +234,13 @@ export default function ExpertProfileEdit({ expert }) {
                                 setValues={(value) => setData('title', value)}
                                 errors={errors}
                             />
-                            <TriLangField
-                                idPrefix="expertise"
-                                label="Expertise"
-                                values={data.expertise}
-                                setValues={(value) => setData('expertise', value)}
+                            <ExpertDomainsPicker
+                                locale={locale}
+                                value={data.expertise_domains}
+                                onChange={(value) =>
+                                    setData('expertise_domains', value)
+                                }
                                 errors={errors}
-                                as="textarea"
                             />
                             <TriLangField
                                 idPrefix="bio"

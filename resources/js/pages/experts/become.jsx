@@ -4,6 +4,9 @@ import { useTranslation } from '@/contexts/TranslationContext';
 import { useEffect, useMemo, useState } from 'react';
 import TransText from '@/components/TransText';
 import { buildCountryOptions, buildLanguageOptions } from '@/components/helpers/expert-form-options';
+import { EXPERT_DOMAINS } from '@/constans';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 
 export default function BecomeExpert() {
     const { locale, t } = useTranslation();
@@ -35,8 +38,9 @@ export default function BecomeExpert() {
         city: { en: '', fr: '', ar: '' },
         languages: [],
         title_i18n: { en: '', fr: '', ar: '' },
-        expertise_i18n: { en: '', fr: '', ar: '' },
+        expertise_domains: [],
         bio_i18n: { en: '', fr: '', ar: '' },
+        accept_terms: false,
         linkedin_url: '',
         twitter_url: '',
         instagram_url: '',
@@ -48,6 +52,8 @@ export default function BecomeExpert() {
     const [cvSizeError, setCvSizeError] = useState('');
     const [imageSizeError, setImageSizeError] = useState('');
     const [languageQuery, setLanguageQuery] = useState('');
+    const [expertiseQuery, setExpertiseQuery] = useState('');
+    const maxExpertiseDomains = 6;
     const countryOptions = useMemo(() => buildCountryOptions(locale), [locale]);
     const languageOptions = useMemo(() => buildLanguageOptions(locale), [locale]);
     const regionOptions = useMemo(
@@ -121,6 +127,43 @@ export default function BecomeExpert() {
         return others.filter((item) => item.searchText.includes(query));
     }, [baseLanguageValues, languageOptions, languageQuery]);
 
+    const domainLabel = (domain) =>
+        domain?.[locale] || domain?.fr || domain?.en || '';
+    const domainKey = (domain) => domain?.fr ?? '';
+    const selectedDomainKeys = useMemo(
+        () =>
+            new Set(
+                (data.expertise_domains ?? []).map((item) => domainKey(item)),
+            ),
+        [data.expertise_domains],
+    );
+    const selectedDomainLabels = useMemo(
+        () =>
+            (data.expertise_domains ?? [])
+                .map((item) => domainLabel(item))
+                .filter(Boolean),
+        [data.expertise_domains, locale],
+    );
+    const filteredExpertiseOptions = useMemo(() => {
+        const query = expertiseQuery.trim().toLowerCase();
+        const searchable = EXPERT_DOMAINS.map((domain) => ({
+            domain,
+            searchText: [domain.fr, domain.en, domain.ar]
+                .join(' ')
+                .toLowerCase(),
+        }));
+
+        if (!query) {
+            return searchable;
+        }
+
+        return searchable.filter((item) => item.searchText.includes(query));
+    }, [expertiseQuery]);
+    const canSubmit =
+        data.accept_terms &&
+        (data.expertise_domains?.length ?? 0) > 0 &&
+        !processing;
+
     useEffect(() => {
         if (data.region_scope === 'maroc') {
             if (data.country !== 'Morocco') {
@@ -149,8 +192,38 @@ export default function BecomeExpert() {
     const getFirstArrayError = (prefix) =>
         Object.entries(errors).find(([key]) => key.startsWith(prefix))?.[1];
 
+    const toggleExpertiseDomain = (domain) => {
+        const key = domainKey(domain);
+        const current = data.expertise_domains ?? [];
+
+        if (selectedDomainKeys.has(key)) {
+            setData(
+                'expertise_domains',
+                current.filter((item) => domainKey(item) !== key),
+            );
+            return;
+        }
+
+        if (current.length >= maxExpertiseDomains) {
+            return;
+        }
+
+        setData('expertise_domains', [
+            ...current,
+            { en: domain.en, fr: domain.fr, ar: domain.ar },
+        ]);
+    };
+
     const submit = (e) => {
         e.preventDefault();
+
+        if (!data.accept_terms) {
+            return;
+        }
+
+        if ((data.expertise_domains?.length ?? 0) === 0) {
+            return;
+        }
 
         if (data.profile_image instanceof File && data.profile_image.size > maxCvSizeBytes) {
             setImageSizeError('The image must be 5 MB or smaller.');
@@ -179,8 +252,9 @@ export default function BecomeExpert() {
                     'city',
                     'languages',
                     'title_i18n',
-                    'expertise_i18n',
+                    'expertise_domains',
                     'bio_i18n',
+                    'accept_terms',
                     'linkedin_url',
                     'twitter_url',
                     'instagram_url',
@@ -753,47 +827,125 @@ export default function BecomeExpert() {
                                     />
                                 </h3>
                                 <div className="rounded-xl border border-border/70 p-4 sm:p-5">
-                                    {['fr', 'en', 'ar'].map((lang) => (
-                                        <div key={`expertise-${lang}`}>
-                                            <label className="mb-2 block text-sm font-semibold text-tblack">
-                                                <TransText
-                                                    en="Expertise areas"
-                                                    fr="Domaines d’expertise"
-                                                    ar="مجالات الخبرة"
-                                                />{' '}
-                                                ({lang.toUpperCase()}){' '}
-                                                {lang === 'fr' ? requiredMark : null}
-                                            </label>
-                                            <textarea
-                                                value={
-                                                    data.expertise_i18n?.[
-                                                        lang
-                                                    ] ?? ''
-                                                }
-                                                onChange={(e) =>
-                                                    setTri(
-                                                        'expertise_i18n',
-                                                        lang,
-                                                        e.target.value,
-                                                    )
-                                                }
-                                                className={`${inputClass} min-h-24 resize-y`}
-                                                placeholder="Ex: Media ethics, digital journalism, climate policy"
-                                                required={lang === 'fr'}
+                                    <div>
+                                        <label className="mb-2 block text-sm font-semibold text-tblack">
+                                            <TransText
+                                                en="Areas of expertise"
+                                                fr="Domaines d’expertise"
+                                                ar="مجالات الخبرة"
+                                            />{' '}
+                                            {requiredMark}
+                                        </label>
+                                        <p className={helperClass}>
+                                            <TransText
+                                                en={`Select up to ${maxExpertiseDomains} domains from the official list.`}
+                                                fr={`Sélectionnez jusqu’à ${maxExpertiseDomains} domaines dans la liste officielle.`}
+                                                ar={`اختر حتى ${maxExpertiseDomains} مجالات من القائمة الرسمية.`}
                                             />
-                                            {errors[
-                                                `expertise_i18n.${lang}`
-                                            ] ? (
-                                                <p className="mt-1 text-xs text-alpha-danger">
-                                                    {
-                                                        errors[
-                                                            `expertise_i18n.${lang}`
-                                                        ]
-                                                    }
-                                                </p>
-                                            ) : null}
+                                        </p>
+                                        <input
+                                            value={expertiseQuery}
+                                            onChange={(e) =>
+                                                setExpertiseQuery(
+                                                    e.target.value,
+                                                )
+                                            }
+                                            className={`${inputClass} mt-3`}
+                                            placeholder={
+                                                locale === 'fr'
+                                                    ? 'Rechercher un domaine…'
+                                                    : locale === 'ar'
+                                                      ? 'ابحث عن مجال…'
+                                                      : 'Search a domain…'
+                                            }
+                                        />
+                                        <div className="mt-3 max-h-56 overflow-y-auto rounded-md border border-border bg-background p-3">
+                                            <div className="grid gap-2 sm:grid-cols-2">
+                                                {filteredExpertiseOptions.map(
+                                                    ({ domain }) => {
+                                                        const key =
+                                                            domainKey(domain);
+                                                        const checked =
+                                                            selectedDomainKeys.has(
+                                                                key,
+                                                            );
+                                                        const atLimit =
+                                                            (data.expertise_domains
+                                                                ?.length ??
+                                                                0) >=
+                                                                maxExpertiseDomains &&
+                                                            !checked;
+
+                                                        return (
+                                                            <label
+                                                                key={key}
+                                                                className={[
+                                                                    'flex cursor-pointer items-start gap-2 rounded-md border px-3 py-2 text-sm',
+                                                                    checked
+                                                                        ? 'border-beta-blue bg-beta-blue/10 text-beta-blue'
+                                                                        : 'border-border bg-card text-foreground',
+                                                                    atLimit
+                                                                        ? 'cursor-not-allowed opacity-50'
+                                                                        : '',
+                                                                ].join(' ')}
+                                                            >
+                                                                <input
+                                                                    type="checkbox"
+                                                                    className="mt-0.5"
+                                                                    checked={
+                                                                        checked
+                                                                    }
+                                                                    disabled={
+                                                                        atLimit
+                                                                    }
+                                                                    onChange={() =>
+                                                                        toggleExpertiseDomain(
+                                                                            domain,
+                                                                        )
+                                                                    }
+                                                                />
+                                                                <span>
+                                                                    {domainLabel(
+                                                                        domain,
+                                                                    )}
+                                                                </span>
+                                                            </label>
+                                                        );
+                                                    },
+                                                )}
+                                            </div>
                                         </div>
-                                    ))}
+                                        <p className="mt-2 text-xs text-muted-foreground">
+                                            <TransText
+                                                en="Selected"
+                                                fr="Sélection"
+                                                ar="المحدد"
+                                            />
+                                            :{' '}
+                                            {selectedDomainLabels.length > 0
+                                                ? selectedDomainLabels.join(
+                                                      ', ',
+                                                  )
+                                                : '—'}
+                                            {' · '}
+                                            {data.expertise_domains?.length ??
+                                                0}
+                                            /{maxExpertiseDomains}
+                                        </p>
+                                        {errors.expertise_domains ? (
+                                            <p className="mt-1 text-xs text-alpha-danger">
+                                                {errors.expertise_domains}
+                                            </p>
+                                        ) : getFirstArrayError(
+                                              'expertise_domains.',
+                                          ) ? (
+                                            <p className="mt-1 text-xs text-alpha-danger">
+                                                {getFirstArrayError(
+                                                    'expertise_domains.',
+                                                )}
+                                            </p>
+                                        ) : null}
+                                    </div>
 
                                     {['fr', 'en', 'ar'].map((lang) => (
                                         <div key={`bio-${lang}`}>
@@ -1051,6 +1203,57 @@ export default function BecomeExpert() {
                                 </p>
                             </div>
 
+                            <div className="rounded-xl border border-border/70 bg-card/60 p-4 sm:p-5">
+                                <div className="flex items-start gap-3">
+                                    <Checkbox
+                                        id="accept_terms"
+                                        checked={Boolean(data.accept_terms)}
+                                        onCheckedChange={(value) =>
+                                            setData(
+                                                'accept_terms',
+                                                Boolean(value),
+                                            )
+                                        }
+                                    />
+                                    <div className="min-w-0">
+                                        <Label
+                                            htmlFor="accept_terms"
+                                            className="text-sm font-semibold text-tblack"
+                                        >
+                                            <TransText
+                                                en="I accept the terms and policies"
+                                                fr="J’accepte les conditions et politiques"
+                                                ar="أوافق على الشروط والسياسات"
+                                            />
+                                            {requiredMark}
+                                        </Label>
+                                        <p className="mt-1 text-sm text-muted-foreground">
+                                            <TransText
+                                                en="I have read and agree to the"
+                                                fr="J’ai lu et j’accepte les"
+                                                ar="لقد قرأت وأوافق على"
+                                            />{' '}
+                                            <Link
+                                                href="/mentions-legales"
+                                                className="font-semibold text-beta-blue hover:underline"
+                                            >
+                                                <TransText
+                                                    en="terms, legal notices and privacy policy"
+                                                    fr="conditions, mentions légales et politique de confidentialité"
+                                                    ar="الشروط والإشعارات القانونية وسياسة الخصوصية"
+                                                />
+                                            </Link>
+                                            .
+                                        </p>
+                                        {errors.accept_terms ? (
+                                            <p className="mt-2 text-xs text-alpha-danger">
+                                                {errors.accept_terms}
+                                            </p>
+                                        ) : null}
+                                    </div>
+                                </div>
+                            </div>
+
                             <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border/70 pt-4">
                                 <Link
                                     href="/experts"
@@ -1064,7 +1267,7 @@ export default function BecomeExpert() {
                                 </Link>
                                 <button
                                     type="submit"
-                                    disabled={processing}
+                                    disabled={!canSubmit}
                                     className="inline-flex items-center rounded-full bg-beta-blue px-5 py-2 text-sm font-semibold text-twhite transition hover:bg-beta-blue/90 disabled:cursor-not-allowed disabled:opacity-60"
                                 >
                                     {processing ? (

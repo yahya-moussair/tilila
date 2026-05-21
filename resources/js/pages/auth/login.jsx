@@ -1,4 +1,5 @@
-import { Form, Head, setLayoutProps } from '@inertiajs/react';
+import { Form, Head, router, setLayoutProps } from '@inertiajs/react';
+import { useState } from 'react';
 import InputError from '@/components/input-error';
 import PasswordInput from '@/components/password-input';
 import TextLink from '@/components/text-link';
@@ -11,8 +12,29 @@ import { useTranslation } from '@/contexts/TranslationContext';
 import { store as loginForm } from '@/routes/login';
 import { request } from '@/routes/password';
 
-export default function Login({ status, canResetPassword }) {
+const DEMO_PASSWORD = 'password';
+
+const DEMO_ACCOUNTS = {
+    admin: { email: 'test.admin@example.com', password: DEMO_PASSWORD },
+    expert: { email: 'test.expert@example.com', password: DEMO_PASSWORD },
+};
+
+export default function Login({
+    status,
+    canResetPassword,
+    showDemoLogins = false,
+}) {
     const { t } = useTranslation();
+    const [demoRole, setDemoRole] = useState(null);
+
+    const loginAsDemo = (role) => {
+        setDemoRole(role);
+        router.post(
+            loginForm.url(),
+            { ...DEMO_ACCOUNTS[role], remember: false },
+            { onFinish: () => setDemoRole(null) },
+        );
+    };
 
     setLayoutProps({
         title: t('auth.login.layoutTitle'),
@@ -116,6 +138,38 @@ export default function Login({ status, canResetPassword }) {
                         </>
                     )}
                 </Form>
+
+                {showDemoLogins && (
+                    <div className="flex flex-col gap-3 border-t border-border pt-6">
+                        <p className="text-center text-xs font-medium uppercase tracking-wide text-tgray">
+                            {t('auth.login.demoDivider')}
+                        </p>
+                        <div className="grid gap-3 sm:grid-cols-2">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="w-full rounded-full border-border text-sm font-semibold text-tblack hover:bg-tblack/5"
+                                disabled={demoRole !== null}
+                                data-test="demo-login-admin"
+                                onClick={() => loginAsDemo('admin')}
+                            >
+                                {demoRole === 'admin' && <Spinner />}
+                                {t('auth.login.demoAdmin')}
+                            </Button>
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="w-full rounded-full border-border text-sm font-semibold text-tblack hover:bg-tblack/5"
+                                disabled={demoRole !== null}
+                                data-test="demo-login-expert"
+                                onClick={() => loginAsDemo('expert')}
+                            >
+                                {demoRole === 'expert' && <Spinner />}
+                                {t('auth.login.demoExpert')}
+                            </Button>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {status && (

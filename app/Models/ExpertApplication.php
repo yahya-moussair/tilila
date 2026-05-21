@@ -32,7 +32,7 @@ class ExpertApplication extends Model
         'expert_id',
     ];
 
-    protected $appends = ['cv_url'];
+    protected $appends = ['cv_url', 'image_url'];
 
     protected function casts(): array
     {
@@ -65,5 +65,17 @@ class ExpertApplication extends Model
         }
 
         return Storage::url($this->cv_path);
+    }
+
+    public function getImageUrlAttribute(): ?string
+    {
+        $path = $this->image_path;
+        if (! is_string($path) || trim($path) === '') {
+            return null;
+        }
+
+        return Storage::disk('public')->exists($path)
+            ? Storage::url($path)
+            : null;
     }
 }

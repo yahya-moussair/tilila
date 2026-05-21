@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Expert;
 
 use App\Http\Controllers\Controller;
 use App\Models\Expert;
+use App\Support\ExpertDomains;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -72,7 +72,7 @@ class ProfileController extends Controller
             'id' => $expert->id,
             'name' => $this->triLangValue($expert->name),
             'title' => $this->triLangValue($expert->title),
-            'expertise' => $this->expertiseToForm($expert->expertise),
+            'expertise_domains' => $this->expertiseDomainsToForm($expert->expertise),
             'bio' => $this->triLangValue($expert->bio_i18n),
             'country' => (string) ($expert->country ?? ''),
             'city' => $this->resolveCityForForm($expert),
@@ -94,16 +94,26 @@ class ProfileController extends Controller
     private function triLangValue(mixed $value): array
     {
         if (is_array($value)) {
-            return [
-                'en' => trim((string) ($value['en'] ?? '')),
-                'fr' => trim((string) ($value['fr'] ?? '')),
-                'ar' => trim((string) ($value['ar'] ?? '')),
-            ];
+            $en = trim((string) ($value['en'] ?? ''));
+            $fr = trim((string) ($value['fr'] ?? ''));
+            $ar = trim((string) ($value['ar'] ?? ''));
+
+            if ($fr === '' && $en !== '') {
+                $fr = $en;
+            }
+            if ($en === '') {
+                $en = $fr;
+            }
+            if ($ar === '') {
+                $ar = $fr;
+            }
+
+            return ['en' => $en, 'fr' => $fr, 'ar' => $ar];
         }
 
         $text = trim((string) ($value ?? ''));
 
-        return ['en' => $text, 'fr' => '', 'ar' => ''];
+        return ['en' => $text, 'fr' => $text, 'ar' => $text];
     }
 
     /**
@@ -113,25 +123,25 @@ class ProfileController extends Controller
     {
         $validated = $request->validate([
             'name' => ['required', 'array'],
-            'name.en' => ['required', 'string', 'max:255'],
+            'name.en' => ['nullable', 'string', 'max:255'],
             'name.fr' => ['required', 'string', 'max:255'],
-            'name.ar' => ['required', 'string', 'max:255'],
+            'name.ar' => ['nullable', 'string', 'max:255'],
             'title' => ['required', 'array'],
-            'title.en' => ['required', 'string', 'max:500'],
+            'title.en' => ['nullable', 'string', 'max:500'],
             'title.fr' => ['required', 'string', 'max:500'],
-            'title.ar' => ['required', 'string', 'max:500'],
-            'expertise' => ['required', 'array'],
-            'expertise.en' => ['required', 'string', 'max:2000'],
-            'expertise.fr' => ['required', 'string', 'max:2000'],
-            'expertise.ar' => ['required', 'string', 'max:2000'],
+            'title.ar' => ['nullable', 'string', 'max:500'],
+            'expertise_domains' => ['required', 'array', 'min:1', 'max:6'],
+            'expertise_domains.*.en' => ['required', 'string', 'max:255'],
+            'expertise_domains.*.fr' => ['required', 'string', 'max:255'],
+            'expertise_domains.*.ar' => ['required', 'string', 'max:255'],
             'bio' => ['required', 'array'],
-            'bio.en' => ['required', 'string', 'max:5000'],
+            'bio.en' => ['nullable', 'string', 'max:5000'],
             'bio.fr' => ['required', 'string', 'max:5000'],
-            'bio.ar' => ['required', 'string', 'max:5000'],
+            'bio.ar' => ['nullable', 'string', 'max:5000'],
             'country' => ['nullable', 'string', 'max:120'],
             'city' => ['nullable', 'array'],
             'city.en' => ['nullable', 'string', 'max:120'],
-            'city.fr' => ['nullable', 'string', 'max:120'],
+            'city.fr' => ['required', 'string', 'max:120'],
             'city.ar' => ['nullable', 'string', 'max:120'],
             'languages' => ['nullable', 'array'],
             'languages.*' => ['string', 'max:16'],
@@ -152,7 +162,6 @@ class ProfileController extends Controller
 
         $validated['name'] = $this->triLangValue($validated['name'] ?? []);
         $validated['title'] = $this->triLangValue($validated['title'] ?? []);
-        $validated['expertise'] = $this->triLangValue($validated['expertise'] ?? []);
         $validated['bio'] = $this->triLangValue($validated['bio'] ?? []);
         $validated['country'] = trim((string) ($validated['country'] ?? ''));
         $validated['city'] = $this->triLangValue($validated['city'] ?? []);
@@ -168,11 +177,10 @@ class ProfileController extends Controller
         $validated['portfolio_url'] = trim((string) ($validated['portfolio_url'] ?? ''));
 
         $validated['bio_i18n'] = $validated['bio'];
-        $validated['expertise'] = $this->buildLocalizedTopics([
-            'en' => $this->extractTopics($validated['expertise']['en']),
-            'fr' => $this->extractTopics($validated['expertise']['fr']),
-            'ar' => $this->extractTopics($validated['expertise']['ar']),
-        ]);
+        $validated['expertise'] = ExpertDomains::normalizeSelection(
+            $validated['expertise_domains'] ?? []
+        );
+        unset($validated['expertise_domains']);
         $validated['socials'] = [
             'linkedin' => $validated['linkedin_url'],
             'twitter' => $validated['twitter_url'],
@@ -226,78 +234,11 @@ class ProfileController extends Controller
 
     /**
      * @param  list<array{en?: string, fr?: string, ar?: string}>|null  $expertise
-     * @return array{en: string, fr: string, ar: string}
-     */
-    private function expertiseToForm(?array $expertise): array
-    {
-        if (! is_array($expertise)) {
-            return $this->triLangValue(['en' => '', 'fr' => '', 'ar' => '']);
-        }
-
-        $values = ['en' => [], 'fr' => [], 'ar' => []];
-        foreach ($expertise as $topic) {
-            if (! is_array($topic)) {
-                continue;
-            }
-            $values['en'][] = trim((string) ($topic['en'] ?? ''));
-            $values['fr'][] = trim((string) ($topic['fr'] ?? ''));
-            $values['ar'][] = trim((string) ($topic['ar'] ?? ''));
-        }
-
-        return [
-            'en' => implode(', ', array_filter($values['en'])),
-            'fr' => implode(', ', array_filter($values['fr'])),
-            'ar' => implode(', ', array_filter($values['ar'])),
-        ];
-    }
-
-    /**
-     * @return list<string>
-     */
-    private function extractTopics(string $raw): array
-    {
-        $items = preg_split('/[,;\n]+/', $raw) ?: [];
-
-        $topics = [];
-        foreach ($items as $item) {
-            $topic = trim($item);
-            if ($topic === '') {
-                continue;
-            }
-
-            $topics[] = Str::limit($topic, 64, '');
-        }
-
-        return array_values(array_unique(array_slice($topics, 0, 8)));
-    }
-
-    /**
-     * @param  array{en: list<string>, fr: list<string>, ar: list<string>}  $topicsByLocale
      * @return list<array{en: string, fr: string, ar: string}>
      */
-    private function buildLocalizedTopics(array $topicsByLocale): array
+    private function expertiseDomainsToForm(?array $expertise): array
     {
-        $rows = [];
-        $max = max(
-            count($topicsByLocale['en']),
-            count($topicsByLocale['fr']),
-            count($topicsByLocale['ar']),
-        );
-
-        for ($i = 0; $i < $max; $i++) {
-            $en = trim((string) ($topicsByLocale['en'][$i] ?? ''));
-            if ($en === '') {
-                continue;
-            }
-
-            $rows[] = [
-                'en' => $en,
-                'fr' => trim((string) ($topicsByLocale['fr'][$i] ?? $en)),
-                'ar' => trim((string) ($topicsByLocale['ar'][$i] ?? $en)),
-            ];
-        }
-
-        return $rows;
+        return ExpertDomains::normalizeSelection(is_array($expertise) ? $expertise : []);
     }
 
     /**

@@ -7,6 +7,7 @@ use App\Mail\ExpertAccountCreated;
 use App\Models\Expert;
 use App\Models\ExpertApplication;
 use App\Models\User;
+use App\Support\ExpertDomains;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -201,20 +202,15 @@ class ExpertApplicationController extends Controller
         $name = $this->resolveTri($application->name_i18n, '', 'Expert');
         $title = $this->resolveTri($application->title_i18n, '', 'Expert');
         $bio = $this->resolveTri($application->bio_i18n, '', '');
-        $expertiseText = $this->resolveTri($application->expertise_i18n, '', '');
         $cityI18n = $this->resolveTri(
             is_array($application->city_i18n) ? $application->city_i18n : null,
             '',
             ''
         );
 
-        $topicsByLocale = [
-            'en' => $this->extractTopics((string) $expertiseText['en']),
-            'fr' => $this->extractTopics((string) $expertiseText['fr']),
-            'ar' => $this->extractTopics((string) $expertiseText['ar']),
-        ];
-
-        $topicTags = $this->buildLocalizedTopics($topicsByLocale);
+        $topicTags = ExpertDomains::fromStored(
+            is_array($application->expertise_i18n) ? $application->expertise_i18n : null
+        );
         $languages = is_array($application->languages)
             ? array_values(array_unique(array_filter(array_map(static fn (mixed $item): string => trim((string) $item), $application->languages))))
             : [];
@@ -260,26 +256,6 @@ class ExpertApplicationController extends Controller
     }
 
     /**
-     * @return list<string>
-     */
-    private function extractTopics(string $raw): array
-    {
-        $items = preg_split('/[,;\n]+/', $raw) ?: [];
-
-        $topics = [];
-        foreach ($items as $item) {
-            $topic = trim($item);
-            if ($topic === '') {
-                continue;
-            }
-
-            $topics[] = Str::limit($topic, 64, '');
-        }
-
-        return array_values(array_unique(array_slice($topics, 0, 6)));
-    }
-
-    /**
      * @param  array<string, mixed>|null  $value
      * @return array{en: string, fr: string, ar: string}
      */
@@ -297,35 +273,6 @@ class ExpertApplicationController extends Controller
             'fr' => $fr,
             'ar' => $ar,
         ];
-    }
-
-    /**
-     * @param  array{en: list<string>, fr: list<string>, ar: list<string>}  $topicsByLocale
-     * @return list<array{en: string, fr: string, ar: string}>
-     */
-    private function buildLocalizedTopics(array $topicsByLocale): array
-    {
-        $rows = [];
-        $max = max(
-            count($topicsByLocale['en']),
-            count($topicsByLocale['fr']),
-            count($topicsByLocale['ar']),
-        );
-
-        for ($i = 0; $i < $max; $i++) {
-            $en = trim((string) ($topicsByLocale['en'][$i] ?? ''));
-            if ($en === '') {
-                continue;
-            }
-
-            $rows[] = [
-                'en' => $en,
-                'fr' => trim((string) ($topicsByLocale['fr'][$i] ?? $en)),
-                'ar' => trim((string) ($topicsByLocale['ar'][$i] ?? $en)),
-            ];
-        }
-
-        return $rows;
     }
 
 }

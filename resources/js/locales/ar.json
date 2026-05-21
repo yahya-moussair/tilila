@@ -232,6 +232,9 @@
             "forgotPassword": "هل نسيت كلمة المرور؟",
             "rememberMe": "تذكرني",
             "submit": "تسجيل الدخول",
+            "demoDivider": "دخول تجريبي",
+            "demoAdmin": "المتابعة كمسؤول",
+            "demoExpert": "المتابعة كخبيرة",
             "noAccount": "ليس لديك حساب؟",
             "signUp": "إنشاء حساب"
         },
