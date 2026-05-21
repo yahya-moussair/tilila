@@ -232,6 +232,9 @@
             "forgotPassword": "Mot de passe oublié ?",
             "rememberMe": "Se souvenir de moi",
             "submit": "Se connecter",
+            "demoDivider": "Accès démo",
+            "demoAdmin": "Continuer en tant qu’admin",
+            "demoExpert": "Continuer en tant qu’experte",
             "noAccount": "Vous n’avez pas de compte ?",
             "signUp": "S’inscrire"
         },

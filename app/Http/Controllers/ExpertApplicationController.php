@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ExpertApplication;
+use App\Support\ExpertDomains;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -20,9 +21,9 @@ class ExpertApplicationController extends Controller
     {
         $data = $request->validate([
             'name_i18n' => ['required', 'array'],
-            'name_i18n.en' => ['required', 'string', 'max:255'],
+            'name_i18n.en' => ['nullable', 'string', 'max:255'],
             'name_i18n.fr' => ['required', 'string', 'max:255'],
-            'name_i18n.ar' => ['required', 'string', 'max:255'],
+            'name_i18n.ar' => ['nullable', 'string', 'max:255'],
             'email' => [
                 'required',
                 'email',
@@ -32,32 +33,34 @@ class ExpertApplicationController extends Controller
                 ),
             ],
             'phone' => ['nullable', 'string', 'max:64'],
-            'country' => ['nullable', 'string', 'max:120'],
-            'city' => ['nullable', 'array'],
+            'region_scope' => ['required', 'string', 'in:maroc,afrique,diaspora'],
+            'country' => ['required', 'string', 'max:120'],
+            'city' => ['required', 'array'],
             'city.en' => ['nullable', 'string', 'max:120'],
-            'city.fr' => ['nullable', 'string', 'max:120'],
+            'city.fr' => ['required', 'string', 'max:120'],
             'city.ar' => ['nullable', 'string', 'max:120'],
             'languages' => ['nullable', 'array'],
             'languages.*' => ['string', 'max:16'],
             'title_i18n' => ['required', 'array'],
-            'title_i18n.en' => ['required', 'string', 'max:255'],
+            'title_i18n.en' => ['nullable', 'string', 'max:255'],
             'title_i18n.fr' => ['required', 'string', 'max:255'],
-            'title_i18n.ar' => ['required', 'string', 'max:255'],
-            'expertise_i18n' => ['required', 'array'],
-            'expertise_i18n.en' => ['required', 'string', 'max:2000'],
-            'expertise_i18n.fr' => ['required', 'string', 'max:2000'],
-            'expertise_i18n.ar' => ['required', 'string', 'max:2000'],
+            'title_i18n.ar' => ['nullable', 'string', 'max:255'],
+            'expertise_domains' => ['required', 'array', 'min:1', 'max:6'],
+            'expertise_domains.*.en' => ['required', 'string', 'max:255'],
+            'expertise_domains.*.fr' => ['required', 'string', 'max:255'],
+            'expertise_domains.*.ar' => ['required', 'string', 'max:255'],
+            'accept_terms' => ['accepted'],
             'bio_i18n' => ['required', 'array'],
-            'bio_i18n.en' => ['required', 'string', 'max:5000'],
+            'bio_i18n.en' => ['nullable', 'string', 'max:5000'],
             'bio_i18n.fr' => ['required', 'string', 'max:5000'],
-            'bio_i18n.ar' => ['required', 'string', 'max:5000'],
+            'bio_i18n.ar' => ['nullable', 'string', 'max:5000'],
             'linkedin_url' => ['nullable', 'url', 'max:2048'],
             'twitter_url' => ['nullable', 'url', 'max:2048'],
             'instagram_url' => ['nullable', 'url', 'max:2048'],
             'portfolio_url' => ['nullable', 'url', 'max:2048'],
             'locale' => ['nullable', 'string', 'max:8'],
             'cv' => ['nullable', 'file', 'mimes:pdf,doc,docx', 'max:5120'],
-            'profile_image' => ['nullable', 'file', 'mimes:jpeg,png,webp,gif', 'max:5120'],
+            'profile_image' => ['required', 'file', 'mimes:jpeg,png,webp,gif', 'max:5120'],
         ], [
             'email.unique' => 'You already have a pending application with this email.',
         ]);
@@ -75,7 +78,7 @@ class ExpertApplicationController extends Controller
 
         $nameI18n = $this->normalizeTri($data['name_i18n'] ?? null);
         $titleI18n = $this->normalizeTri($data['title_i18n'] ?? null);
-        $expertiseI18n = $this->normalizeTri($data['expertise_i18n'] ?? null);
+        $expertiseI18n = ExpertDomains::normalizeSelection($data['expertise_domains'] ?? []);
         $bioI18n = $this->normalizeTri($data['bio_i18n'] ?? null);
         $cityI18n = $this->normalizeTri($data['city'] ?? null, '');
         $socials = [
@@ -93,6 +96,7 @@ class ExpertApplicationController extends Controller
             'name_i18n' => $nameI18n,
             'email' => $data['email'],
             'phone' => $data['phone'] ?? null,
+            'region_scope' => $data['region_scope'] ?? null,
             'country' => $data['country'] ?? null,
             'city_i18n' => $cityI18n,
             'languages' => $languages,

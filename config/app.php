@@ -123,4 +123,15 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Demo mode
+    |--------------------------------------------------------------------------
+    |
+    | When enabled, shows quick-login demo buttons on the login page.
+    |
+    */
+
+    'is_demo' => filter_var(env('IS_DEMO', false), FILTER_VALIDATE_BOOLEAN),
+
 ];

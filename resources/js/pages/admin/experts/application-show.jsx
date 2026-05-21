@@ -1,6 +1,21 @@
-import { Head, Link, router, setLayoutProps } from '@inertiajs/react';
-import { CheckCircle2, FileText, Globe2, MapPin, XCircle } from 'lucide-react';
-import { useState } from 'react';
+import { Head, router, setLayoutProps } from '@inertiajs/react';
+import {
+    Briefcase,
+    Calendar,
+    CheckCircle2,
+    ExternalLink,
+    FileText,
+    Globe2,
+    Instagram,
+    Languages,
+    Linkedin,
+    Mail,
+    MapPin,
+    Phone,
+    User,
+    XCircle,
+} from 'lucide-react';
+import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
     Dialog,
@@ -11,16 +26,25 @@ import {
     DialogTitle,
 } from '@/components/ui/dialog';
 import AppLayout from '@/layouts/app-layout';
+import { useTranslation } from '@/contexts/TranslationContext';
+import { buildLanguageOptions } from '@/components/helpers/expert-form-options';
 import { cn } from '@/lib/utils';
 
-function Row({ label, value }) {
+function InfoItem({ icon: Icon, label, value, className = '' }) {
     return (
-        <div className="grid grid-cols-1 gap-1 sm:grid-cols-4 sm:gap-4">
-            <div className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-                {label}
-            </div>
-            <div className="text-sm wrap-break-word text-foreground sm:col-span-3">
-                {value || '—'}
+        <div className={cn('flex gap-3', className)}>
+            {Icon ? (
+                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-beta-blue/10 text-beta-blue">
+                    <Icon className="size-4" />
+                </span>
+            ) : null}
+            <div className="min-w-0">
+                <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
+                    {label}
+                </p>
+                <p className="mt-0.5 text-sm wrap-break-word text-foreground">
+                    {value || '—'}
+                </p>
             </div>
         </div>
     );
@@ -42,34 +66,12 @@ function SectionCard({ title, description, children, className = '' }) {
                     </p>
                 ) : null}
             </div>
-            <div className="space-y-4">{children}</div>
+            {children}
         </section>
     );
 }
 
-function LangCard({ lang, items }) {
-    return (
-        <div className="rounded-xl border border-border/70 bg-background p-4 shadow-sm">
-            <div className="mb-3 inline-flex items-center rounded-full border border-border/70 bg-card px-2.5 py-0.5 text-xs font-semibold text-muted-foreground">
-                {lang}
-            </div>
-            <div className="space-y-3">
-                {items.map((item) => (
-                    <div key={`${lang}-${item.label}`}>
-                        <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-                            {item.label}
-                        </p>
-                        <p className="mt-1 text-sm wrap-break-word text-foreground">
-                            {item.value || '—'}
-                        </p>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-}
-
-function TagList({ items }) {
+function TagList({ items, variant = 'default' }) {
     if (!items?.length) {
         return <span className="text-sm text-muted-foreground">—</span>;
     }
@@ -79,11 +81,64 @@ function TagList({ items }) {
             {items.map((item) => (
                 <span
                     key={item}
-                    className="inline-flex items-center rounded-full border border-border/70 bg-background px-2.5 py-0.5 text-xs font-medium text-foreground"
+                    className={cn(
+                        'inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-medium',
+                        variant === 'expertise'
+                            ? 'border-beta-blue/25 bg-beta-blue/10 text-beta-blue'
+                            : 'border-border/70 bg-background text-foreground',
+                    )}
                 >
                     {item}
                 </span>
             ))}
+        </div>
+    );
+}
+
+function LangBlock({ lang, name, title, expertise, bio }) {
+    return (
+        <div className="rounded-xl border border-border/70 bg-background p-4">
+            <div className="mb-3 inline-flex items-center rounded-full border border-border/70 bg-card px-2.5 py-0.5 text-xs font-bold tracking-wide text-beta-blue">
+                {lang}
+            </div>
+            <div className="space-y-3">
+                <div>
+                    <p className="text-xs font-semibold text-muted-foreground uppercase">
+                        Name
+                    </p>
+                    <p className="mt-1 text-sm font-semibold text-foreground">
+                        {name || '—'}
+                    </p>
+                </div>
+                <div>
+                    <p className="text-xs font-semibold text-muted-foreground uppercase">
+                        Title
+                    </p>
+                    <p className="mt-1 text-sm text-foreground">
+                        {title || '—'}
+                    </p>
+                </div>
+                {expertise ? (
+                    <div>
+                        <p className="text-xs font-semibold text-muted-foreground uppercase">
+                            Expertise
+                        </p>
+                        <p className="mt-1 text-sm leading-relaxed text-foreground">
+                            {expertise}
+                        </p>
+                    </div>
+                ) : null}
+                {bio ? (
+                    <div>
+                        <p className="text-xs font-semibold text-muted-foreground uppercase">
+                            Bio
+                        </p>
+                        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+                            {bio}
+                        </p>
+                    </div>
+                ) : null}
+            </div>
         </div>
     );
 }
@@ -109,40 +164,120 @@ function getCityLabel(application) {
 }
 
 function getI18nValue(value) {
+    if (Array.isArray(value)) {
+        return value
+            .map((item) => item?.fr || item?.en || item?.ar || '')
+            .filter(Boolean)
+            .join(', ');
+    }
+
     return value?.en || value?.fr || value?.ar || '';
 }
 
-export default function AdminExpertApplicationShow({ application }) {
-    setLayoutProps({
-        breadcrumbs: [
-            {
-                title: 'Dashboard',
-                href: '/admin/dashboard',
-            },
-            {
-                title: 'Expertes Applications',
-                href: '/admin/expert-applications',
-            },
-            {
-                title: `#${application?.id ?? ''}`,
-                href: '#',
-            },
-        ],
-        title: `Experte Application #${application?.id ?? ''}`,
-        description:
-            'Review the details of this expert application and accept or deny it accordingly.',
-    });
+function expertiseTags(value, lang = 'fr') {
+    if (Array.isArray(value)) {
+        return value
+            .map((item) => item?.[lang] || item?.fr || item?.en || '')
+            .filter(Boolean);
+    }
 
+    const raw = value?.[lang] ?? value?.fr ?? '';
+    if (!raw) {
+        return [];
+    }
+
+    return raw
+        .split(/[,;\n]+/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+}
+
+function expertiseForLang(value, lang) {
+    if (Array.isArray(value)) {
+        return value
+            .map((item) => item?.[lang] || '')
+            .filter(Boolean)
+            .join(', ');
+    }
+
+    return value?.[lang] ?? '';
+}
+
+function regionLabel(scope) {
+    switch (scope) {
+        case 'maroc':
+            return 'Morocco';
+        case 'afrique':
+            return 'Africa';
+        case 'diaspora':
+            return 'Diaspora';
+        default:
+            return scope || '—';
+    }
+}
+
+function SocialLink({ href, label, icon: Icon }) {
+    const url = (href ?? '').trim();
+    if (!url) {
+        return null;
+    }
+
+    const external = /^https?:\/\//i.test(url) ? url : `https://${url}`;
+
+    return (
+        <a
+            href={external}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 rounded-lg border border-border/70 bg-background px-3 py-2 text-sm font-medium text-foreground transition hover:border-beta-blue hover:bg-beta-blue/5 hover:text-beta-blue"
+        >
+            <Icon className="size-4 shrink-0" />
+            <span className="truncate">{label}</span>
+            <ExternalLink className="size-3.5 shrink-0 opacity-60" />
+        </a>
+    );
+}
+
+export default function AdminExpertApplicationShow({ application }) {
+    const { locale } = useTranslation();
     const a = application ?? {};
     const [denyOpen, setDenyOpen] = useState(false);
     const [denyNote, setDenyNote] = useState('');
-    const languages = Array.isArray(a.languages) ? a.languages : [];
+    const languageCodes = Array.isArray(a.languages) ? a.languages : [];
+    const languageOptions = useMemo(
+        () => buildLanguageOptions(locale),
+        [locale],
+    );
+    const languageLabels = useMemo(() => {
+        const byValue = new Map(
+            languageOptions.map((option) => [option.value, option.label]),
+        );
+
+        return languageCodes.map((code) => byValue.get(code) ?? code);
+    }, [languageCodes, languageOptions]);
+    const expertiseChips = expertiseTags(a.expertise_i18n, 'fr');
+    const displayName = getI18nValue(a.name_i18n) || 'Application';
+    const displayTitle = getI18nValue(a.title_i18n);
+
     const submittedAt = a.created_at
         ? new Date(a.created_at).toLocaleString()
         : '—';
     const reviewedAt = a.reviewed_at
         ? new Date(a.reviewed_at).toLocaleString()
         : '—';
+
+    setLayoutProps({
+        breadcrumbs: [
+            { title: 'Dashboard', href: '/admin/dashboard' },
+            {
+                title: 'Expert Applications',
+                href: '/admin/expert-applications',
+            },
+            { title: `#${a.id ?? ''}`, href: '#' },
+        ],
+        title: displayName,
+        description: 'Review this application and accept or deny it.',
+    });
 
     const review = (decision) => {
         if (decision === 'denied') {
@@ -175,100 +310,164 @@ export default function AdminExpertApplicationShow({ application }) {
         <>
             <Head title={`Expert Application #${a.id ?? ''}`} />
 
-            <div className="mx-auto flex w-full max-w-[min(100%,90rem)] flex-col gap-8 px-4 py-4 sm:gap-10 md:px-6">
-                <div className="rounded-2xl border border-border/70 bg-card px-5 py-5 shadow-sm sm:px-6">
-                    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-                        <div>
-                            <h1 className="mt-2 text-2xl font-bold tracking-tight text-tblack sm:text-3xl">
-                                {getI18nValue(a.name_i18n) ||
-                                    'Application details'}
-                            </h1>
-                            <div className="mt-2 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-                                <span className="inline-flex items-center gap-1">
-                                    <MapPin className="size-4" />
-                                    {getCityLabel(a) || '—'}
-                                    {a.country ? `, ${a.country}` : ''}
-                                </span>
-                                <span className="inline-flex items-center gap-1">
-                                    <Globe2 className="size-4" />
-                                    {a.locale || '—'}
-                                </span>
-                                <span className="text-muted-foreground">
-                                    Submitted {submittedAt}
-                                </span>
+            <div className="mx-auto w-full max-w-6xl px-4 py-6 sm:px-6 sm:py-8 lg:px-10">
+                <div className="grid gap-6 lg:grid-cols-12">
+                    <aside className="space-y-6 lg:col-span-4">
+                        <div className="overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
+                            <div className="p-5">
+                                <div className="mx-auto size-32 overflow-hidden rounded-2xl border-4 border-card bg-muted shadow-md">
+                                    {a.image_url ? (
+                                        <img
+                                            src={a.image_url}
+                                            alt=""
+                                            className="h-full w-full object-cover"
+                                        />
+                                    ) : (
+                                        <div className="flex h-full w-full items-center justify-center bg-beta-blue/10 text-2xl font-bold text-beta-blue">
+                                            {displayName
+                                                .charAt(0)
+                                                .toUpperCase()}
+                                        </div>
+                                    )}
+                                </div>
+
+                                <div className="mt-4 text-center">
+                                    <h1 className="text-lg font-extrabold text-tblack">
+                                        {displayName}
+                                    </h1>
+                                    {displayTitle ? (
+                                        <p className="mt-1 text-sm text-muted-foreground">
+                                            {displayTitle}
+                                        </p>
+                                    ) : null}
+                                    <div className="mt-3 flex flex-wrap items-center justify-center gap-2">
+                                        <span
+                                            className={cn(
+                                                'inline-flex rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize',
+                                                statusClass(a.status),
+                                            )}
+                                        >
+                                            {a.status || 'pending'}
+                                        </span>
+                                        {a.region_scope ? (
+                                            <span className="inline-flex rounded-full border border-border/70 bg-background px-2.5 py-0.5 text-xs font-medium text-foreground">
+                                                {regionLabel(a.region_scope)}
+                                            </span>
+                                        ) : null}
+                                        {a.expert_id ? (
+                                            <span className="inline-flex rounded-full border border-alpha-green/40 bg-beta-green px-2.5 py-0.5 text-xs font-medium text-alpha-green">
+                                                Published
+                                            </span>
+                                        ) : null}
+                                    </div>
+                                </div>
+
+                                <div className="mt-5 space-y-3 border-t border-border/70 pt-5">
+                                    <InfoItem
+                                        icon={Mail}
+                                        label="Email"
+                                        value={a.email}
+                                    />
+                                    <InfoItem
+                                        icon={Phone}
+                                        label="Phone"
+                                        value={a.phone}
+                                    />
+                                    <InfoItem
+                                        icon={MapPin}
+                                        label="Location"
+                                        value={[getCityLabel(a), a.country]
+                                            .filter(Boolean)
+                                            .join(', ')}
+                                    />
+                                    <InfoItem
+                                        icon={Calendar}
+                                        label="Submitted"
+                                        value={submittedAt}
+                                    />
+                                </div>
+
+                                <div className="mt-5 flex flex-col gap-2">
+                                    {a.cv_url ? (
+                                        <Button
+                                            type="button"
+                                            variant="outline"
+                                            className="w-full gap-2"
+                                            onClick={() =>
+                                                window.open(
+                                                    a.cv_url,
+                                                    '_blank',
+                                                    'noopener,noreferrer',
+                                                )
+                                            }
+                                        >
+                                            <FileText className="size-4" />
+                                            Open CV
+                                        </Button>
+                                    ) : null}
+
+                                    {a.status === 'pending' ? (
+                                        <>
+                                            <Button
+                                                type="button"
+                                                className="w-full gap-2 bg-alpha-green text-twhite hover:bg-alpha-green/90"
+                                                onClick={() =>
+                                                    review('accepted')
+                                                }
+                                            >
+                                                <CheckCircle2 className="size-4" />
+                                                Accept application
+                                            </Button>
+                                            <Button
+                                                type="button"
+                                                variant="destructive"
+                                                className="w-full gap-2"
+                                                onClick={() =>
+                                                    setDenyOpen(true)
+                                                }
+                                            >
+                                                <XCircle className="size-4" />
+                                                Deny application
+                                            </Button>
+                                        </>
+                                    ) : null}
+                                </div>
                             </div>
                         </div>
 
-                        <div className="flex flex-wrap items-center gap-2">
-                            <span
-                                className={`inline-flex rounded-full border px-2.5 py-0.5 text-xs font-medium capitalize ${statusClass(a.status)}`}
-                            >
-                                {a.status || 'pending'}
-                            </span>
-                            {a.expert_id ? (
-                                <span className="text-xs font-medium text-alpha-green">
-                                    Published
-                                </span>
-                            ) : null}
-                        </div>
-                    </div>
-
-                    <div className="mt-5 flex flex-wrap items-center gap-2">
-                        {a.cv_url ? (
-                            <Button
-                                type="button"
-                                variant="outline"
-                                className="gap-2"
-                                onClick={() =>
-                                    window.open(
-                                        a.cv_url,
-                                        '_blank',
-                                        'noopener,noreferrer',
-                                    )
-                                }
-                            >
-                                <FileText className="size-4" />
-                                Open CV
-                            </Button>
-                        ) : null}
-
-                        {a.status === 'pending' ? (
-                            <>
-                                <Button
-                                    type="button"
-                                    className="gap-2 bg-alpha-green text-twhite hover:bg-alpha-green/90"
-                                    onClick={() => review('accepted')}
-                                >
-                                    <CheckCircle2 className="size-4" />
-                                    Accept
-                                </Button>
-                                <Button
-                                    type="button"
-                                    variant="destructive"
-                                    className="gap-2"
-                                    onClick={() => setDenyOpen(true)}
-                                >
-                                    <XCircle className="size-4" />
-                                    Deny
-                                </Button>
-                            </>
-                        ) : null}
-                    </div>
-                </div>
-
-                <div className="grid gap-6">
-                    <div className="flex flex-col gap-6">
-                        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                            <SectionCard
-                                title="Review"
-                                description="Decision and reviewer metadata."
-                            >
-                                <Row
-                                    label="Status"
-                                    value={a.status || 'pending'}
+                        <SectionCard
+                            title="Application meta"
+                            description="Locale and submission context."
+                        >
+                            <div className="space-y-4">
+                                <InfoItem
+                                    icon={Globe2}
+                                    label="Form locale"
+                                    value={a.locale}
                                 />
-                                <Row label="Reviewed at" value={reviewedAt} />
-                                <Row
+                                <InfoItem
+                                    icon={Briefcase}
+                                    label="Region scope"
+                                    value={regionLabel(a.region_scope)}
+                                />
+                                <InfoItem
+                                    icon={User}
+                                    label="Application ID"
+                                    value={`#${a.id}`}
+                                />
+                            </div>
+                        </SectionCard>
+
+                        <SectionCard
+                            title="Review"
+                            description="Decision history and internal notes."
+                        >
+                            <div className="space-y-4">
+                                <InfoItem
+                                    label="Reviewed at"
+                                    value={reviewedAt}
+                                />
+                                <InfoItem
                                     label="Reviewed by"
                                     value={
                                         a.reviewed_by
@@ -277,162 +476,123 @@ export default function AdminExpertApplicationShow({ application }) {
                                     }
                                 />
                                 {a.status !== 'pending' ? (
-                                    <Row
+                                    <InfoItem
                                         label="Featured on front"
                                         value={
                                             a.expert?.on_front ? 'Yes' : 'No'
                                         }
                                     />
                                 ) : null}
-                                <Row
-                                    label="Admin notes"
-                                    value={a.admin_notes}
-                                />
-                            </SectionCard>
-
-                            <SectionCard
-                                title="Identity"
-                                description="Primary contact details and localization."
-                            >
-                                <Row label="Email" value={a.email} />
-                                <Row label="Phone" value={a.phone} />
-                                <Row label="Locale" value={a.locale} />
-                                <Row label="Country" value={a.country} />
-                                <Row label="City" value={getCityLabel(a)} />
-                            </SectionCard>
-                        </div>
-
-                        <SectionCard
-                            title="Names and Titles"
-                            description="Multilingual names and professional titles."
-                        >
-                            <div className="grid gap-4 lg:grid-cols-3">
-                                <LangCard
-                                    lang="EN"
-                                    items={[
-                                        {
-                                            label: 'Name',
-                                            value: a.name_i18n?.en,
-                                        },
-                                        {
-                                            label: 'Current title',
-                                            value: a.title_i18n?.en,
-                                        },
-                                    ]}
-                                />
-                                <LangCard
-                                    lang="FR"
-                                    items={[
-                                        {
-                                            label: 'Name',
-                                            value: a.name_i18n?.fr,
-                                        },
-                                        {
-                                            label: 'Current title',
-                                            value: a.title_i18n?.fr,
-                                        },
-                                    ]}
-                                />
-                                <LangCard
-                                    lang="AR"
-                                    items={[
-                                        {
-                                            label: 'Name',
-                                            value: a.name_i18n?.ar,
-                                        },
-                                        {
-                                            label: 'Current title',
-                                            value: a.title_i18n?.ar,
-                                        },
-                                    ]}
-                                />
-                            </div>
-                        </SectionCard>
-
-                        <SectionCard
-                            title="Expertise and Bio"
-                            description="Areas of expertise and personal bio in three languages."
-                        >
-                            <div className="grid gap-4 lg:grid-cols-3">
-                                <LangCard
-                                    lang="EN"
-                                    items={[
-                                        {
-                                            label: 'Expertise',
-                                            value: a.expertise_i18n?.en,
-                                        },
-                                        {
-                                            label: 'Bio',
-                                            value: a.bio_i18n?.en,
-                                        },
-                                    ]}
-                                />
-                                <LangCard
-                                    lang="FR"
-                                    items={[
-                                        {
-                                            label: 'Expertise',
-                                            value: a.expertise_i18n?.fr,
-                                        },
-                                        {
-                                            label: 'Bio',
-                                            value: a.bio_i18n?.fr,
-                                        },
-                                    ]}
-                                />
-                                <LangCard
-                                    lang="AR"
-                                    items={[
-                                        {
-                                            label: 'Expertise',
-                                            value: a.expertise_i18n?.ar,
-                                        },
-                                        {
-                                            label: 'Bio',
-                                            value: a.bio_i18n?.ar,
-                                        },
-                                    ]}
-                                />
-                            </div>
-                        </SectionCard>
-
-                        <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
-                            <SectionCard
-                                className="lg:col-span-2"
-                                title="Languages"
-                                description="Spoken languages from the application."
-                            >
-                                <div>
-                                    <p className="text-xs font-semibold tracking-wide text-muted-foreground uppercase">
-                                        Languages
-                                    </p>
-                                    <div className="mt-2">
-                                        <TagList items={languages} />
+                                {a.admin_notes ? (
+                                    <div className="rounded-lg border border-border/70 bg-background p-3">
+                                        <p className="text-xs font-semibold text-muted-foreground uppercase">
+                                            Admin notes
+                                        </p>
+                                        <p className="mt-2 text-sm leading-relaxed text-foreground">
+                                            {a.admin_notes}
+                                        </p>
                                     </div>
+                                ) : null}
+                            </div>
+                        </SectionCard>
+                    </aside>
+
+                    <div className="space-y-6 lg:col-span-8">
+                        {expertiseChips.length > 0 ? (
+                            <SectionCard
+                                title="Areas of expertise"
+                                description="Domains selected from the official list."
+                            >
+                                <TagList
+                                    items={expertiseChips}
+                                    variant="expertise"
+                                />
+                            </SectionCard>
+                        ) : null}
+
+                        <SectionCard
+                            title="Profile information"
+                            description="Name, title, expertise and bio per locale."
+                        >
+                            <div className="flex flex-col gap-4">
+                                <LangBlock
+                                    lang="FR"
+                                    name={a.name_i18n?.fr}
+                                    title={a.title_i18n?.fr}
+                                    expertise={expertiseForLang(
+                                        a.expertise_i18n,
+                                        'fr',
+                                    )}
+                                    bio={a.bio_i18n?.fr}
+                                />
+                                <LangBlock
+                                    lang="EN"
+                                    name={a.name_i18n?.en}
+                                    title={a.title_i18n?.en}
+                                    expertise={expertiseForLang(
+                                        a.expertise_i18n,
+                                        'en',
+                                    )}
+                                    bio={a.bio_i18n?.en}
+                                />
+                                <LangBlock
+                                    lang="AR"
+                                    name={a.name_i18n?.ar}
+                                    title={a.title_i18n?.ar}
+                                    expertise={expertiseForLang(
+                                        a.expertise_i18n,
+                                        'ar',
+                                    )}
+                                    bio={a.bio_i18n?.ar}
+                                />
+                            </div>
+                        </SectionCard>
+
+                        <div className="grid gap-6 sm:grid-cols-2">
+                            <SectionCard
+                                title="Languages"
+                                description="Languages declared by the applicant."
+                            >
+                                <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+                                    <Languages className="size-4 text-beta-blue" />
+                                    <TagList items={languageLabels} />
                                 </div>
                             </SectionCard>
 
                             <SectionCard
-                                title="Social Links"
-                                className="lg:col-span-3"
-                                description="Optional public profiles."
+                                title="Social links"
+                                description="Public profiles shared by the applicant."
                             >
-                                <Row
-                                    label="LinkedIn"
-                                    value={a.socials?.linkedin}
-                                />
-                                <Row
-                                    label="Twitter / X"
-                                    value={a.socials?.twitter}
-                                />
-                                <Row
-                                    label="Instagram"
-                                    value={a.socials?.instagram}
-                                />
-                                <Row
-                                    label="Portfolio"
-                                    value={a.socials?.portfolio}
-                                />
+                                <div className="grid gap-2 sm:grid-cols-2">
+                                    <SocialLink
+                                        href={a.socials?.linkedin}
+                                        label="LinkedIn"
+                                        icon={Linkedin}
+                                    />
+                                    <SocialLink
+                                        href={a.socials?.twitter}
+                                        label="X (Twitter)"
+                                        icon={ExternalLink}
+                                    />
+                                    <SocialLink
+                                        href={a.socials?.instagram}
+                                        label="Instagram"
+                                        icon={Instagram}
+                                    />
+                                    <SocialLink
+                                        href={a.socials?.portfolio}
+                                        label="Portfolio"
+                                        icon={ExternalLink}
+                                    />
+                                </div>
+                                {!a.socials?.linkedin &&
+                                !a.socials?.twitter &&
+                                !a.socials?.instagram &&
+                                !a.socials?.portfolio ? (
+                                    <p className="mt-3 text-sm text-muted-foreground">
+                                        No social links provided.
+                                    </p>
+                                ) : null}
                             </SectionCard>
                         </div>
                     </div>

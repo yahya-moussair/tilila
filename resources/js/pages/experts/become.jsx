@@ -1,13 +1,24 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { useTranslation } from '@/contexts/TranslationContext';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import TransText from '@/components/TransText';
 import { buildCountryOptions, buildLanguageOptions } from '@/components/helpers/expert-form-options';
+import { EXPERT_DOMAINS } from '@/constans';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Label } from '@/components/ui/label';
 
 export default function BecomeExpert() {
     const { locale, t } = useTranslation();
     const maxCvSizeBytes = 5 * 1024 * 1024;
+    const baseLanguageValues = ['ar', 'fr', 'en'];
+    const africaCountryCodes = [
+        'DZ', 'AO', 'BJ', 'BW', 'BF', 'BI', 'CM', 'CV', 'CF', 'TD', 'KM', 'CG',
+        'CD', 'CI', 'DJ', 'EG', 'GQ', 'ER', 'SZ', 'ET', 'GA', 'GM', 'GH', 'GN',
+        'GW', 'KE', 'LS', 'LR', 'LY', 'MG', 'MW', 'ML', 'MR', 'MU', 'MA', 'MZ',
+        'NA', 'NE', 'NG', 'RW', 'ST', 'SN', 'SC', 'SL', 'SO', 'ZA', 'SS', 'SD',
+        'TZ', 'TG', 'TN', 'UG', 'ZM', 'ZW',
+    ];
 
     const {
         data,
@@ -22,12 +33,14 @@ export default function BecomeExpert() {
         name_i18n: { en: '', fr: '', ar: '' },
         email: '',
         phone: '',
+        region_scope: 'maroc',
         country: '',
         city: { en: '', fr: '', ar: '' },
         languages: [],
         title_i18n: { en: '', fr: '', ar: '' },
-        expertise_i18n: { en: '', fr: '', ar: '' },
+        expertise_domains: [],
         bio_i18n: { en: '', fr: '', ar: '' },
+        accept_terms: false,
         linkedin_url: '',
         twitter_url: '',
         instagram_url: '',
@@ -39,15 +52,135 @@ export default function BecomeExpert() {
     const [cvSizeError, setCvSizeError] = useState('');
     const [imageSizeError, setImageSizeError] = useState('');
     const [languageQuery, setLanguageQuery] = useState('');
+    const [expertiseQuery, setExpertiseQuery] = useState('');
+    const maxExpertiseDomains = 6;
     const countryOptions = useMemo(() => buildCountryOptions(locale), [locale]);
     const languageOptions = useMemo(() => buildLanguageOptions(locale), [locale]);
+    const regionOptions = useMemo(
+        () => [
+            { value: 'maroc', en: 'Morocco', fr: 'Maroc', ar: 'المغرب' },
+            { value: 'afrique', en: 'Africa', fr: 'Afrique', ar: 'افريقيا' },
+            { value: 'diaspora', en: 'Diaspora', fr: 'Diaspora', ar: 'الشتات' },
+        ],
+        [],
+    );
+    const africaCountryNames = useMemo(() => {
+        if (typeof Intl === 'undefined' || !Intl.DisplayNames) {
+            return new Set();
+        }
+
+        const displayNames = new Intl.DisplayNames(['en'], { type: 'region' });
+        return new Set(
+            africaCountryCodes
+                .map((code) => displayNames.of(code))
+                .filter(Boolean),
+        );
+    }, []);
+    const regionCountryOptions = useMemo(() => {
+        if (data.region_scope === 'maroc') {
+            return countryOptions.filter(
+                (country) => country.value === 'Morocco',
+            );
+        }
+
+        if (data.region_scope === 'afrique') {
+            return countryOptions.filter((country) =>
+                africaCountryNames.has(country.value) &&
+                country.value !== 'Morocco',
+            );
+        }
+
+        return countryOptions.filter(
+            (country) =>
+                country.value !== 'Morocco' &&
+                !africaCountryNames.has(country.value),
+        );
+    }, [africaCountryNames, countryOptions, data.region_scope]);
+    const selectedLanguageLabels = useMemo(() => {
+        const byValue = new Map(
+            languageOptions.map((option) => [option.value, option.label]),
+        );
+
+        return (data.languages ?? [])
+            .map((value) => byValue.get(value) ?? value)
+            .filter(Boolean);
+    }, [data.languages, languageOptions]);
+    const baseLanguageOptions = useMemo(
+        () =>
+            baseLanguageValues
+                .map((value) =>
+                    languageOptions.find((option) => option.value === value),
+                )
+                .filter(Boolean),
+        [baseLanguageValues, languageOptions],
+    );
     const filteredLanguageOptions = useMemo(() => {
         const query = languageQuery.trim().toLowerCase();
+        const others = languageOptions.filter(
+            (item) => !baseLanguageValues.includes(item.value),
+        );
+
         if (!query) {
-            return languageOptions;
+            return others;
         }
-        return languageOptions.filter((item) => item.searchText.includes(query));
-    }, [languageOptions, languageQuery]);
+
+        return others.filter((item) => item.searchText.includes(query));
+    }, [baseLanguageValues, languageOptions, languageQuery]);
+
+    const domainLabel = (domain) =>
+        domain?.[locale] || domain?.fr || domain?.en || '';
+    const domainKey = (domain) => domain?.fr ?? '';
+    const selectedDomainKeys = useMemo(
+        () =>
+            new Set(
+                (data.expertise_domains ?? []).map((item) => domainKey(item)),
+            ),
+        [data.expertise_domains],
+    );
+    const selectedDomainLabels = useMemo(
+        () =>
+            (data.expertise_domains ?? [])
+                .map((item) => domainLabel(item))
+                .filter(Boolean),
+        [data.expertise_domains, locale],
+    );
+    const filteredExpertiseOptions = useMemo(() => {
+        const query = expertiseQuery.trim().toLowerCase();
+        const searchable = EXPERT_DOMAINS.map((domain) => ({
+            domain,
+            searchText: [domain.fr, domain.en, domain.ar]
+                .join(' ')
+                .toLowerCase(),
+        }));
+
+        if (!query) {
+            return searchable;
+        }
+
+        return searchable.filter((item) => item.searchText.includes(query));
+    }, [expertiseQuery]);
+    const canSubmit =
+        data.accept_terms &&
+        (data.expertise_domains?.length ?? 0) > 0 &&
+        !processing;
+
+    useEffect(() => {
+        if (data.region_scope === 'maroc') {
+            if (data.country !== 'Morocco') {
+                setData('country', 'Morocco');
+            }
+            return;
+        }
+
+        if (
+            data.country &&
+            !regionCountryOptions.some(
+                (country) => country.value === data.country,
+            )
+        ) {
+            setData('country', '');
+        }
+    }, [data.country, data.region_scope, regionCountryOptions, setData]);
 
     const cvHasError = Boolean(errors.cv || cvSizeError);
     const imageHasError = Boolean(errors.profile_image || imageSizeError);
@@ -59,8 +192,38 @@ export default function BecomeExpert() {
     const getFirstArrayError = (prefix) =>
         Object.entries(errors).find(([key]) => key.startsWith(prefix))?.[1];
 
+    const toggleExpertiseDomain = (domain) => {
+        const key = domainKey(domain);
+        const current = data.expertise_domains ?? [];
+
+        if (selectedDomainKeys.has(key)) {
+            setData(
+                'expertise_domains',
+                current.filter((item) => domainKey(item) !== key),
+            );
+            return;
+        }
+
+        if (current.length >= maxExpertiseDomains) {
+            return;
+        }
+
+        setData('expertise_domains', [
+            ...current,
+            { en: domain.en, fr: domain.fr, ar: domain.ar },
+        ]);
+    };
+
     const submit = (e) => {
         e.preventDefault();
+
+        if (!data.accept_terms) {
+            return;
+        }
+
+        if ((data.expertise_domains?.length ?? 0) === 0) {
+            return;
+        }
 
         if (data.profile_image instanceof File && data.profile_image.size > maxCvSizeBytes) {
             setImageSizeError('The image must be 5 MB or smaller.');
@@ -84,12 +247,14 @@ export default function BecomeExpert() {
                     'name_i18n',
                     'email',
                     'phone',
+                    'region_scope',
                     'country',
                     'city',
                     'languages',
                     'title_i18n',
-                    'expertise_i18n',
+                    'expertise_domains',
                     'bio_i18n',
+                    'accept_terms',
                     'linkedin_url',
                     'twitter_url',
                     'instagram_url',
@@ -269,7 +434,7 @@ export default function BecomeExpert() {
                                         ) : null}
                                     </div>
 
-                                    {['en', 'fr', 'ar'].map((lang) => (
+                                    {['fr', 'en', 'ar'].map((lang) => (
                                         <div key={`name-${lang}`}>
                                             <label className="mb-2 block text-sm font-semibold text-tblack">
                                                 <TransText
@@ -278,7 +443,7 @@ export default function BecomeExpert() {
                                                     ar="الاسم الكامل"
                                                 />{' '}
                                                 ({lang.toUpperCase()}){' '}
-                                                {requiredMark}
+                                                {lang === 'fr' ? requiredMark : null}
                                             </label>
                                             <input
                                                 value={
@@ -293,6 +458,7 @@ export default function BecomeExpert() {
                                                 }
                                                 className={inputClass}
                                                 placeholder="Your full name"
+                                                required={lang === 'fr'}
                                             />
                                             {errors[`name_i18n.${lang}`] ? (
                                                 <p className="mt-1 text-xs text-alpha-danger">
@@ -317,7 +483,7 @@ export default function BecomeExpert() {
                             </h3>
                             <div className="rounded-xl border border-border/70 p-4 sm:p-5">
                                 <div className="grid gap-5 sm:grid-cols-2">
-                                    {['en', 'fr', 'ar'].map((lang) => (
+                                    {['fr', 'en', 'ar'].map((lang) => (
                                         <div key={`title-${lang}`}>
                                             <label className="mb-2 block text-sm font-semibold text-tblack">
                                                 <TransText
@@ -326,7 +492,7 @@ export default function BecomeExpert() {
                                                     ar="الصفة الحالية"
                                                 />{' '}
                                                 ({lang.toUpperCase()}){' '}
-                                                {requiredMark}
+                                                {lang === 'fr' ? requiredMark : null}
                                             </label>
                                             <input
                                                 value={
@@ -342,6 +508,7 @@ export default function BecomeExpert() {
                                                 }
                                                 className={inputClass}
                                                 placeholder="Journalist, Researcher, ..."
+                                                required={lang === 'fr'}
                                             />
                                             {errors[`title_i18n.${lang}`] ? (
                                                 <p className="mt-1 text-xs text-alpha-danger">
@@ -354,6 +521,53 @@ export default function BecomeExpert() {
                                             ) : null}
                                         </div>
                                     ))}
+                                </div>
+                            </div>
+
+                            <h3 className="mb-3 text-base font-semibold text-tblack">
+                                <TransText
+                                    en="Location"
+                                    fr="Localisation"
+                                    ar="الموقع"
+                                />
+                            </h3>
+                            <div className="rounded-xl border border-border/70 p-4 sm:p-5">
+                                <div className="grid gap-5 sm:grid-cols-2">
+                                    <div>
+                                        <label className="mb-2 block text-sm font-semibold text-tblack">
+                                            <TransText
+                                                en="Region"
+                                                fr="Region"
+                                                ar="المنطقة"
+                                            />{' '}
+                                            {requiredMark}
+                                        </label>
+                                        <select
+                                            value={data.region_scope}
+                                            onChange={(e) =>
+                                                setData(
+                                                    'region_scope',
+                                                    e.target.value,
+                                                )
+                                            }
+                                            className={inputClass}
+                                            required
+                                        >
+                                            {regionOptions.map((option) => (
+                                                <option
+                                                    key={option.value}
+                                                    value={option.value}
+                                                >
+                                                    {option[locale] ?? option.en}
+                                                </option>
+                                            ))}
+                                        </select>
+                                        {errors.region_scope ? (
+                                            <p className="mt-1 text-xs text-alpha-danger">
+                                                {errors.region_scope}
+                                            </p>
+                                        ) : null}
+                                    </div>
 
                                     <div>
                                         <label className="mb-2 block text-sm font-semibold text-tblack">
@@ -361,7 +575,8 @@ export default function BecomeExpert() {
                                                 en="Country"
                                                 fr="Pays"
                                                 ar="البلد"
-                                            />
+                                            />{' '}
+                                            {requiredMark}
                                         </label>
                                         <select
                                             value={data.country}
@@ -372,11 +587,17 @@ export default function BecomeExpert() {
                                                 )
                                             }
                                             className={inputClass}
+                                            required
+                                            disabled={data.region_scope === 'maroc'}
                                         >
-                                            <option value="">
-                                                {t('experts.filters.all')}
+                                            <option value="" disabled>
+                                                {locale === 'fr'
+                                                    ? 'Selectionnez un pays'
+                                                    : locale === 'ar'
+                                                      ? 'اختر بلدا'
+                                                      : 'Select a country'}
                                             </option>
-                                            {countryOptions.map((country) => (
+                                            {regionCountryOptions.map((country) => (
                                                 <option
                                                     key={country.value}
                                                     value={country.value}
@@ -392,7 +613,7 @@ export default function BecomeExpert() {
                                         ) : null}
                                     </div>
 
-                                    {['en', 'fr', 'ar'].map((lang) => (
+                                    {['fr', 'en', 'ar'].map((lang) => (
                                         <div key={`city-${lang}`}>
                                             <label className="mb-2 block text-sm font-semibold text-tblack">
                                                 <TransText
@@ -400,7 +621,8 @@ export default function BecomeExpert() {
                                                     fr="Ville"
                                                     ar="المدينة"
                                                 />{' '}
-                                                ({lang.toUpperCase()})
+                                                ({lang.toUpperCase()}){' '}
+                                                {lang === 'fr' ? requiredMark : null}
                                             </label>
                                             <input
                                                 value={data.city?.[lang] ?? ''}
@@ -412,6 +634,7 @@ export default function BecomeExpert() {
                                                     )
                                                 }
                                                 className={inputClass}
+                                                required={lang === 'fr'}
                                             />
                                             {errors[`city.${lang}`] ? (
                                                 <p className="mt-1 text-xs text-alpha-danger">
@@ -424,13 +647,76 @@ export default function BecomeExpert() {
                                             ) : null}
                                         </div>
                                     ))}
+                                </div>
+                            </div>
 
-                                    <div className="sm:col-span-2">
+                            <div>
+                                <h3 className="mb-3 text-base font-semibold text-tblack">
+                                    <TransText
+                                        en="Languages"
+                                        fr="Langues"
+                                        ar="اللغات"
+                                    />
+                                </h3>
+                                <div className="rounded-xl border border-border/70 p-4 sm:p-5">
+                                    <p className="text-xs font-semibold text-muted-foreground uppercase">
+                                        <TransText
+                                            en="Primary languages"
+                                            fr="Langues principales"
+                                            ar="اللغات الاساسية"
+                                        />
+                                    </p>
+                                    <div className="mt-2 grid gap-2 sm:grid-cols-3">
+                                        {baseLanguageOptions.map((language) => {
+                                            const checked = (
+                                                data.languages ?? []
+                                            ).includes(language.value);
+
+                                            return (
+                                                <label
+                                                    key={language.value}
+                                                    className={[
+                                                        'flex cursor-pointer items-center gap-2 rounded-md border px-3 py-2 text-sm font-medium',
+                                                        checked
+                                                            ? 'border-beta-blue bg-beta-blue/10 text-beta-blue'
+                                                            : 'border-border bg-card text-foreground',
+                                                    ].join(' ')}
+                                                >
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={checked}
+                                                        onChange={(e) => {
+                                                            setData(
+                                                                'languages',
+                                                                e.target.checked
+                                                                    ? [
+                                                                          ...(data.languages ?? []),
+                                                                          language.value,
+                                                                      ]
+                                                                    : (
+                                                                          data.languages ?? []
+                                                                      ).filter(
+                                                                          (
+                                                                              item,
+                                                                          ) =>
+                                                                              item !==
+                                                                              language.value,
+                                                                      ),
+                                                            );
+                                                        }}
+                                                    />
+                                                    <span>{language.label}</span>
+                                                </label>
+                                            );
+                                        })}
+                                    </div>
+
+                                    <div className="mt-5">
                                         <label className="mb-2 block text-sm font-semibold text-tblack">
                                             <TransText
-                                                en="Languages"
-                                                fr="Langues"
-                                                ar="اللغات"
+                                                en="Search other languages"
+                                                fr="Rechercher d'autres langues"
+                                                ar="ابحث عن لغات اخرى"
                                             />
                                         </label>
                                         <input
@@ -475,26 +761,28 @@ export default function BecomeExpert() {
                                                                     onChange={(
                                                                         e,
                                                                     ) => {
+                                                                        const nextLanguages = e
+                                                                            .target
+                                                                            .checked
+                                                                            ? [
+                                                                                  ...(data.languages ??
+                                                                                      []),
+                                                                                  language.value,
+                                                                              ]
+                                                                            : (
+                                                                                  data.languages ??
+                                                                                  []
+                                                                              ).filter(
+                                                                                  (
+                                                                                      item,
+                                                                                  ) =>
+                                                                                      item !==
+                                                                                      language.value,
+                                                                              );
+
                                                                         setData(
                                                                             'languages',
-                                                                            e
-                                                                                .target
-                                                                                .checked
-                                                                                ? [
-                                                                                      ...(data.languages ??
-                                                                                          []),
-                                                                                      language.value,
-                                                                                  ]
-                                                                                : (
-                                                                                      data.languages ??
-                                                                                      []
-                                                                                  ).filter(
-                                                                                      (
-                                                                                          item,
-                                                                                      ) =>
-                                                                                          item !==
-                                                                                          language.value,
-                                                                                  ),
+                                                                            nextLanguages,
                                                                         );
                                                                     }}
                                                                 />
@@ -509,9 +797,11 @@ export default function BecomeExpert() {
                                                 )}
                                             </div>
                                         </div>
-                                        <p className="mt-1 text-xs text-muted-foreground">
+                                        <p className="mt-2 text-xs text-muted-foreground">
                                             Selected:{' '}
-                                            {(data.languages ?? []).length}
+                                            {selectedLanguageLabels.length > 0
+                                                ? selectedLanguageLabels.join(', ')
+                                                : '—'}
                                         </p>
                                         {errors.languages ? (
                                             <p className="mt-1 text-xs text-alpha-danger">
@@ -537,48 +827,127 @@ export default function BecomeExpert() {
                                     />
                                 </h3>
                                 <div className="rounded-xl border border-border/70 p-4 sm:p-5">
-                                    {['en', 'fr', 'ar'].map((lang) => (
-                                        <div key={`expertise-${lang}`}>
-                                            <label className="mb-2 block text-sm font-semibold text-tblack">
-                                                <TransText
-                                                    en="Expertise areas"
-                                                    fr="Domaines d’expertise"
-                                                    ar="مجالات الخبرة"
-                                                />{' '}
-                                                ({lang.toUpperCase()}){' '}
-                                                {requiredMark}
-                                            </label>
-                                            <textarea
-                                                value={
-                                                    data.expertise_i18n?.[
-                                                        lang
-                                                    ] ?? ''
-                                                }
-                                                onChange={(e) =>
-                                                    setTri(
-                                                        'expertise_i18n',
-                                                        lang,
-                                                        e.target.value,
-                                                    )
-                                                }
-                                                className={`${inputClass} min-h-24 resize-y`}
-                                                placeholder="Ex: Media ethics, digital journalism, climate policy"
+                                    <div>
+                                        <label className="mb-2 block text-sm font-semibold text-tblack">
+                                            <TransText
+                                                en="Areas of expertise"
+                                                fr="Domaines d’expertise"
+                                                ar="مجالات الخبرة"
+                                            />{' '}
+                                            {requiredMark}
+                                        </label>
+                                        <p className={helperClass}>
+                                            <TransText
+                                                en={`Select up to ${maxExpertiseDomains} domains from the official list.`}
+                                                fr={`Sélectionnez jusqu’à ${maxExpertiseDomains} domaines dans la liste officielle.`}
+                                                ar={`اختر حتى ${maxExpertiseDomains} مجالات من القائمة الرسمية.`}
                                             />
-                                            {errors[
-                                                `expertise_i18n.${lang}`
-                                            ] ? (
-                                                <p className="mt-1 text-xs text-alpha-danger">
-                                                    {
-                                                        errors[
-                                                            `expertise_i18n.${lang}`
-                                                        ]
-                                                    }
-                                                </p>
-                                            ) : null}
-                                        </div>
-                                    ))}
+                                        </p>
+                                        <input
+                                            value={expertiseQuery}
+                                            onChange={(e) =>
+                                                setExpertiseQuery(
+                                                    e.target.value,
+                                                )
+                                            }
+                                            className={`${inputClass} mt-3`}
+                                            placeholder={
+                                                locale === 'fr'
+                                                    ? 'Rechercher un domaine…'
+                                                    : locale === 'ar'
+                                                      ? 'ابحث عن مجال…'
+                                                      : 'Search a domain…'
+                                            }
+                                        />
+                                        <div className="mt-3 max-h-56 overflow-y-auto rounded-md border border-border bg-background p-3">
+                                            <div className="grid gap-2 sm:grid-cols-2">
+                                                {filteredExpertiseOptions.map(
+                                                    ({ domain }) => {
+                                                        const key =
+                                                            domainKey(domain);
+                                                        const checked =
+                                                            selectedDomainKeys.has(
+                                                                key,
+                                                            );
+                                                        const atLimit =
+                                                            (data.expertise_domains
+                                                                ?.length ??
+                                                                0) >=
+                                                                maxExpertiseDomains &&
+                                                            !checked;
 
-                                    {['en', 'fr', 'ar'].map((lang) => (
+                                                        return (
+                                                            <label
+                                                                key={key}
+                                                                className={[
+                                                                    'flex cursor-pointer items-start gap-2 rounded-md border px-3 py-2 text-sm',
+                                                                    checked
+                                                                        ? 'border-beta-blue bg-beta-blue/10 text-beta-blue'
+                                                                        : 'border-border bg-card text-foreground',
+                                                                    atLimit
+                                                                        ? 'cursor-not-allowed opacity-50'
+                                                                        : '',
+                                                                ].join(' ')}
+                                                            >
+                                                                <input
+                                                                    type="checkbox"
+                                                                    className="mt-0.5"
+                                                                    checked={
+                                                                        checked
+                                                                    }
+                                                                    disabled={
+                                                                        atLimit
+                                                                    }
+                                                                    onChange={() =>
+                                                                        toggleExpertiseDomain(
+                                                                            domain,
+                                                                        )
+                                                                    }
+                                                                />
+                                                                <span>
+                                                                    {domainLabel(
+                                                                        domain,
+                                                                    )}
+                                                                </span>
+                                                            </label>
+                                                        );
+                                                    },
+                                                )}
+                                            </div>
+                                        </div>
+                                        <p className="mt-2 text-xs text-muted-foreground">
+                                            <TransText
+                                                en="Selected"
+                                                fr="Sélection"
+                                                ar="المحدد"
+                                            />
+                                            :{' '}
+                                            {selectedDomainLabels.length > 0
+                                                ? selectedDomainLabels.join(
+                                                      ', ',
+                                                  )
+                                                : '—'}
+                                            {' · '}
+                                            {data.expertise_domains?.length ??
+                                                0}
+                                            /{maxExpertiseDomains}
+                                        </p>
+                                        {errors.expertise_domains ? (
+                                            <p className="mt-1 text-xs text-alpha-danger">
+                                                {errors.expertise_domains}
+                                            </p>
+                                        ) : getFirstArrayError(
+                                              'expertise_domains.',
+                                          ) ? (
+                                            <p className="mt-1 text-xs text-alpha-danger">
+                                                {getFirstArrayError(
+                                                    'expertise_domains.',
+                                                )}
+                                            </p>
+                                        ) : null}
+                                    </div>
+
+                                    {['fr', 'en', 'ar'].map((lang) => (
                                         <div key={`bio-${lang}`}>
                                             <label className="mb-2 block text-sm font-semibold text-tblack">
                                                 <TransText
@@ -587,7 +956,7 @@ export default function BecomeExpert() {
                                                     ar="نبذة قصيرة"
                                                 />{' '}
                                                 ({lang.toUpperCase()}){' '}
-                                                {requiredMark}
+                                                {lang === 'fr' ? requiredMark : null}
                                             </label>
                                             <textarea
                                                 value={
@@ -602,6 +971,7 @@ export default function BecomeExpert() {
                                                 }
                                                 className={`${inputClass} min-h-28 resize-y`}
                                                 placeholder="Tell us about your work and achievements"
+                                                required={lang === 'fr'}
                                             />
                                             {errors[`bio_i18n.${lang}`] ? (
                                                 <p className="mt-1 text-xs text-alpha-danger">
@@ -736,7 +1106,8 @@ export default function BecomeExpert() {
                                         en="Profile image"
                                         fr="Image de profil"
                                         ar="صورة الملف الشخصي"
-                                    />
+                                    />{' '}
+                                    {requiredMark}
                                 </label>
                                 <input
                                     type="file"
@@ -757,6 +1128,7 @@ export default function BecomeExpert() {
                                         setData('profile_image', file);
                                     }}
                                     aria-invalid={imageHasError}
+                                    required
                                     className={[
                                         inputClass,
                                         imageHasError
@@ -774,7 +1146,7 @@ export default function BecomeExpert() {
                                     </p>
                                 ) : null}
                                 <p className={helperClass}>
-                                    Optional. JPEG, PNG, WebP, or GIF. Max size: 5 MB.
+                                    Required. JPEG, PNG, WebP, or GIF. Max size: 5 MB.
                                 </p>
                             </div>
 
@@ -831,6 +1203,57 @@ export default function BecomeExpert() {
                                 </p>
                             </div>
 
+                            <div className="rounded-xl border border-border/70 bg-card/60 p-4 sm:p-5">
+                                <div className="flex items-start gap-3">
+                                    <Checkbox
+                                        id="accept_terms"
+                                        checked={Boolean(data.accept_terms)}
+                                        onCheckedChange={(value) =>
+                                            setData(
+                                                'accept_terms',
+                                                Boolean(value),
+                                            )
+                                        }
+                                    />
+                                    <div className="min-w-0">
+                                        <Label
+                                            htmlFor="accept_terms"
+                                            className="text-sm font-semibold text-tblack"
+                                        >
+                                            <TransText
+                                                en="I accept the terms and policies"
+                                                fr="J’accepte les conditions et politiques"
+                                                ar="أوافق على الشروط والسياسات"
+                                            />
+                                            {requiredMark}
+                                        </Label>
+                                        <p className="mt-1 text-sm text-muted-foreground">
+                                            <TransText
+                                                en="I have read and agree to the"
+                                                fr="J’ai lu et j’accepte les"
+                                                ar="لقد قرأت وأوافق على"
+                                            />{' '}
+                                            <Link
+                                                href="/mentions-legales"
+                                                className="font-semibold text-beta-blue hover:underline"
+                                            >
+                                                <TransText
+                                                    en="terms, legal notices and privacy policy"
+                                                    fr="conditions, mentions légales et politique de confidentialité"
+                                                    ar="الشروط والإشعارات القانونية وسياسة الخصوصية"
+                                                />
+                                            </Link>
+                                            .
+                                        </p>
+                                        {errors.accept_terms ? (
+                                            <p className="mt-2 text-xs text-alpha-danger">
+                                                {errors.accept_terms}
+                                            </p>
+                                        ) : null}
+                                    </div>
+                                </div>
+                            </div>
+
                             <div className="flex flex-wrap items-center justify-end gap-2 border-t border-border/70 pt-4">
                                 <Link
                                     href="/experts"
@@ -844,7 +1267,7 @@ export default function BecomeExpert() {
                                 </Link>
                                 <button
                                     type="submit"
-                                    disabled={processing}
+                                    disabled={!canSubmit}
                                     className="inline-flex items-center rounded-full bg-beta-blue px-5 py-2 text-sm font-semibold text-twhite transition hover:bg-beta-blue/90 disabled:cursor-not-allowed disabled:opacity-60"
                                 >
                                     {processing ? (

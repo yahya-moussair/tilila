@@ -42,6 +42,13 @@ function getCityLabel(application) {
 }
 
 function getI18nValue(value) {
+    if (Array.isArray(value)) {
+        return value
+            .map((item) => item?.fr || item?.en || item?.ar || '')
+            .filter(Boolean)
+            .join(', ');
+    }
+
     return value?.en || value?.fr || value?.ar || '';
 }
 

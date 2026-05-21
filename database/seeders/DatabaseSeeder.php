@@ -6,7 +6,6 @@ use App\Models\HomeHighlight;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Schema;
 
 class DatabaseSeeder extends Seeder
@@ -21,17 +20,16 @@ class DatabaseSeeder extends Seeder
         }
 
         User::query()->updateOrCreate(
+            ['email' => 'test.admin@example.com'],
             [
-                'email' => 'test@example.com',
+                'name' => 'Test Admin',
+                'password' => 'password',
                 'role' => 'admin',
-            ],
-            [
-                'name' => 'Test User',
-                'password' => Hash::make('password'),
+                'email_verified_at' => now(),
             ],
         );
 
-        // $this->call(ExpertSeeder::class);
+        $this->call(ExpertSeeder::class);
         $this->call(OpportunitySeeder::class);
         $this->call(EventSeeder::class);
         $this->call(TililaEditionSeeder::class);

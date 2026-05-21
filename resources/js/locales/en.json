@@ -232,6 +232,9 @@
             "forgotPassword": "Forgot password?",
             "rememberMe": "Remember me",
             "submit": "Log in",
+            "demoDivider": "Demo access",
+            "demoAdmin": "Continue as admin",
+            "demoExpert": "Continue as expert",
             "noAccount": "Don't have an account?",
             "signUp": "Sign up"
         },
