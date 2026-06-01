@@ -77,8 +77,8 @@ export default function Navbar() {
                 ar: 'فعاليات تيليلا',
                 href: '/events',
             },
-            { en: 'Tilila Experts', fr: 'Tilala Expertes', ar: 'خبيرات تيليلا', href: '/experts' },
-            { en: 'Tilila Learn', fr: 'Tilila Learn', ar: 'تعلم تيليلا', href: '/learn' },
+            // { en: 'Tilila Experts', fr: 'Tilala Expertes', ar: 'خبيرات تيليلا', href: '/experts' },
+            // { en: 'Tilila Learn', fr: 'Tilila Learn', ar: 'تعلم تيليلا', href: '/learn' },
         ],
         [],
     );
@@ -179,7 +179,7 @@ export default function Navbar() {
     const dashboardHref =
         auth?.user?.role === 'expert' ? '/expert/dashboard' : '/admin/dashboard';
 
-    return (
+        return (
         <header
             ref={headerRef}
             className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/90 backdrop-blur"
@@ -201,7 +201,7 @@ export default function Navbar() {
                 </Link>
 
                 <nav className="hidden flex-1 items-center justify-center gap-6 lg:gap-8 md:flex">
-                    {navItems.map((item) => (
+                    {navItems.slice(0, 1).map((item) => (
                         <Link
                             key={item.href}
                             href={item.href}
@@ -267,6 +267,27 @@ export default function Navbar() {
                             ))}
                         </DropdownMenuContent>
                     </DropdownMenu>
+
+                    {navItems.slice(1).map((item) => (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={[
+                                'relative text-sm font-medium transition-colors',
+                                isActiveHref(item.href)
+                                    ? 'text-beta-blue'
+                                    : 'text-tgray hover:text-tblack',
+                            ].join(' ')}
+                        >
+                            <TransText en={item.en} fr={item.fr} ar={item.ar} />
+                            {isActiveHref(item.href) ? (
+                                <span
+                                    aria-hidden="true"
+                                    className="absolute -bottom-2 left-0 h-0.5 w-full rounded-full bg-beta-blue"
+                                />
+                            ) : null}
+                        </Link>
+                    ))}
                 </nav>
 
                 <div className="ml-auto hidden items-center gap-3 md:flex">
@@ -350,7 +371,7 @@ export default function Navbar() {
                             <div className="pb-2">
                                 <LanguageSwitcher className="w-fit" />
                             </div>
-                            {navItems.map((item) => (
+                            {navItems.slice(0, 1).map((item) => (
                                 <Link
                                     key={item.href}
                                     href={item.href}
@@ -412,6 +433,22 @@ export default function Navbar() {
                                     </div>
                                 ) : null}
                             </div>
+
+                            {navItems.slice(1).map((item) => (
+                                <Link
+                                    key={item.href}
+                                    href={item.href}
+                                    className="rounded-lg px-3 py-2.5 text-sm font-medium text-tgray transition-colors hover:bg-alpha-blue/30 hover:text-tblack"
+                                    onClick={closeMobile}
+                                >
+                                    <TransText
+                                        en={item.en}
+                                        fr={item.fr}
+                                        ar={item.ar}
+                                    />
+                                </Link>
+                            ))}
+
                             <Link
                                 href="/experts"
                                 className={`${registerButtonClass} justify-center`}
