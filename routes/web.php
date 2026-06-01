@@ -152,14 +152,22 @@ Route::get('/tililab', function () {
     ]);
 });
 Route::get('/tilila', function () {
-    $editions = TililaEdition::query()
+    $currentEdition = TililaEdition::current();
+
+    $pastEditions = TililaEdition::query()
+        ->where('is_current', false)
+        ->when(
+            $currentEdition,
+            fn ($q) => $q->where('id', '!=', $currentEdition->id),
+        )
         ->orderByDesc('year')
         ->orderBy('sort')
         ->orderByDesc('id')
         ->get();
 
     return Inertia::render('user/tilila/index', [
-        'editions' => $editions,
+        'currentEdition' => $currentEdition,
+        'editions' => $pastEditions,
     ]);
 });
 
