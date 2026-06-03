@@ -22,8 +22,8 @@ export function coverImageSrc(coverPath, galleryImages) {
  */
 export function normalizeEdition(raw) {
     if (!raw) {
-return null;
-}
+        return null;
+    }
 
     const coverPath = raw.cover_image_path ?? null;
     const galleryImages = Array.isArray(raw.gallery_images)

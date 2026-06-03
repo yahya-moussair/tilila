@@ -16,8 +16,8 @@ export function coverImageSrc(galleryImages, winners) {
 
 export function normalizeEdition(raw) {
     if (!raw) {
-return null;
-}
+        return null;
+    }
 
     const galleryImages = Array.isArray(raw.gallery_images)
         ? raw.gallery_images
@@ -39,9 +39,7 @@ return null;
         details_url: raw.id ? `/tililab/editions/${raw.id}` : '/tililab',
         winners_url: raw.id ? `/tililab/editions/${raw.id}` : '/tililab',
         gallery_images: galleryImages,
-        has_gallery:
-            Boolean(raw.has_gallery) ||
-            (galleryImages.length > 0),
+        has_gallery: Boolean(raw.has_gallery) || galleryImages.length > 0,
         is_current: Boolean(raw.is_current),
     };
 }

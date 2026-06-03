@@ -231,11 +231,7 @@ export default function TililaEditionDetails() {
                 <div id="jury">
                     <TililaPeopleGrid
                         title={
-                            <TransText
-                                en="Jury"
-                                fr="Jury"
-                                ar="لجنة التحكيم"
-                            />
+                            <TransText en="Jury" fr="Jury" ar="لجنة التحكيم" />
                         }
                         people={jury}
                     />

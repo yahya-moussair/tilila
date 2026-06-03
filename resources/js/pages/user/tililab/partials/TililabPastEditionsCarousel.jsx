@@ -53,9 +53,7 @@ export default function TililabPastEditionsCarousel({
                   .filter((edition) => edition && !shouldExclude(edition))
             : [];
         if (fromApi.length > 0) {
-            return [...fromApi].sort(
-                (a, b) => Number(b.year) - Number(a.year),
-            );
+            return [...fromApi].sort((a, b) => Number(b.year) - Number(a.year));
         }
         return [...TILILAB_EDITIONS_HISTORY]
             .map(editionRowFromHistory)
@@ -116,8 +114,7 @@ export default function TililabPastEditionsCarousel({
 
         if (autoTimerRef.current) clearInterval(autoTimerRef.current);
         autoTimerRef.current = setInterval(() => {
-            if (Date.now() - (lastInteractionAtRef.current || 0) < 3500)
-                return;
+            if (Date.now() - (lastInteractionAtRef.current || 0) < 3500) return;
             autoAdvance();
         }, 4200);
 
@@ -209,7 +206,7 @@ export default function TililabPastEditionsCarousel({
                 </div>
 
                 <div className="relative mt-8">
-                    <div className="pointer-events-none absolute inset-y-0 start-0 z-10 w-10 bg-linear-to-e from-background to-transparent" />
+                    <div className="bg-linear-to-e pointer-events-none absolute inset-y-0 start-0 z-10 w-10 from-background to-transparent" />
                     <div className="pointer-events-none absolute inset-y-0 end-0 z-10 w-10 bg-linear-to-l from-background to-transparent" />
                     <div
                         ref={trackRef}

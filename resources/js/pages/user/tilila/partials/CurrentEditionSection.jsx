@@ -55,10 +55,7 @@ function GalleryGrid({ images }) {
     );
 }
 
-export default function CurrentEditionSection({
-    edition,
-    onOpenParticipate,
-}) {
+export default function CurrentEditionSection({ edition, onOpenParticipate }) {
     if (!edition) {
         return null;
     }
@@ -158,7 +155,8 @@ export default function CurrentEditionSection({
                                             ar="لجنة التحكيم"
                                         />
                                     </Link>
-                                    {(edition.has_gallery || images.length > 0) && (
+                                    {(edition.has_gallery ||
+                                        images.length > 0) && (
                                         <Link
                                             href={`/tilila/editions/${editionId}/gallery`}
                                             className="inline-flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm font-semibold text-foreground hover:bg-muted"

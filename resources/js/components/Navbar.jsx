@@ -177,9 +177,11 @@ export default function Navbar() {
     const registerButtonClass =
         'inline-flex items-center justify-center rounded-full border border-beta-blue/30 bg-transparent px-5 py-2 text-sm font-semibold text-beta-blue transition-colors hover:bg-beta-blue hover:text-twhite';
     const dashboardHref =
-        auth?.user?.role === 'expert' ? '/expert/dashboard' : '/admin/dashboard';
+        auth?.user?.role === 'expert'
+            ? '/expert/dashboard'
+            : '/admin/dashboard';
 
-        return (
+    return (
         <header
             ref={headerRef}
             className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/90 backdrop-blur"
@@ -200,7 +202,7 @@ export default function Navbar() {
                     <TransText en="Tilila" fr="Tilila" ar="تيليلا" />
                 </Link>
 
-                <nav className="hidden flex-1 items-center justify-center gap-6 lg:gap-8 md:flex">
+                <nav className="hidden flex-1 items-center justify-center gap-6 md:flex lg:gap-8">
                     {navItems.slice(0, 1).map((item) => (
                         <Link
                             key={item.href}
@@ -244,7 +246,10 @@ export default function Navbar() {
                                 />
                             ) : null}
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent align="center" className="min-w-52">
+                        <DropdownMenuContent
+                            align="center"
+                            className="min-w-52"
+                        >
                             {aboutMenuItems.map((item) => (
                                 <DropdownMenuItem key={item.hash} asChild>
                                     <Link
@@ -403,9 +408,7 @@ export default function Navbar() {
                                     <ChevronDown
                                         className={[
                                             'size-4 transition-transform',
-                                            aboutMobileOpen
-                                                ? 'rotate-180'
-                                                : '',
+                                            aboutMobileOpen ? 'rotate-180' : '',
                                         ].join(' ')}
                                     />
                                 </button>

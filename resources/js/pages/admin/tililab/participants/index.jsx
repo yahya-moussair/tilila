@@ -93,10 +93,10 @@ export default function AdminTililabParticipantsIndex({
 
     const hasActiveFilters = Boolean(
         filters?.search ||
-            filters?.edition_id ||
-            filters?.country ||
-            filters?.from ||
-            filters?.to,
+        filters?.edition_id ||
+        filters?.country ||
+        filters?.from ||
+        filters?.to,
     );
 
     return (
@@ -340,12 +340,12 @@ export default function AdminTililabParticipantsIndex({
                                             </p>
                                             <div className="mt-1 flex flex-wrap gap-1">
                                                 {p.original_video_link ? (
-                                                    <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-semibold uppercase text-muted-foreground">
+                                                    <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground uppercase">
                                                         Link
                                                     </span>
                                                 ) : null}
                                                 {p.original_video_url ? (
-                                                    <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-semibold uppercase text-muted-foreground">
+                                                    <span className="rounded bg-muted px-1.5 py-0.5 text-[10px] font-semibold text-muted-foreground uppercase">
                                                         Upload
                                                     </span>
                                                 ) : null}

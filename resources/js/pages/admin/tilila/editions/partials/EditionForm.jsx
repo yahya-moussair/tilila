@@ -474,8 +474,8 @@ export default function EditionForm({
                             Ceremony video (YouTube)
                         </div>
                         <p className="text-xs text-muted-foreground">
-                            Optional link to the awards ceremony replay. Shown on
-                            the public edition page.
+                            Optional link to the awards ceremony replay. Shown
+                            on the public edition page.
                         </p>
                         <Input
                             id="ceremony_video_url"

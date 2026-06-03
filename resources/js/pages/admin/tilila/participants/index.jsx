@@ -96,10 +96,10 @@ export default function AdminTililaSubmissionsIndex({
 
     const hasActiveFilters = Boolean(
         filters?.search ||
-            filters?.edition_id ||
-            filters?.country ||
-            filters?.from ||
-            filters?.to,
+        filters?.edition_id ||
+        filters?.country ||
+        filters?.from ||
+        filters?.to,
     );
 
     return (
@@ -190,7 +190,10 @@ export default function AdminTililaSubmissionsIndex({
                             <option value="">All editions</option>
                             <option value="none">No edition</option>
                             {editions.map((edition) => (
-                                <option key={edition.id} value={String(edition.id)}>
+                                <option
+                                    key={edition.id}
+                                    value={String(edition.id)}
+                                >
                                     {edition.year}
                                     {edition.is_current ? ' (current)' : ''}
                                 </option>
