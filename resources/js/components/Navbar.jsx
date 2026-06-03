@@ -1,9 +1,11 @@
-import { Link, usePage } from '@inertiajs/react';
-import { ChevronDown, Menu, X } from 'lucide-react';
+import { Link, router, usePage } from '@inertiajs/react';
+import { ChevronDown, LogOut, Menu, Settings, X } from 'lucide-react';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { home, login } from '@/routes';
+import { home, login, logout } from '@/routes';
+import { edit } from '@/routes/profile';
 import LanguageSwitcher from '@/components/LanguageSwitcher';
 import TransText from '@/components/TransText';
+import { UserMenuContent } from '@/components/user-menu-content';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -178,8 +180,14 @@ export default function Navbar() {
         'inline-flex items-center justify-center rounded-full border border-beta-blue/30 bg-transparent px-5 py-2 text-sm font-semibold text-beta-blue transition-colors hover:bg-beta-blue hover:text-twhite';
     const dashboardHref =
         auth?.user?.role === 'expert' ? '/expert/dashboard' : '/admin/dashboard';
+    const showAccountMenu = auth?.user?.role === 'user';
 
-        return (
+    const handleLogout = () => {
+        closeMobile();
+        router.flushAll();
+    };
+
+    return (
         <header
             ref={headerRef}
             className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/90 backdrop-blur"
@@ -303,13 +311,37 @@ export default function Navbar() {
                     </Link> */}
                     <LanguageSwitcher />
                     {auth?.user ? (
-                        <Link href={dashboardHref} className={authButtonClass}>
-                            <TransText
-                                en="Dashboard"
-                                fr="Tableau de bord"
-                                ar="لوحة التحكم"
-                            />
-                        </Link>
+                        showAccountMenu ? (
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                    <button
+                                        type="button"
+                                        className={`${authButtonClass} gap-1`}
+                                    >
+                                        <TransText
+                                            en="Account"
+                                            fr="Compte"
+                                            ar="الحساب"
+                                        />
+                                        <ChevronDown className="size-4 opacity-80" />
+                                    </button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent
+                                    align="end"
+                                    className="w-56"
+                                >
+                                    <UserMenuContent user={auth.user} />
+                                </DropdownMenuContent>
+                            </DropdownMenu>
+                        ) : (
+                            <Link href={dashboardHref} className={authButtonClass}>
+                                <TransText
+                                    en="Dashboard"
+                                    fr="Tableau de bord"
+                                    ar="لوحة التحكم"
+                                />
+                            </Link>
+                        )
                     ) : (
                         <Link href={login()} className={authButtonClass}>
                             <TransText
@@ -462,17 +494,52 @@ export default function Navbar() {
                             </Link>
                             <div className="my-2 border-t border-border" />
                             {auth?.user ? (
-                                <Link
-                                    href={dashboardHref}
-                                    className={`${authButtonClass} justify-center`}
-                                    onClick={closeMobile}
-                                >
-                                    <TransText
-                                        en="Dashboard"
-                                        fr="Tableau de bord"
-                                        ar="لوحة التحكم"
-                                    />
-                                </Link>
+                                showAccountMenu ? (
+                                    <div className="flex flex-col gap-2 pb-1">
+                                        <Link
+                                            href={edit()}
+                                            className={`${registerButtonClass} justify-center`}
+                                            onClick={closeMobile}
+                                        >
+                                            <span className="inline-flex items-center justify-center gap-2">
+                                                <Settings className="size-4" />
+                                                <TransText
+                                                    en="Settings"
+                                                    fr="Paramètres"
+                                                    ar="الإعدادات"
+                                                />
+                                            </span>
+                                        </Link>
+                                        <Link
+                                            href={logout()}
+                                            as="button"
+                                            className={`${authButtonClass} justify-center`}
+                                            onClick={handleLogout}
+                                            data-test="logout-button"
+                                        >
+                                            <span className="inline-flex items-center justify-center gap-2">
+                                                <LogOut className="size-4" />
+                                                <TransText
+                                                    en="Log out"
+                                                    fr="Déconnexion"
+                                                    ar="تسجيل الخروج"
+                                                />
+                                            </span>
+                                        </Link>
+                                    </div>
+                                ) : (
+                                    <Link
+                                        href={dashboardHref}
+                                        className={`${authButtonClass} justify-center`}
+                                        onClick={closeMobile}
+                                    >
+                                        <TransText
+                                            en="Dashboard"
+                                            fr="Tableau de bord"
+                                            ar="لوحة التحكم"
+                                        />
+                                    </Link>
+                                )
                             ) : (
                                 <div className="flex flex-col gap-2 pb-1">
                                     <Link

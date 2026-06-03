@@ -2,6 +2,7 @@ import { Link, usePage } from '@inertiajs/react';
 import {
     Calendar,
     Images,
+    KeyRound,
     LayoutGrid,
     Mail,
     Megaphone,
@@ -19,6 +20,7 @@ import {
     SidebarGroupLabel,
     SidebarHeader,
     SidebarMenu,
+    SidebarMenuBadge,
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
@@ -89,6 +91,9 @@ function SidebarNavLinks({ items }: { items: NavItem[] }) {
                             <Link href={item.href} prefetch>
                                 {Icon && <Icon />}
                                 <span>{item.title}</span>
+                                {item.badge != null && item.badge > 0 ? (
+                                    <SidebarMenuBadge>{item.badge}</SidebarMenuBadge>
+                                ) : null}
                             </Link>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
@@ -101,6 +106,8 @@ function SidebarNavLinks({ items }: { items: NavItem[] }) {
 export function AppSidebar() {
     const page = usePage();
     const role = (page.props.auth?.user?.role as string | undefined) ?? 'user';
+    const accessRequestsPending =
+        (page.props.access_requests_pending as number | undefined) ?? 0;
     const isExpert = role === 'expert';
     const { isCurrentUrl } = useCurrentUrl();
     const dashboardItem: NavItem = {
@@ -178,6 +185,12 @@ export function AppSidebar() {
                                         title: 'Applications',
                                         href: '/admin/expert-applications',
                                         icon: Users,
+                                    },
+                                    {
+                                        title: 'Access Requests',
+                                        href: '/admin/access-requests',
+                                        icon: KeyRound,
+                                        badge: accessRequestsPending,
                                     },
                                 ]}
                             />

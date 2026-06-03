@@ -408,5 +408,88 @@
             "emailPlaceholder": "Entrez votre e-mail"
         }
     },
-    "welcome": "Bienvenue dans l’application"
+    "welcome": "Bienvenue dans l’application",
+    "accessRequest": {
+        "common": {
+            "goHome": "Retour à l’accueil"
+        },
+        "create": {
+            "headTitle": "Demander l’accès",
+            "title": "Demander l’accès aux profils d’expertes",
+            "subtitle": "Expliquez pourquoi vous souhaitez consulter les profils complets. Notre équipe examinera votre demande.",
+            "reasonLabel": "Motif de la demande",
+            "reasonPlaceholder": "Décrivez votre rôle et pourquoi vous avez besoin d’accéder aux profils…",
+            "organizationLabel": "Organisation (facultatif)",
+            "organizationPlaceholder": "ex. Média ou institution",
+            "professionLabel": "Profession",
+            "professionPlaceholder": "ex. Journaliste, chercheuse",
+            "submit": "Envoyer la demande",
+            "submitting": "Envoi en cours…",
+            "reapplyTitle": "Nouvelle demande d’accès",
+            "reapplySubtitle": "Mettez à jour vos informations ci-dessous et renvoyez votre demande. Notre équipe l’examinera à nouveau.",
+            "reapplySubmit": "Renvoyer la demande"
+        },
+        "pending": {
+            "headTitle": "Demande en cours d’examen",
+            "title": "Votre demande est en cours d’examen",
+            "description": "Nous examinons votre demande d’accès aux profils d’expertes.",
+            "emailNotice": "Vous recevrez un e-mail une fois votre demande traitée."
+        },
+        "rejected": {
+            "headTitle": "Demande non approuvée",
+            "title": "Votre demande d’accès n’a pas été approuvée",
+            "description": "Nous n’avons pas pu approuver votre demande pour le moment. Vous pouvez toujours parcourir l’annuaire public.",
+            "reapplyHint": "Vous pouvez soumettre une nouvelle demande avec des informations mises à jour.",
+            "reapply": "Nouvelle demande"
+        },
+        "admin": {
+            "headTitle": "Demandes d’accès",
+            "title": "Demandes d’accès",
+            "description": "Examinez les demandes d’accès aux profils d’expertes.",
+            "successTitle": "Terminé",
+            "approve": "Approuver",
+            "reject": "Refuser",
+            "reaccept": "Réaccepter",
+            "confirmReacceptTitle": "Réaccepter cette demande ?",
+            "confirmReacceptDescription": "Voulez-vous vraiment réaccepter cette demande ? Le demandeur recevra immédiatement un nouveau lien d’activation.",
+            "confirmApproveTitle": "Approuver cette demande ?",
+            "confirmApproveDescription": "L’utilisateur pourra consulter les profils et recevra un e-mail.",
+            "confirmRejectTitle": "Refuser cette demande ?",
+            "confirmRejectDescription": "L’utilisateur ne pourra pas consulter les profils et recevra un e-mail.",
+            "empty": "Aucune demande pour ce filtre.",
+            "paginationPrefix": "Affichage",
+            "paginationTo": "à",
+            "paginationOf": "sur",
+            "paginationResults": "résultats",
+            "filters": {
+                "all": "Toutes",
+                "pending": "En attente",
+                "approved": "Approuvées",
+                "rejected": "Refusées"
+            },
+            "status": {
+                "pending": "En attente",
+                "approved": "Approuvée",
+                "rejected": "Refusée",
+                "revoked": "Révoquée"
+            },
+            "reapplication": "Nouvelle demande",
+            "resubmittedAt": "Renvoyée le",
+            "viewDetails": "Voir les détails",
+            "detailsTitle": "Détails de la demande",
+            "detailsKicker": "Demande",
+            "detailsSubmitted": "Soumise le",
+            "detailsReviewed": "Examinée le",
+            "columns": {
+                "user": "Utilisateur",
+                "email": "E-mail",
+                "organization": "Organisation",
+                "profession": "Profession",
+                "reason": "Motif",
+                "submitted": "Soumise le",
+                "status": "Statut",
+                "actions": "Actions"
+            }
+        }
+    }
 }

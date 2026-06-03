@@ -408,5 +408,88 @@
             "emailPlaceholder": "أدخل بريدك الإلكتروني"
         }
     },
-    "welcome": "مرحباً بك في التطبيق"
+    "welcome": "مرحباً بك في التطبيق",
+    "accessRequest": {
+        "common": {
+            "goHome": "العودة إلى الصفحة الرئيسية"
+        },
+        "create": {
+            "headTitle": "طلب الوصول",
+            "title": "طلب الوصول إلى ملفات الخبراء",
+            "subtitle": "أخبرنا لماذا تحتاج إلى الاطلاع على الملفات الكاملة. سيقوم فريقنا بمراجعة طلبك.",
+            "reasonLabel": "سبب الطلب",
+            "reasonPlaceholder": "صف دورك ولماذا تحتاج إلى الوصول إلى الملفات…",
+            "organizationLabel": "المؤسسة (اختياري)",
+            "organizationPlaceholder": "مثال: وسيلة إعلام أو مؤسسة",
+            "professionLabel": "المهنة",
+            "professionPlaceholder": "مثال: صحفية، باحثة",
+            "submit": "إرسال الطلب",
+            "submitting": "جارٍ الإرسال…",
+            "reapplyTitle": "إعادة التقديم للوصول",
+            "reapplySubtitle": "حدّث بياناتك أدناه وأرسل الطلب مجدداً. سيقوم فريقنا بمراجعته.",
+            "reapplySubmit": "إرسال مجدداً"
+        },
+        "pending": {
+            "headTitle": "الطلب قيد المراجعة",
+            "title": "طلبك قيد المراجعة",
+            "description": "نراجع طلبك للوصول إلى ملفات الخبراء.",
+            "emailNotice": "ستتلقى بريداً إلكترونياً عند الانتهاء من المراجعة."
+        },
+        "rejected": {
+            "headTitle": "لم يُوافق على الطلب",
+            "title": "لم يُوافق على طلب الوصول",
+            "description": "لم نتمكن من الموافقة على طلبك في الوقت الحالي. يمكنك الاستمرار في تصفح الدليل العام.",
+            "reapplyHint": "يمكنك تقديم طلب جديد بمعلومات محدّثة.",
+            "reapply": "إعادة التقديم"
+        },
+        "admin": {
+            "headTitle": "طلبات الوصول",
+            "title": "طلبات الوصول",
+            "description": "مراجعة طلبات الوصول إلى ملفات الخبراء.",
+            "successTitle": "تم",
+            "approve": "موافقة",
+            "reject": "رفض",
+            "reaccept": "إعادة القبول",
+            "confirmReacceptTitle": "إعادة قبول هذا الطلب؟",
+            "confirmReacceptDescription": "هل أنت متأكد من إعادة قبول هذا الطلب؟ سيتلقى مقدم الطلب فوراً رابط تفعيل جديد.",
+            "confirmApproveTitle": "الموافقة على هذا الطلب؟",
+            "confirmApproveDescription": "سيتمكن المستخدم من عرض الملفات وسيتلقى إشعاراً بالبريد.",
+            "confirmRejectTitle": "رفض هذا الطلب؟",
+            "confirmRejectDescription": "لن يتمكن المستخدم من عرض الملفات وسيتلقى إشعاراً بالبريد.",
+            "empty": "لا توجد طلبات لهذا الفلتر.",
+            "paginationPrefix": "عرض",
+            "paginationTo": "إلى",
+            "paginationOf": "من",
+            "paginationResults": "نتيجة",
+            "filters": {
+                "all": "الكل",
+                "pending": "قيد الانتظار",
+                "approved": "موافق عليها",
+                "rejected": "مرفوضة"
+            },
+            "status": {
+                "pending": "قيد الانتظار",
+                "approved": "موافق عليها",
+                "rejected": "مرفوضة",
+                "revoked": "ملغاة"
+            },
+            "reapplication": "إعادة تقديم",
+            "resubmittedAt": "أُعيد التقديم",
+            "viewDetails": "عرض التفاصيل",
+            "detailsTitle": "تفاصيل طلب الوصول",
+            "detailsKicker": "الطلب",
+            "detailsSubmitted": "تاريخ الإرسال",
+            "detailsReviewed": "تاريخ المراجعة",
+            "columns": {
+                "user": "المستخدم",
+                "email": "البريد",
+                "organization": "المؤسسة",
+                "profession": "المهنة",
+                "reason": "السبب",
+                "submitted": "تاريخ الإرسال",
+                "status": "الحالة",
+                "actions": "إجراءات"
+            }
+        }
+    }
 }

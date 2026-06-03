@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccessRequestController;
 use App\Http\Controllers\ExpertApplicationController;
 use App\Http\Controllers\ExpertArticleController;
 use App\Http\Controllers\ExpertController;
@@ -122,7 +123,9 @@ Route::post('/experts/connect', [TililaConnectController::class, 'store'])->name
 Route::get('/experts/become', [ExpertApplicationController::class, 'create'])->name('experts.become');
 Route::post('/experts/become', [ExpertApplicationController::class, 'store'])->name('experts.become.store');
 Route::get('/experts/articles/{article}', [ExpertArticleController::class, 'show'])->name('experts.articles.show');
-Route::get('/experts/{expert}', [ExpertController::class, 'show'])->name('experts.show');
+Route::get('/experts/{expert}', [ExpertController::class, 'show'])
+    ->middleware(['auth', 'verified', 'expert.access'])
+    ->name('experts.show');
 
 Route::post('/newsletter', [NewsletterSubscriptionController::class, 'store'])->name('newsletter.store');
 
@@ -208,6 +211,13 @@ Route::get('/media', [MediaController::class, 'index'])->name('media.index');
 Route::get('/media/{media}', [MediaController::class, 'show'])->name('media.show');
 
 Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('access-request/create', [AccessRequestController::class, 'create'])->name('access-request.create');
+    Route::post('access-request', [AccessRequestController::class, 'store'])
+        ->middleware('throttle:5,60')
+        ->name('access-request.store');
+    Route::get('access-request/pending', [AccessRequestController::class, 'pending'])->name('access-request.pending');
+    Route::get('access-request/rejected', [AccessRequestController::class, 'rejected'])->name('access-request.rejected');
+
     Route::get('dashboard', fn () => redirect()->route('admin.dashboard'))
         ->middleware('role:admin')
         ->name('dashboard');

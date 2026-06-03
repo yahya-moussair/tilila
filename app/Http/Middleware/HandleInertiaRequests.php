@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Enums\AccessRequestStatus;
+use App\Models\AccessRequest;
 use App\Models\HeroSlide;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
@@ -53,6 +55,9 @@ class HandleInertiaRequests extends Middleware
                 ->get()
                 ->map(fn (HeroSlide $s) => $s->toCarouselArray())
                 ->all(),
+            'access_requests_pending' => fn () => $request->user()?->role === 'admin'
+                ? AccessRequest::query()->where('status', AccessRequestStatus::Pending)->count()
+                : 0,
         ];
     }
 }

@@ -408,5 +408,88 @@
             "emailPlaceholder": "Enter your email"
         }
     },
-    "welcome": "Welcome to the app"
+    "welcome": "Welcome to the app",
+    "accessRequest": {
+        "common": {
+            "goHome": "Go back home"
+        },
+        "create": {
+            "headTitle": "Request access",
+            "title": "Request access to expert profiles",
+            "subtitle": "Tell us why you need to view full expert profiles. Our team will review your request.",
+            "reasonLabel": "Reason for access",
+            "reasonPlaceholder": "Describe your role and why you need access to expert profiles…",
+            "organizationLabel": "Organization (optional)",
+            "organizationPlaceholder": "e.g. Media outlet or institution",
+            "professionLabel": "Profession",
+            "professionPlaceholder": "e.g. Journalist, researcher",
+            "submit": "Submit request",
+            "submitting": "Submitting…",
+            "reapplyTitle": "Re-apply for access",
+            "reapplySubtitle": "Update your details below and submit again. Our team will review your new request.",
+            "reapplySubmit": "Submit again"
+        },
+        "pending": {
+            "headTitle": "Request under review",
+            "title": "Your request is under review",
+            "description": "We are reviewing your request to access expert profiles. This usually takes a short time.",
+            "emailNotice": "You will receive an email once your request has been reviewed."
+        },
+        "rejected": {
+            "headTitle": "Request not approved",
+            "title": "Your access request was not approved",
+            "description": "We were unable to approve your request at this time. You can still browse the public experts directory.",
+            "reapplyHint": "You may submit a new request with updated information.",
+            "reapply": "Re-apply"
+        },
+        "admin": {
+            "headTitle": "Access Requests",
+            "title": "Access Requests",
+            "description": "Review requests from users who want to view full expert profiles.",
+            "successTitle": "Done",
+            "approve": "Approve",
+            "reject": "Reject",
+            "reaccept": "Re-accept",
+            "confirmReacceptTitle": "Re-accept this request?",
+            "confirmReacceptDescription": "Are you sure you want to re-accept this request? The applicant will immediately receive a new activation link.",
+            "confirmApproveTitle": "Approve this request?",
+            "confirmApproveDescription": "The user will be able to view expert profiles and will receive an email notification.",
+            "confirmRejectTitle": "Reject this request?",
+            "confirmRejectDescription": "The user will not be able to view expert profiles and will receive an email notification.",
+            "empty": "No access requests match this filter.",
+            "paginationPrefix": "Showing",
+            "paginationTo": "to",
+            "paginationOf": "of",
+            "paginationResults": "results",
+            "filters": {
+                "all": "All",
+                "pending": "Pending",
+                "approved": "Approved",
+                "rejected": "Rejected"
+            },
+            "status": {
+                "pending": "Pending",
+                "approved": "Approved",
+                "rejected": "Rejected",
+                "revoked": "Revoked"
+            },
+            "reapplication": "Re-application",
+            "resubmittedAt": "Re-submitted",
+            "viewDetails": "View details",
+            "detailsTitle": "Access request details",
+            "detailsKicker": "Request",
+            "detailsSubmitted": "Submitted",
+            "detailsReviewed": "Reviewed",
+            "columns": {
+                "user": "User",
+                "email": "Email",
+                "organization": "Organization",
+                "profession": "Profession",
+                "reason": "Reason",
+                "submitted": "Submitted",
+                "status": "Status",
+                "actions": "Actions"
+            }
+        }
+    }
 }

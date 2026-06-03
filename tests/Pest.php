@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 /*
@@ -14,8 +15,12 @@ use Tests\TestCase;
 */
 
 pest()->extend(TestCase::class)
-    ->use(Illuminate\Foundation\Testing\RefreshDatabase::class)
+    ->use(RefreshDatabase::class)
     ->in('Feature');
+
+pest()->extend(TestCase::class)
+    ->use(RefreshDatabase::class)
+    ->in('Unit');
 
 /*
 |--------------------------------------------------------------------------
@@ -43,7 +48,15 @@ expect()->extend('toBeOne', function () {
 |
 */
 
-function something()
+use App\Models\Expert;
+
+function createPublishedExpert(array $attributes = []): Expert
 {
-    // ..
+    return Expert::query()->create(array_merge([
+        'name' => ['en' => 'Test Expert', 'fr' => 'Experte test', 'ar' => ''],
+        'title' => ['en' => 'Expert', 'fr' => 'Experte', 'ar' => ''],
+        'status' => 'published',
+        'email' => fake()->unique()->safeEmail(),
+        'expertise' => [],
+    ], $attributes));
 }

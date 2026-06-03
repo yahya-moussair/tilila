@@ -1,8 +1,10 @@
 <?php
 
+use App\Http\Controllers\Admin\AccessRequestController;
 use App\Http\Controllers\Admin\EventController;
 use App\Http\Controllers\Admin\ExpertApplicationController;
 use App\Http\Controllers\Admin\ExpertController;
+use App\Http\Controllers\Admin\HeroSlideController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\MediaSidebarController;
 use App\Http\Controllers\Admin\OpportunityController;
@@ -11,13 +13,17 @@ use App\Http\Controllers\Admin\TililabEditionController;
 use App\Http\Controllers\Admin\TililabParticipantController;
 use App\Http\Controllers\Admin\TililaConnectRequestController;
 use App\Http\Controllers\Admin\TililaContestParticipantController;
-use App\Http\Controllers\Admin\HeroSlideController;
 use App\Http\Controllers\Admin\TililaEditionController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', fn () => Inertia::render('dashboard'))->name('dashboard');
+
+    Route::get('access-requests', [AccessRequestController::class, 'index'])->name('access-requests.index');
+    Route::patch('access-requests/{accessRequest}/approve', [AccessRequestController::class, 'approve'])->name('access-requests.approve');
+    Route::patch('access-requests/{accessRequest}/reject', [AccessRequestController::class, 'reject'])->name('access-requests.reject');
+    Route::patch('access-requests/{accessRequest}/reaccept', [AccessRequestController::class, 'reaccept'])->name('access-requests.reaccept');
 
     Route::get('expert-applications', [ExpertApplicationController::class, 'index'])->name('expert-applications.index');
     Route::get('expert-applications/{application}', [ExpertApplicationController::class, 'show'])->name('expert-applications.show');
